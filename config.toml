@@ -1,0 +1,10 @@
+baseURL = "https://ethankent.dev"
+languageCode = "en-us"
+title = "Ethan Kent's Blog"
+theme = "beautiful"
+
+[Params]
+useHLJS = true
+
+[Author]
+name = "Ethan Kent"

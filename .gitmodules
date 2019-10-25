@@ -1,0 +1,9 @@
+[submodule "themes/hermit"]
+	path = themes/hermit
+	url = https://github.com/Track3/hermit.git
+[submodule "themes/tale"]
+	path = themes/tale
+	url = https://github.com/EmielH/tale-hugo.git
+[submodule "beautiful"]
+	path = beautiful
+	url = https://github.com/halogenica/beautifulhugo.git
