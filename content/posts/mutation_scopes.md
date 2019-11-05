@@ -1,6 +1,6 @@
 ---
 title: "Limiting the scope of mutation"
-date: 2019-10-25T11:57:11-05:00
+date: 2019-11-05T15:05:29-06:00
 draft: false
 ---
 
@@ -131,7 +131,7 @@ developer follow the same pattern.
 
 ## Better yet, use a literal or the builder pattern to instantiate the object.
 
-A rust crate called [`maplit`](https://github.com/bluss/maplit) exposes a
+A Rust crate called [`maplit`](https://github.com/bluss/maplit) exposes a
 macro for creating literal hashmaps:
 
 ```rust
@@ -184,6 +184,8 @@ Or you can use the builder pattern with an object you define:
 
 use std::collections::HashMap;
 
+// You'd do this with named struct fields; just making this example more like
+// the others.
 struct Lunch(HashMap<String, String>);
 
 impl Lunch {
