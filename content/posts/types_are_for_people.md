@@ -1,12 +1,13 @@
 ---
-title: "Types Are for People"
-date: 2019-11-06T12:59:01-06:00
-draft: true
+title: Types Are for People, not Computers
+date: 2019-11-14T09:00:00-06:00
+draft: false
 ---
 
-Types—in the static-typing sense—are for people. Oh sure, we use them, in
-part, to subdue the compiler or meet some need peculiarly arising from our
-computer. But types are valuable because they are a way of communicating.
+Types—in the static-typing sense—are useful because they help people, not
+computers. Oh sure, we use them, in part, to subdue the compiler or meet some
+need peculiarly arising from our computer. But types are valuable because
+they are a way of communicating.
 
 ## Type systems are a way of communicating.
 
@@ -16,107 +17,221 @@ they let you describe these things based on what things _are_ or what they
 _do_.
 
 So if types are a way of communicating, who or what are you talking _to_?
-First, you are talking to yourself—leaving notes. Next, you are talking to
-the computer. You are asking it to hold you accountable to what you told it
-you understood, expected, or intended. Finally, you are talking to other
-developers (including future you).
+Several audiences. You are talking to yourself—leaving notes. You are also
+talking to the computer—but often for your sake rather than its. You are
+asking it to hold you accountable to what you told it you understood,
+expected, or intended. Finally, you are talking to other developers
+(including future you).
 
-## Good type systems remind us to think about things we might otherwise forget.
+## We can match how we use the type system with what we understand, expect, or intend of our objects.
 
-Consider this example, in which we deserialize some JSON into a struct and
-then cast one of the values from a string to an integer:
+Consider this JavaScript code:
 
-````rust
-use serde::Deserialize;
+```javascript
+const mathItForMe = (a, b) => {
+  return { added: a + b, subtracted: a - b, multiplied: a * b, divided: a / b };
+};
 
-// Define a struct that has the shape of our JSON. By deriving the `Deserialize`
-// trait from the `serde` library, Rust now knows how to take JSON and put it
-// into this struct.
-#[derive(Deserialize)]
-#[serde(rename_all = "camelCase")] // JSON's camelcase -> Rust's snake case.
-struct MyJsonFormat {
-    /// A string that should be coercible to a number.
-    stringy_number: String,
+mathItForMe(5, "3");
+// => { added: '53', subtracted: 2, multiplied: 15, divided: 1.6666666666666667 }
+
+mathItForMe(true, 7);
+// => { added: 8, subtracted: -6, multiplied: 7, divided: 0.14285714285714285 }
+
+mathItForMe("3", true);
+// => { added: '3true', subtracted: 2, multiplied: 3, divided: 3 }
+```
+
+In what programming context is the desired behavior for using `+` with a
+string and a boolean to coerce the boolean into the string `true` or `false`
+and concatenate it to the string? It's madness. But then again, all implicit
+coercion is the same kind of insanity; some instances are just more florid
+than others. Using types imposes some discipline:
+
+```rust
+#[derive(Debug, PartialEq)]
+struct GotMathed {
+    added: i32,
+    subtracted: i32,
+    divided: i32,
+    multiplied: i32,
 }
 
-// In Rust, we have a `Result` type, defined:
-//
-// ```
-// enum Result<T, E> { // `T` is the type for `Ok`; `E` is the type for `Err`
-//   Ok(T), // Rust enum variants can hold values.
-//   Err(E),
-// }
-// ```
-//
-// So a `Result` is either the `Ok` variant that wraps the value on success, or
-// the `Err` variant that wraps the value on error.
-
-/// Given a `json_string` parsable into `MyJsonFormat`, parse the
-/// `stringy_number` field into an integer. Return an error if `json_string` is
-/// not parsable into `MyJsonFormat` or if `string_number` is not parsable into a
-/// an integer.
-fn extract_number(json_string: &str) -> Result<i32, Box<dyn std::error::Error>> {
-    // The `?` operator is a shorthand similar to a `try` block. If `serde_json`
-    // returns an error, we short-circuit the function's evaluation and
-    // immediately return the Error. Otherwise, we get the success value,
-    // unwrapped from its `Ok()`.
-    let deserialized: MyJsonFormat = serde_json::from_str(json_string)?;
-
-    // This operation is *not* fallible. If we successfully deserialized the
-    // JSON (the line above), we're *guaranteed* to have a field called
-    // `stringy_number`. That's why there's no `?` or the like.
-    let my_number = deserialized.stringy_number;
-
-    // Once again, we have a fallible operation: parsing a string to an integer
-    // can fail, so we have to use the `?` operator to either short-circuit with
-    // an error or to unwrap the `Ok` if we succeed.
-    let parsed: i32 = my_number.parse()?;
-
-    // If we made it this far without returning an error, it's time to return
-    // the integer wrapped in an `Ok` to signify success.
-    Ok(parsed)
+fn math_it_for_me(num_1: i32, num_2: i32) -> GotMathed {
+    GotMathed {
+        added: num_1 + num_2,
+        subtracted: num_1 - num_2,
+        divided: num_1 / num_2,
+        multiplied: num_1 * num_2,
+    }
 }
 
 fn main() {
-    // Try replacing "7" with "foo".
-    // Try removing the "stringNumber" key.
-    let json_string = "{\"stringyNumber\": \"7\"}";
-    match extract_number(json_string) {
-        Ok(num) => println!("Your number times 2 = {}", num * 2),
-        Err(e) => println!("I had an error: {}", e),
+    let x: i32 = 7;
+    let y: i32 = 5;
+
+    assert_eq!(
+        math_it_for_me(x, y),
+        GotMathed {
+            added: 12,
+            subtracted: 2,
+            divided: 1,
+            multiplied: 35,
+        }
+    );
+}
+```
+
+But notice that we aren't necessarily capturing our intent. What if, instead
+of a signed 32-bit integer (an `i32`), we use an unsigned, 64-bit integer (a
+`u64`)? Or a 32-bit float (an `f32`)? Our function doesn't work—but it
+probably should. This function isn't _about_ doing math on 32-bit integers,
+it's about doing math on numbers.
+
+The type system has helped us figure out what our function ought to do by
+requiring us to describe it explicitly. Here we've gone too narrow. This is
+worlds better than a function that takes types we didn't even consider, like
+the JavaScript example. The behavior there was pathological because we were
+too accepting.
+
+But now the type system is putting pressure on us to think about exactly what
+this function ought to do. If it were part of a private API—a private method
+in a class or a non `pub` function in an `impl` block in Rust—we might accept
+that it places arbitrary limits on the types it accepts in order to
+streamline implementation or avoid premature optimization. Plus, we would
+have additional context and the method's restricted visibility means we
+wouldn't be beholden to others who rely on the code.
+
+```rust
+use core::ops::{Add, Div, Mul, Sub};
+
+#[derive(Debug, PartialEq)]
+struct GotMathed<T> {
+    added: T,
+    subtracted: T,
+    divided: T,
+    multiplied: T,
+}
+
+fn math_it_for_me<T>(num_1: T, num_2: T) -> GotMathed<T>
+where
+    T: Add<Output = T>    // Specify "trait bounds": A trait is like an
+        + Sub<Output = T> // interface. It specifies the behavior (method
+        + Mul<Output = T> // signatures) a type must implement. Here we're
+        + Div<Output = T> // saying `T` is a type that must implement addition,
+        + Copy            // subtraction, multiplication, and division, in each
+        + Clone           // case returning the same type. It must also
+        + PartialEq,      // allow the value to be copied and cloned, and
+{                         // compared for equality (used by `assert_eq!` ↓).
+    GotMathed {
+        added: num_1 + num_2,
+        subtracted: num_1 - num_2,
+        divided: num_1 / num_2,
+        multiplied: num_1 * num_2,
     }
 }
-````
 
-Notice that _every time_ something is fallible, we have to handle it. The
-fallibility is built into the type: the success and failure cases are wrapped
-in the enum variants `Ok` or `Err`. If you don't extract the value from it's
-`Ok` box, you get a type error. If you only handle the `Ok` variant, the
-compiler will catch you in one of several ways.
+fn main() {
+    let x: f32 = 7.0;
+    let y: f32 = 5.0;
 
-You can opt out of that behavior by using `unwrap()` on the `Result`
-type. That panics if you call it on the `Err` variant. But `unwrap()`ing is
-considered a faux pas in Rust most of the time.
+    assert_eq!(
+        math_it_for_me(x, y),
+        GotMathed {
+            added: 12.0,
+            subtracted: 2.0,
+            divided: 1.4,
+            multiplied: 35.0,
+        }
+    );
+}
+```
 
-## Static-typing detractors attack several strawmen.
+Here we have brought our intent, expectations, and understanding into
+alignment. We are communicating to the computer what our function needs to be
+able to do and how we intend to do it; the computer will now make sure that
+we are able to do what we promised with the types our function will accept.
+We have put ourselves in a position where the computer can help us. We are
+also communicating to other people what our function is _for_ based on what
+kinds of arguments are acceptable and what they can expect it to return.
 
-### Types are not simply an anemic test suite.
+Note that we are now describing what kinds of arguments are appropriate in
+_precisely_ the terms that make sense. We're no longer talking about
+arbitrary concretions: we are talking about the arguments at exactly the
+level of abstraction that ought to define them.^[_Cf._ the [Dependency
+Inversion
+Principle](https://en.wikipedia.org/wiki/Dependency_inversion_principle).]
 
-A coworker argued that
+We have specified the arguments that `math_it_for_me` takes in terms of
+_behavior_, and in so doing have aligned our intent with our understanding
+and expectations. We could alter the code so that `num_1` and `num_2` could
+be different numeric types, but that would force us to consider edge cases
+and typecasts, and so it is reasonable to limit our code the way we have, out
+to the limit of undefined or tricky behavior that we're not interested in
+dealing with. And all of these positive changes were driven by the type
+system's pressure to define things explicitly, together with its allowing
+us to describe acceptable arguments at the right level of abstraction.
 
-> the extra one or two tests to confirm the inputs and outputs `respond_to`
-> the correct duck typing are so easy to write, why not do it? We need tests
-> for the business logic anyway so the "type" tests are about 2% of the effort.
+## Good type systems remind us to think about things we might otherwise forget.
 
-### Type are not primarily about helping your computer.
+Type systems with `Option`/`Maybe` and `Result`/`Either` are a good example
+of how type systems can force us to handle all possible results. For example, Rust
+defines the `Option` type:
 
-There are times when type systems get in the way.
+```rust
+enum Option<T> {
+    // Enums in Rust can contain values. Here the `Some` variant contains a
+    // value of the generic type `T`.
+    Some(T),
+    None
+}
+```
 
-## The advantages of static typing are real because programmers are fallible and because better is better.
+There is no `null` in Rust. A function that can fail to return a value of
+type `T` must return an `Option<T>` (or similar) rather than a `T`. If you
+write a function that is supposed to return a `T` but there is any code path
+in the function that would fail to return a `T`, the compiler will yell at
+you for not satisfying the function's type signature. If the caller of that
+function tries to treat its return type like a `T` rather than an
+`Option<T>`, you will likely get a type error.^[If you just so happened to
+treat your `Option<T>` in a way that is fully compatible with `T`, the type
+system would not catch it.]
 
-In an [Ask Me
-Anything](https://dev.to/sandimetz/im-sandi-metz-ask-me-anything-4ff9), the
-brilliant Sandi Metz wrote,
+So unless you follow the antipattern of calling `unwrap()` or `expect()` with
+your `Option` type,^[If you call either with a `None` type, you get a panic,
+which is like an unhandled exception.] the compiler will hound you until you
+have dealt with the `null` case. Libertine Rubyists and Pythonistas may
+object and say that they always handle their `nil`s. But that's not what the
+runtime logs say for any of the applications I've worked on in any of my
+programming jobs.^[[Rich Hickey](https://www.youtube.com/watch?v=YR5WdGrpoug)
+doesn't like this pattern, and TypeScript handles nullability a [different
+way](https://www.typescriptlang.org/docs/handbook/advanced-types.html#nullable-types),
+but at bottom any alternative approach should require handling the `null`
+case.]
+
+## Specifying types in terms of interfaces, traits, or typeclasses is the same thing as duck typing, except it's harder to screw up.
+
+In dynamically typed languages, duck types
+
+> are abstract; this gives them strength as a design tool but this very
+> abstraction makes the duck type less than obvious in code. [¶] When you
+> create duck types you must document _and_ test their public interfaces.
+> Fortunately, good tests are the best documentation, so you are already
+> halfway done; you need only write the tests.[^implicit-duck]
+
+[^implicit-duck]: Sandi Metz, _Practical Object-oriented Design in Ruby: An Agile Primer_ 98 (2013).
+
+_Pace_ the brilliant Sandi Metz, types are better documentation than tests,
+at least for the kinds of things types help us with. Unlike tests, types are
+nearby, facilitate our tooling, and provide a consistent means of
+communication. Tests and types are both better than documentation, but types
+are documentation attached to our code like PostIt notes, while tests are
+like books down in the stacks that we have to go looking for, hoping that the
+card catalog will help us find them.
+
+Elsewhere, Metz writes,^[[I'm Sandi Metz, Ask Me
+Anything!](https://dev.to/sandimetz/im-sandi-metz-ask-me-anything-4ff9),
+(Jan. 24, 2018).]
 
 > [I]n my code, I don't get run-time type errors. Because my experience is
 > that dynamic typing is perfectly safe, I find myself resenting having to
@@ -135,32 +250,61 @@ brilliant Sandi Metz wrote,
 > sends. This leads to a descending spiral of manually adding type checking,
 > and code which ultimately breaks in confusing and painful ways.
 
-Metz also implicitly rejects the propositions that static typing is necessary
-to prevent runtime errors, that programmers "cannot infer an object's type
-from its context," and that static typing is necessary for optimal
-performance. _Practical Object-oriented Design in Ruby: An Agile Primer_
-101–02 (2013).
+I'm not as good a programmer as Sandi Metz is, and you probably aren't,
+either. It may be like the case of the great athlete who can't coach
+inferior talents because she didn't have to learn to work with the same
+limitations.
 
-## Static type systems don't ruin duck typing or metaprogramming.
+But even if your code is Metzian in its brilliance, implicit interfaces are
+like verbal contracts: a fine way to get confused about what has been
+promised. Worse, the absence of a rigorously and explicitly defined for your
+interface means your computer is powerless to help you get it right.
+Remember, types are _for people_.
 
-<!-- Fans of dynamic typing often make two arguments:
+## Types are not a panacea.
 
-1. Static typing is an anemic test suite, and
-2. Duck typing allows greater flexibility, because it focuses on behavior
-   rather than type.
+There are some limitations to type systems, and I should acknowledge them to
+show that I am not enamored of a caricature of types. The problems are real,
+but they are worth it.
 
-For example, the brilliant Sandi Metz writes:
+### Sometimes types aren't for people; sometimes they are about the programmer helping the computer.
 
-> Applications may define many public interfaces that are not related to one specific class
+In Rust, if you have a function that can return more than one error type, you
+must in some cases put the error in a
+[`Box`](https://doc.rust-lang.org/rust-by-example/error/multiple_error_types/boxing_errors.html).
+That is because different errors are different sizes, and the return type of
+a Rust function must be of a size known at compile-time. So the indirection
+of a `Box` (which is a pointer) means that the compiler knows how big the
+return value is. You have to help the compiler know what's going on—you're
+helping the computer rather than the reverse.
 
-Type systems conflate two things, in my view: what the computer needs versus what helps you write correct code.
-In Rust, if you want to return a generic error, you sometimes have to return a type like Box<std::error::Error>. That’s a unmitigated pain in the ass: you have put something in a Box, which is a way of returning a pointer, which is necessary because functions have to have a size known at compile time, which would be impossible if the function returned any type that implemented the Error interface. You’re doing that because the computer needs it.
-But static typing used to help the programmer is a huge boon. It improves support from tooling. It turns runtime errors into compile-time errors. It lets you ask the compiler or tooling to help you commit to things—for example, that you’re sure to have an object with a particular method on it. And a well-designed type system lets you make those commitments at the level of specificity that you need.
+This is annoying. But even Ruby and Python aren't written in English
+sentences. Semicolons and curly braces are mostly there to help the computer,
+too. Just because types are _sometimes_ for computers doesn't mean than types
+aren't mostly useful for people.^[The title "Types Are Mostly for People,
+Though Occasionally for Computers, Which can Be a Pain" seemed less punchy.]
 
-Really good type systems also require you to handle errors and null values, otherwise refusing to compile.
+### Types can't help you with all your business logic.
 
-Types aren’t a poor man’s test suite. Types are a way of communicating your expectations of the typed thing. Communicating it to the compiler, which will tell you if you’re wrong. Communicating it to your tooling, which will help you and others find where it’s defined and how it’s expected to be used. Communicating it to other developers. Is it panacea? No. But the ability to define types and to use generics in order to describe expectations is richer than “just write a test for types or duck typing” suggests to me. -->
+I once used a `u8` (an 8-bit, unsigned integer) to represent people's ages.
+Because people haven't lived past 122, 255 seemed like plenty of room. Fair
+enough. But I also saw it as a way of embedding business logic into the type.
+It just so happens that 255 is not an insane limit for validating a person's
+age. If you input `-50` or `3000`, you have probably made a mistake.
 
-```
+That got me thinking: What if I could somehow define a 7-bit unsigned
+integer. Then I could use the type system to do a kind of validation.
 
-```
+I now see that this was colossally wrongheaded. This is mixing levels of
+abstraction in the wrong way. It's like noticing that motor oil and coffee
+are about the same color, so they should be interchangeable to keep your car
+running and to perk you up in the morning.
+
+Types are not for fine-grained validation. They're not a replacement for
+tests.
+
+But when you use them for their proper purposes, types can help you talk to
+yourself, your computer, and other people; they can catch certain kinds of
+errors; and they can put pressure on you to think, design, and communicate
+more clearly. That's enough to make them a great tool that most programmers
+should use.
