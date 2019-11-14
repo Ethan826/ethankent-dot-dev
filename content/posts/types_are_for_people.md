@@ -256,10 +256,10 @@ inferior talents because she didn't have to learn to work with the same
 limitations.
 
 But even if your code is Metzian in its brilliance, implicit interfaces are
-like verbal contracts: a fine way to get confused about what has been
-promised. Worse, the absence of a rigorously and explicitly defined for your
-interface means your computer is powerless to help you get it right.
-Remember, types are _for people_.
+like verbal contracts: a fine way to get confused about what has been promised.
+Worse, the absence of a rigorous and explicit definition for your interface
+means your computer is powerless to help you get it right. Remember, types are
+_for people_.
 
 ## Types are not a panacea.
 
