@@ -1,7 +1,7 @@
 ---
 title: "Priors"
 date: 2019-12-02T12:50:00-06:00
-draft: true
+draft: false
 ---
 
 There's a lyric in a They Might Be Giants song:
