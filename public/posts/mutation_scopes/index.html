@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="http://schema.org/WebPage">
+  <head>
+    
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <title>Limiting the scope of mutation - Ethan Kent&#39;s Blog</title>
+  <meta name="description" content="Functional programming teaches us about the dangers of mutability. But some object-oriented code mutates variables freely, in different scopes, along different code paths, and in many places.
+To maintain our ability to reason about code, we can learn from functional programming and treat mutation as a risk to be managed. Even if we stop short of mandatory immutability and using constructs like monads, we can still manage mutations and recognize them as a source of bugs and confusion.">
+  <meta name="author" content="Ethan Kent"/><script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "WebSite",
+    "name": "Ethan Kent\x27s Blog",
+    
+    "url": "https:\/\/ethankent.dev"
+}
+</script><script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Organization",
+  "name": "",
+  "url": "https:\/\/ethankent.dev"
+  
+  
+  
+  
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+        "@type": "ListItem",
+        "position": 1,
+        "item": {
+          "@id": "https:\/\/ethankent.dev",
+          "name": "home"
+        }
+    },{
+        "@type": "ListItem",
+        "position": 3,
+        "item": {
+          "@id": "https:\/\/ethankent.dev\/posts\/mutation_scopes\/",
+          "name": "Limiting the scope of mutation"
+        }
+    }]
+}
+</script><script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Article",
+  "author": {
+    "name" : "Ethan Kent"
+  },
+  "headline": "Limiting the scope of mutation",
+  "description" : "Functional programming teaches us about the dangers of mutability. But some object-oriented code mutates variables freely, in different scopes, along different code paths, and in many places.\nTo maintain our ability to reason about code, we can learn from functional programming and treat mutation as a risk to be managed. Even if we stop short of mandatory immutability and using constructs like monads, we can still manage mutations and recognize them as a source of bugs and confusion.",
+  "inLanguage" : "en",
+  "wordCount":  1177 ,
+  "datePublished" : "2019-11-05T15:05:29",
+  "dateModified" : "2019-11-05T15:05:29",
+  "image" : "https:\/\/ethankent.dev",
+  "keywords" : [ "" ],
+  "mainEntityOfPage" : "https:\/\/ethankent.dev\/posts\/mutation_scopes\/",
+  "publisher" : {
+    "@type": "Organization",
+    "name" : "https:\/\/ethankent.dev",
+    "logo" : {
+        "@type" : "ImageObject",
+        "url" : "https:\/\/ethankent.dev",
+        "height" :  60 ,
+        "width" :  60
+    }
+  }
+}
+</script>
+
+<meta property="og:title" content="Limiting the scope of mutation" />
+<meta property="og:description" content="Functional programming teaches us about the dangers of mutability. But some object-oriented code mutates variables freely, in different scopes, along different code paths, and in many places.
+To maintain our ability to reason about code, we can learn from functional programming and treat mutation as a risk to be managed. Even if we stop short of mandatory immutability and using constructs like monads, we can still manage mutations and recognize them as a source of bugs and confusion.">
+<meta property="og:url" content="https://ethankent.dev/posts/mutation_scopes/" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Ethan Kent&#39;s Blog" />
+
+  <meta name="twitter:title" content="Limiting the scope of mutation" />
+  <meta name="twitter:description" content="Functional programming teaches us about the dangers of mutability. But some object-oriented code mutates variables freely, in different scopes, along different code paths, and in many places.
+To …">
+  <meta name="twitter:card" content="summary" />
+  <meta name="generator" content="Hugo 0.59.1" />
+  <link rel="alternate" href="https://ethankent.dev/index.xml" type="application/rss+xml" title="Ethan Kent&#39;s Blog"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css" integrity="sha384-9eLZqc9ds8eNjO3TmqPeYcDj8n+Qfa4nuSiGYa6DjLNcv9BtN69ZIulL9+8CqC9Y" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"><link rel="stylesheet" href="https://ethankent.dev/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" />
+  <link rel="stylesheet" href="https://ethankent.dev/css/highlight.min.css" /><link rel="stylesheet" href="https://ethankent.dev/css/codeblock.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
+
+
+
+  </head>
+  <body>
+    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://ethankent.dev">Ethan Kent&#39;s Blog</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-right">
+        
+
+        
+
+        
+      </ul>
+    </div>
+
+    
+
+  </div>
+</nav>
+
+
+
+
+    
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+
+  
+  
+  
+
+
+
+
+
+
+  
+
+  <header class="header-section ">
+    
+    <div class="intro-header no-img">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <div class="posts-heading">
+              
+                <h1>Limiting the scope of mutation</h1>
+              
+              
+                <hr class="small">
+              
+              
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+
+    
+<div class="container" role="main">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main" class="blog-post">
+        
+
+<p>Functional programming teaches us about the dangers of mutability. But some
+object-oriented code mutates variables freely, in different scopes, along
+different code paths, and in many places.</p>
+
+<p>To maintain our ability to reason about code, we can learn from functional
+programming and treat mutation as a risk to be managed. Even if we stop short
+of mandatory immutability and using constructs like monads, we can still
+manage mutations and recognize them as a source of bugs and confusion.</p>
+
+<p>I&rsquo;m always nervous when I see code like this:</p>
+
+<pre><code class="language-ruby">class Unwieldy &lt; GrabBag::Base
+  include BizarroHelpers
+  # ... 500 lines of spaghetti
+
+  def do_something(wibble)
+    result = []
+    intermediate_result = []
+
+    # ... 20 lines of code
+
+    intermediate_result &lt;&lt; weird_helper(wibble)
+
+    # ... 20 lines of code
+
+    intermediate_result &lt;&lt; biscuits? ? gravy : grits
+
+    # ... 20 lines of code
+
+    if weirder_helper(wibble)
+      intermediate_result.reject!(&amp;:magic)
+    else
+      result &lt;&lt; inexplicable_helper(wibble)
+    end
+
+    # ... 20 lines of code
+
+    if confusing_predicate_method?
+      result += intermediate_result
+      return result
+    end
+
+    result &lt;&lt; :deus_ex_machina
+    result
+  end
+
+  # ... 500 lines of spaghetti
+end
+</code></pre>
+
+<p>We might not be able to fix all the spaghetti code and we&rsquo;re sure to have
+difficulty grokking what comes from where (the class inherits from
+<code>GrabBag::Base</code> and mixes in <code>BizzaroHelpers</code>). But if we&rsquo;re writing
+<code>do_something</code>, we can use a few rules of thumb to avoid getting too confused
+and to make our code more maintainable.</p>
+
+<p>To summarize the ideas presented below: Generally, avoid declaring a basic
+object and repeatedly mutating it in a large scope. Prefer instantiating
+objects using literals, other objects, and the builder pattern/fluent API.
+Run the code with mutations in an attached scope, or at least right next to
+the declaration. And avoid building logic into the interaction of control
+flow with mutation.</p>
+
+<h2 id="keep-mutation-near-the-declaration">Keep mutation near the declaration.</h2>
+
+<p>The examples here use a Rust <code>HashMap</code>. I chose that because the standard
+library doesn&rsquo;t give us a way to construct one using a literal.</p>
+
+<p>The following Rust code has a few benefits: it keeps all mutations close
+together and it immediately makes <code>lunch</code> immutable once the assigning is
+done.</p>
+
+<pre><code class="language-rust">#![allow(unused_variables)]
+
+use std::collections::HashMap;
+
+fn main() {
+    let mut lunch = HashMap::new();
+    lunch.insert(&quot;salad&quot;, &quot;house&quot;);
+    lunch.insert(&quot;entree&quot;, &quot;sandwich&quot;);
+    lunch.insert(&quot;dessert&quot;, &quot;cookie&quot;);
+    lunch.insert(&quot;drink&quot;, &quot;milk&quot;);
+    let lunch = lunch; // `let` binding without `mut` makes `lunch` immutable.
+}
+</code></pre>
+
+<h2 id="better-yet-put-mutation-in-a-scope-attached-to-the-declaration">Better yet, put mutation in a scope attached to the declaration.</h2>
+
+<p>This is overkill here, but it demonstrates a point. Notice that the scope in
+which the <code>HashMap</code> is mutable is only in the body of the closure passed to <code>fold</code>:</p>
+
+<pre><code class="language-rust">let lunch = [
+    (&quot;salad&quot;, &quot;house&quot;),
+    (&quot;entree&quot;, &quot;sandwich&quot;),
+    (&quot;dessert&quot;, &quot;cookie&quot;),
+    (&quot;drink&quot;, &quot;milk&quot;),
+]
+.iter()
+.fold(HashMap::new(), |mut result, (k, v)| {
+    result.insert(k, v);
+    result
+});
+</code></pre>
+
+<p>Ruby has some nice patterns with <code>Object#tap</code> and <code>Object#yield_self</code>, for
+example:</p>
+
+<pre><code class="language-ruby">immutable = MyClass.new.tap |mutable| do
+  mutable.blip = 8
+  mutable.blop = 10
+end
+</code></pre>
+
+<p>An instance of <code>MyClass</code> is mutated after being instantiated, but before it
+is bound to <code>immutable</code>. We do that with a scope in which the instance of
+<code>MyClass</code> is mutated, but <code>mutable</code> goes out of scope at the end of the <code>tap</code>
+block; the result is now bound to <code>immutable</code> and—we hope—not mutated any
+more. This doesn&rsquo;t actually prevent anyone from mutating <code>immutable</code> (that&rsquo;s
+just a name, after all), but it makes our intent clear and helps the next
+developer follow the same pattern.</p>
+
+<h2 id="better-yet-use-a-literal-or-the-builder-pattern-to-instantiate-the-object">Better yet, use a literal or the builder pattern to instantiate the object.</h2>
+
+<p>A Rust crate called <a href="https://github.com/bluss/maplit"><code>maplit</code></a> exposes a
+macro for creating literal hashmaps:</p>
+
+<pre><code class="language-rust">let lunch = hashmap! {
+    &quot;salad&quot; =&gt; &quot;house&quot;,
+    &quot;entree&quot; =&gt; &quot;sandwich&quot;,
+    &quot;dessert&quot; =&gt; &quot;cookie&quot;,
+    &quot;drink&quot; =&gt; &quot;milk&quot;,
+};
+</code></pre>
+
+<p>If you have control over objects, you can allow them to be initialized with a
+literal. For example:</p>
+
+<pre><code class="language-rust">use std::collections::HashMap;
+
+// The &quot;Newtype&quot; pattern. Lunch is basically a `HashMap`, but we're making our
+// own type as a thin wrapper over it (in Rust it's a struct, but it would be a
+// class in many languages) so that we control its construction and which
+// methods we expose.
+struct Lunch(HashMap&lt;String, String&gt;);
+
+impl Lunch {
+    // You can ignore the `&amp;str` and `to_string()` stuff for this example and
+    // view them all as strings. It's a Rust quirk.
+    fn new(init: Vec&lt;(&amp;str, &amp;str)&gt;) -&gt; Self {
+        let mut result = HashMap::with_capacity(init.len());
+        for (k, v) in init {
+            result.insert(k.to_string(), v.to_string());
+        }
+        Self(result)
+    }
+}
+
+fn main() {
+    let lunch = Lunch::new(vec![
+        (&quot;salad&quot;, &quot;house&quot;),
+        (&quot;entree&quot;, &quot;sandwich&quot;),
+        (&quot;dessert&quot;, &quot;cookie&quot;),
+        (&quot;drink&quot;, &quot;milk&quot;),
+    ]);
+}
+</code></pre>
+
+<p>Or you can use the builder pattern with an object you define:</p>
+
+<pre><code class="language-rust">#![allow(unused_variables)]
+
+use std::collections::HashMap;
+
+// You'd do this with named struct fields; just making this example more like
+// the others.
+struct Lunch(HashMap&lt;String, String&gt;);
+
+impl Lunch {
+    fn new() -&gt; Self {
+        Lunch(HashMap::with_capacity(4))
+    }
+
+    fn with_salad(mut self, salad: &amp;str) -&gt; Self {
+        self.0.insert(&quot;salad&quot;.to_string(), salad.to_string());
+        self
+    }
+
+    fn with_entree(mut self, entree: &amp;str) -&gt; Self {
+        self.0.insert(&quot;entree&quot;.to_string(), entree.to_string());
+        self
+    }
+
+    fn with_dessert(mut self, dessert: &amp;str) -&gt; Self {
+        self.0.insert(&quot;dessert&quot;.to_string(), dessert.to_string());
+        self
+    }
+
+    fn with_drink(mut self, drink: &amp;str) -&gt; Self {
+        self.0.insert(&quot;drink&quot;.to_string(), drink.to_string());
+        self
+    }
+}
+
+fn main() {
+    let lunch = Lunch::new()
+        .with_salad(&quot;house&quot;)
+        .with_entree(&quot;sandwich&quot;)
+        .with_dessert(&quot;cookie&quot;)
+        .with_drink(&quot;milk&quot;);
+}
+</code></pre>
+
+<h2 id="assign-from-rather-than-in-conditional-expressions">Assign <em>from</em> rather than <em>in</em> conditional <em>expressions</em>.</h2>
+
+<p>In many languages, <code>if/else</code> is an expression rather than a statement. When
+that is so, make use of this to assign the value of the <code>if/else</code> expression
+rather than assigning within the <code>if</code>. That fits in with the rest of the
+recommendations because it entails mutation in one scope that affects a larger
+scope.</p>
+
+<p>Thus, prefer</p>
+
+<pre><code class="language-ruby">my_result = if predicate?
+              value_a
+            else
+              value_b
+            end
+</code></pre>
+
+<p>to</p>
+
+<pre><code class="language-ruby">if predicate?
+  my_result = value_a
+else
+  my_result = value_b
+end
+</code></pre>
+
+<p>Among other reasons, it assures that <code>my_result</code> is always defined, and it
+makes clear that the intent of the <code>if/else</code> is to bind a value to a
+variable. (And of course, don&rsquo;t <em>also</em> do some side-effecting thing in the
+conditional. Remember the <a href="https://en.wikipedia.org/wiki/Command%E2%80%93query_separation">command–query separation
+principle</a>.)</p>
+
+<p>In JavaScript, ternaries are expressions while <code>if/else</code> blocks are
+not. So you can use ternaries in lieu of <code>if/else</code> expressions in some
+cases. But ternaries are probably best confined to small amounts of code
+because the <code>?</code> and <code>:</code> operators are easy to lose track of.</p>
+
+<h2 id="do-not-embed-logic-in-the-interaction-of-flow-control-and-mutation">Do not embed logic in the interaction of flow control and mutation.</h2>
+
+<p>This is a general statement of the specific example of <code>if/then</code> statements
+from the previous section. When your business logic is immanent from the
+interaction of control flow and mutation, it can be quite difficult to reason
+about your code, the code is more difficult to maintain, and bugs are more
+likely.</p>
+
+<p>The tongue-in-cheek example at the beginning is a case of this. A common
+pattern is for a <code>result</code> variable to be mutated throughout a large function,
+with some mutation occurring inside conditionals, and <code>result</code> sometimes
+short-circuit returned. The author of the code may think he or she is helping
+you out because you don&rsquo;t wind up deep within nested conditionals. Yet the
+effect is often worse: the logic is just as confusing, but now the logic is
+implicit: the state of your <code>result</code> variable is determined by the
+combination of not having returned at line X, having entered the <code>else</code> block
+at line Y, and so forth.</p>
+
+
+        
+
+        
+
+        
+      </article>
+
+      
+        <ul class="pager blog-pager">
+          
+          
+            <li class="next">
+              <a href="https://ethankent.dev/posts/types_are_for_people/" data-toggle="tooltip" data-placement="top" title="Types Are for People, not Computers">Next Post &rarr;</a>
+            </li>
+          
+        </ul>
+      
+
+
+      
+
+    </div>
+  </div>
+</div>
+
+      
+<footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <ul class="list-inline text-center footer-links">
+          
+          
+        </ul>
+        <p class="credits copyright text-muted">
+          
+            
+              Ethan Kent
+            
+          
+
+          &nbsp;&bull;&nbsp;&copy;
+          
+            2019
+          
+
+          
+            &nbsp;&bull;&nbsp;
+            <a href="https://ethankent.dev">Ethan Kent&#39;s Blog</a>
+          
+        </p>
+        
+        <p class="credits theme-by text-muted">
+          <a href="https://gohugo.io">Hugo v0.59.1</a> powered &nbsp;&bull;&nbsp; Theme <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> adapted from <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
+          
+        </p>
+      </div>
+    </div>
+  </div>
+</footer><script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.js" integrity="sha384-K3vbOmF2BtaVai+Qk37uypf7VrgBubhQreNQe9aGsz9lB63dIFiQVlJbr92dw2Lx" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/contrib/auto-render.min.js" integrity="sha384-kmZOZB5ObwgQnS/DuDg6TScgOiWWBiVt0plIRkZCmE6rDZGrEOQeHM5PcHi+nyqe" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+<script src="https://ethankent.dev/js/main.js"></script>
+<script src="https://ethankent.dev/js/highlight.min.js"></script>
+<script> hljs.initHighlightingOnLoad(); </script>
+<script> $(document).ready(function() {$("pre.chroma").css("padding","0");}); </script><script> renderMathInElement(document.body); </script><script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js" integrity="sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js" integrity="sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q" crossorigin="anonymous"></script><script src="https://ethankent.dev/js/load-photoswipe.js"></script>
+
+
+
+
+
+
+
+
+
+    
+  </body>
+</html>
+

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Ethan Kent&#39;s Blog</title>
+    <link>https://ethankent.dev/</link>
+    <description>Recent content on Ethan Kent&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 02 Dec 2019 12:50:00 -0600</lastBuildDate>
+    
+	<atom:link href="https://ethankent.dev/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Priors</title>
+      <link>https://ethankent.dev/posts/priors/</link>
+      <pubDate>Mon, 02 Dec 2019 12:50:00 -0600</pubDate>
+      
+      <guid>https://ethankent.dev/posts/priors/</guid>
+      <description>There&amp;rsquo;s a lyric in a They Might Be Giants song:
+ Now you&amp;rsquo;re the only one here,
+Who can tell me if it&amp;rsquo;s true:
+That you love me,
+And I love me.1
+ The lyric is effective because it uses our expectations of rhyme scheme, parallelism, and reciprocity to have us all but certain that the final line of the verse will end with you. And the surprise serves a purpose: it uses the flouting of our expectations as a way of making us feel the potency of the narrator&amp;rsquo;s self-centeredness.</description>
+    </item>
+    
+    <item>
+      <title>Types Are for People, not Computers</title>
+      <link>https://ethankent.dev/posts/types_are_for_people/</link>
+      <pubDate>Thu, 14 Nov 2019 09:00:00 -0600</pubDate>
+      
+      <guid>https://ethankent.dev/posts/types_are_for_people/</guid>
+      <description>Types—in the static-typing sense—are useful because they help people, not computers. Oh sure, we use them, in part, to subdue the compiler or meet some need peculiarly arising from our computer. But types are valuable because they are a way of communicating.
+Type systems are a way of communicating. Type systems are a way of announcing what you understand, expect, or intend. Good type systems let you do so at the level of abstraction you choose.</description>
+    </item>
+    
+    <item>
+      <title>Limiting the scope of mutation</title>
+      <link>https://ethankent.dev/posts/mutation_scopes/</link>
+      <pubDate>Tue, 05 Nov 2019 15:05:29 -0600</pubDate>
+      
+      <guid>https://ethankent.dev/posts/mutation_scopes/</guid>
+      <description>Functional programming teaches us about the dangers of mutability. But some object-oriented code mutates variables freely, in different scopes, along different code paths, and in many places.
+To maintain our ability to reason about code, we can learn from functional programming and treat mutation as a risk to be managed. Even if we stop short of mandatory immutability and using constructs like monads, we can still manage mutations and recognize them as a source of bugs and confusion.</description>
+    </item>
+    
+  </channel>
+</rss>
