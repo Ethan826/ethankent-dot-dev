@@ -19,7 +19,7 @@ the narrator's self-centeredness.
 
 The same thing happens when we read code: our expectations are set by
 familiar patterns. When something confounds our expectations, we will likely
-assume it serves a purpose. Sometimes our priors our so strong that—like an
+assume it serves a purpose. Sometimes our priors are so strong that—like an
 optical illusion—we see what we expect rather than what is actually there.
 
 In practice, that means that a departure from common patterns may present in
@@ -100,7 +100,7 @@ My strong prior is that it is an extremely common error to use `=` instead of
 `==` in a conditional. Another (albeit weaker) prior is that code will
 generally separate distinct kinds of operations—avoiding things like
 assignment within control flow.^[That is, unless language constructs exist to
-do exactly that, as in `match` and `if let` statement in some languages.]
+do exactly that, as in `match` and `if let` statements in some languages.]
 Here, things run so strongly against my priors that I may not even see what's
 going on: my eyes don't see that single equals sign the first time around.
 
