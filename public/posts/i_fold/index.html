@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="http://schema.org/WebPage">
+  <head>
+    
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <title>I fold! - Ethan Kent&#39;s Blog</title>
+  <meta name="description" content="This article is a love letter to fold, a.k.a. reduce, a.k.a. inject.1
+I love fold for three reasons. First, it is useful in a wide variety of programming contexts. Second, it is a ladder between different levels of abstraction: it is simple to define, but allows operating on collections more abstractly. Third, it can have the same API but be defined based on looping or recursion, and so can help you solve similar problems in similar ways despite coding in different paradigms.">
+  <meta name="author" content="Ethan Kent"/><script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "WebSite",
+    "name": "Ethan Kent\x27s Blog",
+    
+    "url": "https:\/\/ethankent.dev"
+}
+</script><script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Organization",
+  "name": "",
+  "url": "https:\/\/ethankent.dev"
+  
+  
+  
+  
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+        "@type": "ListItem",
+        "position": 1,
+        "item": {
+          "@id": "https:\/\/ethankent.dev",
+          "name": "home"
+        }
+    },{
+        "@type": "ListItem",
+        "position": 3,
+        "item": {
+          "@id": "https:\/\/ethankent.dev\/posts\/i_fold\/",
+          "name": "I fold!"
+        }
+    }]
+}
+</script><script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Article",
+  "author": {
+    "name" : "Ethan Kent"
+  },
+  "headline": "I fold!",
+  "description" : "This article is a love letter to fold, a.k.a. reduce, a.k.a. inject.1\nI love fold for three reasons. First, it is useful in a wide variety of programming contexts. Second, it is a ladder between different levels of abstraction: it is simple to define, but allows operating on collections more abstractly. Third, it can have the same API but be defined based on looping or recursion, and so can help you solve similar problems in similar ways despite coding in different paradigms.",
+  "inLanguage" : "en",
+  "wordCount":  1826 ,
+  "datePublished" : "2019-12-08T14:14:00",
+  "dateModified" : "2019-12-08T14:14:00",
+  "image" : "https:\/\/ethankent.dev",
+  "keywords" : [ "" ],
+  "mainEntityOfPage" : "https:\/\/ethankent.dev\/posts\/i_fold\/",
+  "publisher" : {
+    "@type": "Organization",
+    "name" : "https:\/\/ethankent.dev",
+    "logo" : {
+        "@type" : "ImageObject",
+        "url" : "https:\/\/ethankent.dev",
+        "height" :  60 ,
+        "width" :  60
+    }
+  }
+}
+</script>
+
+<meta property="og:title" content="I fold!" />
+<meta property="og:description" content="This article is a love letter to fold, a.k.a. reduce, a.k.a. inject.1
+I love fold for three reasons. First, it is useful in a wide variety of programming contexts. Second, it is a ladder between different levels of abstraction: it is simple to define, but allows operating on collections more abstractly. Third, it can have the same API but be defined based on looping or recursion, and so can help you solve similar problems in similar ways despite coding in different paradigms.">
+<meta property="og:url" content="https://ethankent.dev/posts/i_fold/" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Ethan Kent&#39;s Blog" />
+
+  <meta name="twitter:title" content="I fold!" />
+  <meta name="twitter:description" content="This article is a love letter to fold, a.k.a. reduce, a.k.a. inject.1
+I love fold for three reasons. First, it is useful in a wide variety of programming contexts. Second, it is a ladder between …">
+  <meta name="twitter:card" content="summary" />
+  <meta name="generator" content="Hugo 0.59.1" />
+  <link rel="alternate" href="https://ethankent.dev/index.xml" type="application/rss+xml" title="Ethan Kent&#39;s Blog"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css" integrity="sha384-9eLZqc9ds8eNjO3TmqPeYcDj8n+Qfa4nuSiGYa6DjLNcv9BtN69ZIulL9+8CqC9Y" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"><link rel="stylesheet" href="https://ethankent.dev/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" />
+  <link rel="stylesheet" href="https://ethankent.dev/css/highlight.min.css" /><link rel="stylesheet" href="https://ethankent.dev/css/codeblock.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
+
+
+
+  </head>
+  <body>
+    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://ethankent.dev">Ethan Kent&#39;s Blog</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-right">
+        
+
+        
+
+        
+      </ul>
+    </div>
+
+    
+
+  </div>
+</nav>
+
+
+
+
+    
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+
+  
+  
+  
+
+
+
+
+
+
+  
+
+  <header class="header-section ">
+    
+    <div class="intro-header no-img">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <div class="posts-heading">
+              
+                <h1>I fold!</h1>
+              
+              
+                <hr class="small">
+              
+              
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+
+    
+<div class="container" role="main">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main" class="blog-post">
+        
+
+<p>This article is a love letter to <code>fold</code>, a.k.a. <code>reduce</code>, a.k.a.
+<code>inject</code>.<sup class="footnote-ref" id="fnref:It-is-unclear-to"><a href="#fn:It-is-unclear-to">1</a></sup></p>
+
+<p>I love fold for three reasons. First, it is useful in a wide variety of
+programming contexts. Second, it is a ladder between different levels of
+abstraction: it is simple to define, but allows operating on collections more
+abstractly. Third, it can have the same API but be defined based on looping
+or recursion, and so can help you solve similar problems in similar ways
+despite coding in different paradigms.</p>
+
+<p>I&rsquo;ll explain what I mean in the opposite order. I will not take up the topic
+of folding infinite collections, laziness, <code>foldl</code> vs. <code>foldr</code>, etc.; perhaps
+I will write about these ideas another time.</p>
+
+<h2 id="fold-provides-the-same-abstraction-across-programming-paradigms"><code>fold</code> provides the same abstraction across programming paradigms.</h2>
+
+<p>We can define <code>fold</code> iteratively or recursively. Let&rsquo;s define <code>fold</code> in each
+way (not necessarily the most efficient or with all the bells and whistles):</p>
+
+<pre><code class="language-javascript">const iterativeFold = (array, fn, initialAccumulator) =&gt; {
+  let accumulator =
+    typeof initialAccumulator === &quot;undefined&quot; ? [] : initialAccumulator;
+  for (element of array) {
+    accumulator = fn(accumulator, element);
+  }
+  return accumulator;
+};
+
+const recursiveFold = ([head, ...tail], fn, initialAccumulator) =&gt; {
+  let accumulator =
+    typeof initialAccumulator === &quot;undefined&quot; ? [] : initialAccumulator;
+  return head === undefined
+    ? accumulator
+    : recursiveFold(tail, fn, fn(accumulator, head));
+};
+</code></pre>
+
+<p>Notice that although <code>recursiveFold</code> makes its recursive call from the tail
+position, most JavaScript engines don&rsquo;t support tail-call
+optimization.<sup class="footnote-ref" id="fnref:See-Juriy-Zaytse"><a href="#fn:See-Juriy-Zaytse">2</a></sup> But that would be a necessary feature in order
+to make the recursive definition usable with large collections.</p>
+
+<h2 id="fold-can-be-used-to-define-all-the-other-important-higher-order-functions"><code>fold</code> can be used to define all the other important higher-order functions.</h2>
+
+<p>Now that we have two definitions of <code>fold</code> with the same API and equivalent
+logic, we can use that to define other important higher-order functions.</p>
+
+<pre><code class="language-javascript">// Assume that `fold` is now the name of whichever of the above implementations
+// you want. Also notice that we're ignoring the perfectly good `reduce` method
+// on JavaScript iterables and are defining one ourselves.
+
+const map = (array, fn) =&gt; {
+  return fold(array, (accumulator, element) =&gt; {
+    // Rebuild our array with every element after applying `fn`
+    accumulator.push(fn(element));
+    return accumulator;
+  });
+};
+
+const filter = (array, fn) =&gt; {
+  return fold(array, (accumulator, element) =&gt; {
+    // Rebuild our array with only those elements that return truthy values when
+    // `fn` is called with them.
+    if (fn(element)) accumulator.push(element);
+    return accumulator;
+  });
+};
+
+const all = (array, fn) =&gt; {
+  return fold(
+    array,
+    // Accumulator is initialized to `true`. If we ever encounter an element
+    // that causes `fn` to return a falsey value, we coerce that value to
+    // Boolean and replace the accumulator with that. Then, no matter how many
+    // truthy values we later encounter, the accumulator is now locked in as
+    // `false`, which is the appropriate behavior for `all`.
+    (accumulator, element) =&gt; accumulator &amp;&amp; !!fn(element),
+    true,
+  );
+};
+
+const any = (array, fn) =&gt; {
+  return fold(
+    array,
+    // Accumulator is initialized to `false`. If we ever encounter an element
+    // that causes `fn` to return a truthy value, we coerce that value to
+    // Boolean and replace the accumulator with that. Then, no matter how many
+    // truthy values we later encounter, the accumulator is now locked in as
+    // `true`, which is the appropriate behavior for `any`.
+    (accumulator, element) =&gt; accumulator || !!fn(element),
+    false,
+  );
+};
+</code></pre>
+
+<p>My next article will deal with the problem attentive readers may notice:
+these <code>any</code> and <code>all</code> functions don&rsquo;t short-circuit; we can reduce the
+constant factor associated with our time complexity if we allow these
+functions to <code>break</code>. The problem, fundamentally, is that we can&rsquo;t reach from
+within the closure to <code>fold</code> to cause the looping in <code>fold</code> itself to break.</p>
+
+<h2 id="fold-is-useful-in-a-wide-variety-of-circumstances"><code>fold</code> is useful in a wide variety of circumstances.</h2>
+
+<p>When I need to operate on a collection, I generally use this rule of thumb:</p>
+
+<ul>
+<li>Do I want to return the same collection type with the same number of
+elements, but with the elements themselves changed? Use <code>map</code>.</li>
+<li>Do I want to return the same collection type with a subset of the original
+elements? Use <code>filter</code>.</li>
+<li>Do I want to do something else (e.g. return a different type, return a
+collection with a subset of the original elements and with the elements
+changed, iterate with a flag or intermediate result, etc.)? Use <code>reduce</code>.</li>
+</ul>
+
+<h3 id="fold-is-useful-to-combine-multiple-transformations"><code>fold</code> is useful to combine multiple transformations.</h3>
+
+<p>In some languages, calling <code>filter</code> and then <code>map</code> requires two iterations of
+the collection.<sup class="footnote-ref" id="fnref:This-is-the-powe"><a href="#fn:This-is-the-powe">3</a></sup> While this does not change the runtime complexity from a Big-O
+perspective, (<code>O(n)</code> == <code>O(2n)</code>), constant factors are often relevant in
+practical applications.</p>
+
+<p>Consider this code:</p>
+
+<pre><code class="language-javascript">/**
+ * From an array of integers, return only the even integers, divided by two.
+ *
+ * @param {Integer[]} numbers - The integers to operate on.
+ * @returns {Integer[]} The even integers only, divided by two.
+ */
+const halveEvens = numbers =&gt; {
+  let iterationSteps = 0;
+  return numbers
+    .filter(number =&gt; {
+      console.log(`Inside filter; on iterationStep ${++iterationSteps}`);
+      return number % 2 === 0;
+    })
+    .map(number =&gt; {
+      console.log(`Inside map; on iterationStep ${++iterationSteps}`);
+      return number / 2;
+    });
+};
+
+halveEvens([1, 2, 3, 4, 5, 6]);
+
+// Inside filter; on iterationStep 1
+// Inside filter; on iterationStep 2
+// Inside filter; on iterationStep 3
+// Inside filter; on iterationStep 4
+// Inside filter; on iterationStep 5
+// Inside filter; on iterationStep 6
+// Inside map; on iterationStep 7
+// Inside map; on iterationStep 8
+// Inside map; on iterationStep 9
+// =&gt; [ 1, 2, 3 ]
+</code></pre>
+
+<p>This code logs 9 iteration steps.</p>
+
+<pre><code class="language-javascript">/**
+ * From an array of integers, return only the even integers, divided by two.
+ *
+ * @param {Integer[]} numbers - The integers to operate on.
+ * @returns {Integer[]} The even integers only, divided by two.
+ */
+const halveEvens = numbers =&gt; {
+  let iterationStep = 0;
+  return fold(numbers, (accumulator, element) =&gt; {
+    console.log(`Inside fold; on iteration step ${++iterationStep}`);
+    if (element % 2 === 0) {
+      accumulator.push(element / 2);
+    }
+    return accumulator;
+  });
+};
+
+halveEvens([1, 2, 3, 4, 5, 6]);
+
+// Inside fold; on iteration step 1
+// Inside fold; on iteration step 2
+// Inside fold; on iteration step 3
+// Inside fold; on iteration step 4
+// Inside fold; on iteration step 5
+// Inside fold; on iteration step 6
+// =&gt; [ 1, 2, 3 ]
+</code></pre>
+
+<p>This code logs 6 iteration steps, the minimum possible.</p>
+
+<h3 id="fold-is-useful-when-we-want-to-operate-on-a-collection-to-return-a-different-type"><code>fold</code> is useful when we want to operate on a collection to return a different type.</h3>
+
+<p>To sum the elements of an array, we can use <code>fold</code>:</p>
+
+<pre><code class="language-javascript">const sum = numbers =&gt; {
+  return fold(numbers, (total, number) =&gt; total + number, 0);
+};
+
+sum([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+
+// =&gt; 55
+</code></pre>
+
+<h3 id="fold-is-useful-when-we-must-iterate-with-a-flag-or-intermediate-result"><code>fold</code> is useful when we must iterate with a flag or intermediate result.</h3>
+
+<p>We can implement <code>max</code> and <code>min</code> with <code>fold</code> by making the max or min so far
+encountered take the place of the accumulator.</p>
+
+<pre><code class="language-javascript">const max = numbers =&gt; {
+  return fold(
+    numbers,
+    (bestSoFar, current) =&gt; (current &gt; bestSoFar ? current : bestSoFar),
+    -Infinity,
+  );
+};
+
+max([3, 0, 10, 2, 1001, -1000, 1000]);
+
+// =&gt; 1001
+</code></pre>
+
+<p>Or, imagine a game in which you must collect one <code>tinyBooomer</code> or two
+<code>megaBoomer</code>s to win.<sup class="footnote-ref" id="fnref:To-make-this-eff"><a href="#fn:To-make-this-eff">4</a></sup> A <code>nothing</code>
+does nothing and a <code>whammy</code> makes you lose, assuming you haven&rsquo;t yet won.</p>
+
+<p>There are refactors to be done by extracting some classes, etc., but here&rsquo;s
+an illustration of what I mean:</p>
+
+<pre><code class="language-javascript">const tinyBoomer = Symbol(&quot;tinyBoomer&quot;);
+const megaBoomer = Symbol(&quot;megaBoomer&quot;);
+const nothing = Symbol(&quot;nothing&quot;);
+const whammy = Symbol(&quot;whammy&quot;);
+
+const isWinningGame = gameTape =&gt; {
+  return fold(
+    gameTape,
+    (status, event) =&gt; {
+      const gameOver = status.hasWon || status.hasLost;
+      if (!gameOver) {
+        switch (event) {
+          case whammy:
+            status.hasLost = true;
+            break;
+          case megaBoomer:
+            status.hasWon = true;
+            break;
+          case tinyBoomer:
+            status.tinyBoomerCount += 1;
+            if (status.tinyBoomerCount &gt;= 2) status.hasWon = true;
+        }
+      }
+      return status;
+    },
+    {
+      hasWon: false,
+      hasLost: false,
+      tinyBoomerCount: 0,
+    },
+  ).hasWon;
+};
+
+const winner = [tinyBoomer, nothing, nothing, tinyBoomer, whammy];
+const loser = [tinyBoomer, nothing, whammy, tinyBoomer, megaBoomer];
+
+isWinningGame(winner);
+isWinningGame(loser);
+
+// =&gt; true
+// =&gt; false
+</code></pre>
+
+<h3 id="attach-a-mutable-scope">Attach a mutable scope</h3>
+
+<p>You can use <code>fold</code> to help attach a scope for mutating an object in a scope
+that ends when you&rsquo;re done mutating it. That was the topic of <a href="https://ethankent.dev/posts/mutation_scopes/#better-yet-put-mutation-in-a-scope-attached-to-the-declaration">another
+article</a>.</p>
+
+<p><center>❧&nbsp;❧&nbsp;❧</center></p>
+
+<p>I will admit to overusing <code>fold</code> a bit. But I hope you can see why its
+versatility is appealing, both from a pragmatic and an aesthetic perspective.</p>
+
+<!--
+#### `fold` has a problem with short-circuiting.
+
+Notice that our `any` and `all` don't short circuit. We get a better constant
+factor for our time complexity if we can short-circuit our `any` or `all`.
+Let's see if we can do this with Ruby (using the build-in `reduce` method):
+
+```ruby
+# `any` using `reduce`; we're going to skip the actual function definition as I
+# don't want to distract with Ruby's weird blocks and lambdas.
+!![false, true, false, false, false].reduce(false) do |a, e|
+  puts e ? "Breaking" : "Continuing"
+  break true if e
+  a # We'd actually use `each_with_object`, but that's not the point here.
+end
+
+# Continuing
+# Continuing
+# Continuing
+# Continuing
+# Continuing
+# => false
+
+!![false, true, false, false, false].reduce(false) do |a, e|
+  puts e ? "Breaking" : "Continuing"
+  break true if e
+  a
+end
+# Continuing
+# Breaking
+# => true
+
+# "Breaking" + no more output means short circuiting. Voila!
+```
+
+In other words, Ruby gives us a version of `fold` that allows us to
+short-circuit the looping. This isn't possible in all languages, however.
+Consider this JavaScript:
+
+```javascript
+const any = (array, fn) => {
+  return fold(
+    array,
+    (accumulator, element) => {
+      if (fn(element)) {
+        break true; // This isn't valid syntax.
+      }
+      return accumulator;
+    },
+    false,
+  );
+};
+```
+
+In Ruby, putting `break` in a block is pretty powerful. It causes a return
+from the function that `yield`ed to that `block`. In other words, it _reaches
+outside of its own scope_ and makes the function that called _it_ return.
+What's more, `break` is an expression that can make that outer function
+return the value you give it: `break true`, for example. If this seems subtle
+and in the weeds, the takeaway is that Ruby lets you hit the eject button
+from way down inside the code run with each iteration of `reduce` and make
+the whole `reduce` bail out.
+
+That simply isn't possible in JavaScript as a `break` doesn't have the power
+to cause an outer function to return. The JavaScript interpreter looks at the
+`break` and thinks we must be talking about the closure, the one that begins
+`(accumulator, element) =>`. And it says, "What do you mean, break? I don't
+see any loop inside my scope. The interpreter doesn't take any notice of the
+fact that the closure is called from inside a loop. That's a different scope,
+and as I said, JavaScript doesn't let something inside the closure pop its
+head out of its own scope and then tinker with the control flow of the loop
+it's situated inside of, namely the `reduce` itself.
+ -->
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:It-is-unclear-to">It is unclear to me why Ruby thinks all of the big higher-order functions must end in <em>–ect</em>: <code>collect</code> (<code>map</code>), <code>select</code> (<code>filter</code>), <code>inject</code> (<code>fold</code>/<code>reduce</code>), and <code>reject</code> (like <code>filter</code>, but retain only values for which the closure returns <code>false</code>). I will admit that <code>reject</code> is pretty useful and well named, but those other ones seem pretty bloody-minded—particularly <code>collect</code>, a name much better suited to the way Rust <a href="https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.collect">uses it</a>. <a class="footnote-return" href="#fnref:It-is-unclear-to"><sup>[return]</sup></a></li>
+<li id="fn:See-Juriy-Zaytse"><em>See</em> Juriy Zaytsev, Leon Arnott, Denis Pushkarev, <a href="http://kangax.github.io/compat-table/es6/#test-proper_tail_calls_%28tail_call_optimisation%29">ECMAScript 6 compatibility table</a> (last visited Dec. 5, 2019). <a class="footnote-return" href="#fnref:See-Juriy-Zaytse"><sup>[return]</sup></a></li>
+<li id="fn:This-is-the-powe">This is the power of <code>collect()</code> in Rust and <code>lazy</code> in Ruby. <a class="footnote-return" href="#fnref:This-is-the-powe"><sup>[return]</sup></a></li>
+<li id="fn:To-make-this-eff">To make this efficient we&rsquo;d want to be able to short-circuit, which will be the subject of the next article. <a class="footnote-return" href="#fnref:To-make-this-eff"><sup>[return]</sup></a></li>
+</ol>
+</div>
+
+
+        
+
+        
+
+        
+      </article>
+
+      
+        <ul class="pager blog-pager">
+          
+            <li class="previous">
+              <a href="https://ethankent.dev/posts/priors/" data-toggle="tooltip" data-placement="top" title="Priors">&larr; Previous Post</a>
+            </li>
+          
+          
+        </ul>
+      
+
+
+      
+
+    </div>
+  </div>
+</div>
+
+      
+<footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <ul class="list-inline text-center footer-links">
+          
+          
+        </ul>
+        <p class="credits copyright text-muted">
+          
+            
+              Ethan Kent
+            
+          
+
+          &nbsp;&bull;&nbsp;&copy;
+          
+            2019
+          
+
+          
+            &nbsp;&bull;&nbsp;
+            <a href="https://ethankent.dev">Ethan Kent&#39;s Blog</a>
+          
+        </p>
+        
+        <p class="credits theme-by text-muted">
+          <a href="https://gohugo.io">Hugo v0.59.1</a> powered &nbsp;&bull;&nbsp; Theme <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> adapted from <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
+          
+        </p>
+      </div>
+    </div>
+  </div>
+</footer><script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.js" integrity="sha384-K3vbOmF2BtaVai+Qk37uypf7VrgBubhQreNQe9aGsz9lB63dIFiQVlJbr92dw2Lx" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/contrib/auto-render.min.js" integrity="sha384-kmZOZB5ObwgQnS/DuDg6TScgOiWWBiVt0plIRkZCmE6rDZGrEOQeHM5PcHi+nyqe" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+<script src="https://ethankent.dev/js/main.js"></script>
+<script src="https://ethankent.dev/js/highlight.min.js"></script>
+<script> hljs.initHighlightingOnLoad(); </script>
+<script> $(document).ready(function() {$("pre.chroma").css("padding","0");}); </script><script> renderMathInElement(document.body); </script><script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js" integrity="sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js" integrity="sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q" crossorigin="anonymous"></script><script src="https://ethankent.dev/js/load-photoswipe.js"></script>
+
+
+
+
+
+
+
+
+
+    
+  </body>
+</html>
+
