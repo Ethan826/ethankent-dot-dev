@@ -6,10 +6,20 @@
     <description>Recent content in Posts on Ethan Kent&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 08 Dec 2019 14:14:00 -0600</lastBuildDate>
+    <lastBuildDate>Sun, 15 Dec 2019 15:58:10 -0600</lastBuildDate>
     
 	<atom:link href="https://ethankent.dev/posts/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Breaking out of the fold</title>
+      <link>https://ethankent.dev/posts/breaking_fold/</link>
+      <pubDate>Sun, 15 Dec 2019 15:58:10 -0600</pubDate>
+      
+      <guid>https://ethankent.dev/posts/breaking_fold/</guid>
+      <description>This article addresses an issue alluded to in my previous one. Namely, we sometimes want to break out of the iteration within fold, but it is not easy to do that in many languages.
+fold has a problem with short-circuiting. In defining any and all by using fold, as we did in the previous article, we did not short-circuit. But we&#39;d get a better constant factor for our time complexity if we can break from those methods once we know the final outcome.</description>
+    </item>
     
     <item>
       <title>I fold!</title>
@@ -27,12 +37,9 @@ I love fold for three reasons. First, it is useful in a wide variety of programm
       <pubDate>Mon, 02 Dec 2019 12:50:00 -0600</pubDate>
       
       <guid>https://ethankent.dev/posts/priors/</guid>
-      <description>There&amp;rsquo;s a lyric in a They Might Be Giants song:
- Now you&amp;rsquo;re the only one here,
-Who can tell me if it&amp;rsquo;s true:
-That you love me,
-And I love me.1
- The lyric is effective because it uses our expectations of rhyme scheme, parallelism, and reciprocity to have us all but certain that the final line of the verse will end with you. And the surprise serves a purpose: it uses the flouting of our expectations as a way of making us feel the potency of the narrator&amp;rsquo;s self-centeredness.</description>
+      <description>There&#39;s a lyric in a They Might Be Giants song:1
+ Now you&#39;re the only one here,Who can tell me if it&#39;s true:That you love me,And I love me.
+ The lyric is effective because it uses our expectations of rhyme scheme, parallelism, and reciprocity to have us all but certain that the final line of the verse will end with you. And the surprise serves a purpose: it uses the flouting of our expectations as a way of making us feel the potency of the narrator&#39;s self-centeredness.</description>
     </item>
     
     <item>

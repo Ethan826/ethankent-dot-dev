@@ -1,429 +1,227 @@
 <!DOCTYPE html>
-<html lang="en" itemscope itemtype="http://schema.org/WebPage">
-  <head>
+<html lang="en-us">
+    <head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<title>Types Are for People, not Computers &middot; Ethan Kent&#39;s Blog</title>
+
+		
+  		<link rel="stylesheet" href="/css/style.css">
+		<link rel="stylesheet" href="/css/fonts.css">
+		
+		<link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+
+		
+		<link href="" rel="alternate" type="application/rss+xml" title="Ethan Kent&#39;s Blog" />
+	</head>
+
+    <body>
+        		<nav class="nav">
+			<div class="nav-container">
+				<a href="/">
+					<h2 class="nav-title">Ethan Kent&#39;s Blog</h2>
+				</a>
+				<ul>
     
-
-  <meta charset="utf-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-
-  <title>Types Are for People, not Computers - Ethan Kent&#39;s Blog</title>
-  <meta name="description" content="Types—in the static-typing sense—are useful because they help people, not computers. Oh sure, we use them, in part, to subdue the compiler or meet some need peculiarly arising from our computer. But types are valuable because they are a way of communicating.
-Type systems are a way of communicating. Type systems are a way of announcing what you understand, expect, or intend. Good type systems let you do so at the level of abstraction you choose.">
-  <meta name="author" content="Ethan Kent"/><script type="application/ld+json">
-{
-    "@context": "http://schema.org",
-    "@type": "WebSite",
-    "name": "Ethan Kent\x27s Blog",
     
-    "url": "https:\/\/ethankent.dev"
-}
-</script><script type="application/ld+json">
-{
-  "@context": "http://schema.org",
-  "@type": "Organization",
-  "name": "",
-  "url": "https:\/\/ethankent.dev"
-  
-  
-  
-  
-}
-</script>
-<script type="application/ld+json">
-{
-  "@context": "http://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": [{
-        "@type": "ListItem",
-        "position": 1,
-        "item": {
-          "@id": "https:\/\/ethankent.dev",
-          "name": "home"
-        }
-    },{
-        "@type": "ListItem",
-        "position": 3,
-        "item": {
-          "@id": "https:\/\/ethankent.dev\/posts\/types_are_for_people\/",
-          "name": "Types are for people, not computers"
-        }
-    }]
-}
-</script><script type="application/ld+json">
-{
-  "@context": "http://schema.org",
-  "@type": "Article",
-  "author": {
-    "name" : "Ethan Kent"
-  },
-  "headline": "Types Are for People, not Computers",
-  "description" : "Types—in the static-typing sense—are useful because they help people, not computers. Oh sure, we use them, in part, to subdue the compiler or meet some need peculiarly arising from our computer. But types are valuable because they are a way of communicating.\nType systems are a way of communicating. Type systems are a way of announcing what you understand, expect, or intend. Good type systems let you do so at the level of abstraction you choose.",
-  "inLanguage" : "en",
-  "wordCount":  2195 ,
-  "datePublished" : "2019-11-14T09:00:00",
-  "dateModified" : "2019-11-14T09:00:00",
-  "image" : "https:\/\/ethankent.dev",
-  "keywords" : [ "" ],
-  "mainEntityOfPage" : "https:\/\/ethankent.dev\/posts\/types_are_for_people\/",
-  "publisher" : {
-    "@type": "Organization",
-    "name" : "https:\/\/ethankent.dev",
-    "logo" : {
-        "@type" : "ImageObject",
-        "url" : "https:\/\/ethankent.dev",
-        "height" :  60 ,
-        "width" :  60
-    }
-  }
-}
-</script>
-
-<meta property="og:title" content="Types Are for People, not Computers" />
-<meta property="og:description" content="Types—in the static-typing sense—are useful because they help people, not computers. Oh sure, we use them, in part, to subdue the compiler or meet some need peculiarly arising from our computer. But types are valuable because they are a way of communicating.
-Type systems are a way of communicating. Type systems are a way of announcing what you understand, expect, or intend. Good type systems let you do so at the level of abstraction you choose.">
-<meta property="og:url" content="https://ethankent.dev/posts/types_are_for_people/" />
-<meta property="og:type" content="website" />
-<meta property="og:site_name" content="Ethan Kent&#39;s Blog" />
-
-  <meta name="twitter:title" content="Types Are for People, not Computers" />
-  <meta name="twitter:description" content="Types—in the static-typing sense—are useful because they help people, not computers. Oh sure, we use them, in part, to subdue the compiler or meet some need peculiarly arising from our computer. But …">
-  <meta name="twitter:card" content="summary" />
-  <meta name="generator" content="Hugo 0.59.1" />
-  <link rel="alternate" href="https://ethankent.dev/index.xml" type="application/rss+xml" title="Ethan Kent&#39;s Blog"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css" integrity="sha384-9eLZqc9ds8eNjO3TmqPeYcDj8n+Qfa4nuSiGYa6DjLNcv9BtN69ZIulL9+8CqC9Y" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"><link rel="stylesheet" href="https://ethankent.dev/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" />
-  <link rel="stylesheet" href="https://ethankent.dev/css/highlight.min.css" /><link rel="stylesheet" href="https://ethankent.dev/css/codeblock.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
-
-
-
-  </head>
-  <body>
-    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="https://ethankent.dev">Ethan Kent&#39;s Blog</a>
-    </div>
-
-    <div class="collapse navbar-collapse" id="main-navbar">
-      <ul class="nav navbar-nav navbar-right">
-        
+</ul>
+			</div>
+		</nav>
 
         
 
-        
-      </ul>
-    </div>
-
-    
-
-  </div>
-</nav>
-
-
-
-
-    
-
-
-<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
-
-<div class="pswp__bg"></div>
-
-<div class="pswp__scroll-wrap">
-    
-    <div class="pswp__container">
-      <div class="pswp__item"></div>
-      <div class="pswp__item"></div>
-      <div class="pswp__item"></div>
-    </div>
-    
-    <div class="pswp__ui pswp__ui--hidden">
-    <div class="pswp__top-bar">
-      
-      <div class="pswp__counter"></div>
-      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
-      <button class="pswp__button pswp__button--share" title="Share"></button>
-      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
-      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
-      
-      
-      <div class="pswp__preloader">
-        <div class="pswp__preloader__icn">
-          <div class="pswp__preloader__cut">
-            <div class="pswp__preloader__donut"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
-      <div class="pswp__share-tooltip"></div>
-    </div>
-    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
-    </button>
-    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
-    </button>
-    <div class="pswp__caption">
-      <div class="pswp__caption__center"></div>
-    </div>
-    </div>
-    </div>
+<main>
+	<div class="post">
+		<div class="post-info">
+    <span>Written by</span>
+        Ethan Kent
+        <br>
+        <span>on&nbsp;</span><time datetime="2019-11-14 09:00:00 -0600 CST">November 14, 2019</time>
 </div>
+		<h1 class="post-title">Types Are for People, not Computers</h1>
+<div class="post-line"></div>
 
+		
 
-  
-  
-  
-
-
-
-
-
-
-  
-
-  <header class="header-section ">
-    
-    <div class="intro-header no-img">
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-            <div class="posts-heading">
-              
-                <h1>Types Are for People, not Computers</h1>
-              
-              
-                <hr class="small">
-              
-              
-              
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </header>
-
-
-    
-<div class="container" role="main">
-  <div class="row">
-    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-      <article role="main" class="blog-post">
-        
-
-<p>Types—in the static-typing sense—are useful because they help people, not
+		<p>Types—in the static-typing sense—are useful because they help people, not
 computers. Oh sure, we use them, in part, to subdue the compiler or meet some
 need peculiarly arising from our computer. But types are valuable because
 they are a way of communicating.</p>
-
 <h2 id="type-systems-are-a-way-of-communicating">Type systems are a way of communicating.</h2>
-
 <p>Type systems are a way of announcing what you understand, expect, or intend.
 Good type systems let you do so at the level of abstraction you choose. And
 they let you describe these things based on what things <em>are</em> or what they
 <em>do</em>.</p>
-
 <p>So if types are a way of communicating, who or what are you talking <em>to</em>?
 Several audiences. You are talking to yourself—leaving notes. You are also
 talking to the computer—but often for your sake rather than its. You are
 asking it to hold you accountable to what you told it you understood,
 expected, or intended. Finally, you are talking to other developers
 (including future you).</p>
-
 <h2 id="we-can-match-how-we-use-the-type-system-with-what-we-understand-expect-or-intend-of-our-objects">We can match how we use the type system with what we understand, expect, or intend of our objects.</h2>
-
 <p>Consider this JavaScript code:</p>
-
-<pre><code class="language-javascript">const mathItForMe = (a, b) =&gt; {
-  return { added: a + b, subtracted: a - b, multiplied: a * b, divided: a / b };
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">mathItForMe</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">a</span>, <span style="color:#a6e22e">b</span>) =&gt; {
+  <span style="color:#66d9ef">return</span> { <span style="color:#a6e22e">added</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">a</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">b</span>, <span style="color:#a6e22e">subtracted</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">a</span> <span style="color:#f92672">-</span> <span style="color:#a6e22e">b</span>, <span style="color:#a6e22e">multiplied</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">a</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">b</span>, <span style="color:#a6e22e">divided</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">a</span> <span style="color:#f92672">/</span> <span style="color:#a6e22e">b</span> };
 };
 
-mathItForMe(5, &quot;3&quot;);
-// =&gt; { added: '53', subtracted: 2, multiplied: 15, divided: 1.6666666666666667 }
-
-mathItForMe(true, 7);
-// =&gt; { added: 8, subtracted: -6, multiplied: 7, divided: 0.14285714285714285 }
-
-mathItForMe(&quot;3&quot;, true);
-// =&gt; { added: '3true', subtracted: 2, multiplied: 3, divided: 3 }
-</code></pre>
-
-<p>In what programming context is the desired behavior for using <code>+</code> with a
+<span style="color:#a6e22e">mathItForMe</span>(<span style="color:#ae81ff">5</span>, <span style="color:#e6db74">&#34;3&#34;</span>);
+<span style="color:#75715e">// =&gt; { added: &#39;53&#39;, subtracted: 2, multiplied: 15, divided: 1.6666666666666667 }
+</span><span style="color:#75715e"></span>
+<span style="color:#a6e22e">mathItForMe</span>(<span style="color:#66d9ef">true</span>, <span style="color:#ae81ff">7</span>);
+<span style="color:#75715e">// =&gt; { added: 8, subtracted: -6, multiplied: 7, divided: 0.14285714285714285 }
+</span><span style="color:#75715e"></span>
+<span style="color:#a6e22e">mathItForMe</span>(<span style="color:#e6db74">&#34;3&#34;</span>, <span style="color:#66d9ef">true</span>);
+<span style="color:#75715e">// =&gt; { added: &#39;3true&#39;, subtracted: 2, multiplied: 3, divided: 3 }
+</span></code></pre></div><p>In what programming context is the desired behavior for using <code>+</code> with a
 string and a boolean to coerce the boolean into the string <code>true</code> or <code>false</code>
-and concatenate it to the string? It&rsquo;s madness. But then again, all implicit
+and concatenate it to the string? It's madness. But then again, all implicit
 coercion is the same kind of insanity; some instances are just more florid
 than others. Using types imposes some discipline:</p>
-
-<pre><code class="language-rust">#[derive(Debug, PartialEq)]
-struct GotMathed {
-    added: i32,
-    subtracted: i32,
-    divided: i32,
-    multiplied: i32,
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#75715e">#[</span><span style="color:#75715e">derive(Debug, PartialEq)</span><span style="color:#75715e">]</span>
+<span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">GotMathed</span> {
+    added: <span style="color:#66d9ef">i32</span>,
+    subtracted: <span style="color:#66d9ef">i32</span>,
+    divided: <span style="color:#66d9ef">i32</span>,
+    multiplied: <span style="color:#66d9ef">i32</span>,
 }
 
-fn math_it_for_me(num_1: i32, num_2: i32) -&gt; GotMathed {
+<span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">math_it_for_me</span>(num_1: <span style="color:#66d9ef">i32</span>, num_2: <span style="color:#66d9ef">i32</span>) -&gt; <span style="color:#a6e22e">GotMathed</span> {
     GotMathed {
-        added: num_1 + num_2,
-        subtracted: num_1 - num_2,
-        divided: num_1 / num_2,
-        multiplied: num_1 * num_2,
+        added: <span style="color:#a6e22e">num_1</span> <span style="color:#f92672">+</span> num_2,
+        subtracted: <span style="color:#a6e22e">num_1</span> <span style="color:#f92672">-</span> num_2,
+        divided: <span style="color:#a6e22e">num_1</span> <span style="color:#f92672">/</span> num_2,
+        multiplied: <span style="color:#a6e22e">num_1</span> <span style="color:#f92672">*</span> num_2,
     }
 }
 
-fn main() {
-    let x: i32 = 7;
-    let y: i32 = 5;
+<span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">main</span>() {
+    <span style="color:#66d9ef">let</span> x: <span style="color:#66d9ef">i32</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">7</span>;
+    <span style="color:#66d9ef">let</span> y: <span style="color:#66d9ef">i32</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">5</span>;
 
-    assert_eq!(
+    assert_eq<span style="color:#f92672">!</span>(
         math_it_for_me(x, y),
         GotMathed {
-            added: 12,
-            subtracted: 2,
-            divided: 1,
-            multiplied: 35,
+            added: <span style="color:#ae81ff">12</span>,
+            subtracted: <span style="color:#ae81ff">2</span>,
+            divided: <span style="color:#ae81ff">1</span>,
+            multiplied: <span style="color:#ae81ff">35</span>,
         }
     );
 }
-</code></pre>
-
-<p>But notice that we aren&rsquo;t necessarily capturing our intent. What if, instead
+</code></pre></div><p>But notice that we aren't necessarily capturing our intent. What if, instead
 of a signed 32-bit integer (an <code>i32</code>), we use an unsigned, 64-bit integer (a
-<code>u64</code>)? Or a 32-bit float (an <code>f32</code>)? Our function doesn&rsquo;t work—but it
-probably should. This function isn&rsquo;t <em>about</em> doing math on 32-bit integers,
-it&rsquo;s about doing math on numbers.</p>
-
+<code>u64</code>)? Or a 32-bit float (an <code>f32</code>)? Our function doesn't work—but it
+probably should. This function isn't <em>about</em> doing math on 32-bit integers,
+it's about doing math on numbers.</p>
 <p>The type system has helped us figure out what our function ought to do by
-requiring us to describe it explicitly. Here we&rsquo;ve gone too narrow. This is
-worlds better than a function that takes types we didn&rsquo;t even consider, like
+requiring us to describe it explicitly. Here we've gone too narrow. This is
+worlds better than a function that takes types we didn't even consider, like
 the JavaScript example. The behavior there was pathological because we were
 too accepting.</p>
-
 <p>But now the type system is putting pressure on us to think about exactly what
 this function ought to do. If it were part of a private API—a private method
 in a class or a non <code>pub</code> function in an <code>impl</code> block in Rust—we might accept
 that it places arbitrary limits on the types it accepts in order to
 streamline implementation or avoid premature optimization. Plus, we would
-have additional context and the method&rsquo;s restricted visibility means we
-wouldn&rsquo;t be beholden to others who rely on the code.</p>
+have additional context and the method's restricted visibility means we
+wouldn't be beholden to others who rely on the code.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#66d9ef">use</span> core::ops::{Add, Div, Mul, Sub};
 
-<pre><code class="language-rust">use core::ops::{Add, Div, Mul, Sub};
-
-#[derive(Debug, PartialEq)]
-struct GotMathed&lt;T&gt; {
-    added: T,
-    subtracted: T,
-    divided: T,
-    multiplied: T,
+<span style="color:#75715e">#[</span><span style="color:#75715e">derive(Debug, PartialEq)</span><span style="color:#75715e">]</span>
+<span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">GotMathed</span><span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> {
+    added: <span style="color:#a6e22e">T</span>,
+    subtracted: <span style="color:#a6e22e">T</span>,
+    divided: <span style="color:#a6e22e">T</span>,
+    multiplied: <span style="color:#a6e22e">T</span>,
 }
 
-fn math_it_for_me&lt;T&gt;(num_1: T, num_2: T) -&gt; GotMathed&lt;T&gt;
-where
-    T: Add&lt;Output = T&gt;    // Specify &quot;trait bounds&quot;: A trait is like an
-        + Sub&lt;Output = T&gt; // interface. It specifies the behavior (method
-        + Mul&lt;Output = T&gt; // signatures) a type must implement. Here we're
-        + Div&lt;Output = T&gt; // saying `T` is a type that must implement addition,
-        + Copy            // subtraction, multiplication, and division, in each
-        + Clone           // case returning the same type. It must also
-        + PartialEq,      // allow the value to be copied and cloned, and
-{                         // compared for equality (used by `assert_eq!` ↓).
-    GotMathed {
-        added: num_1 + num_2,
-        subtracted: num_1 - num_2,
-        divided: num_1 / num_2,
-        multiplied: num_1 * num_2,
+<span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">math_it_for_me</span><span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span>(num_1: <span style="color:#a6e22e">T</span>, num_2: <span style="color:#a6e22e">T</span>) -&gt; <span style="color:#a6e22e">GotMathed</span><span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span>
+<span style="color:#66d9ef">where</span>
+    T: <span style="color:#a6e22e">Add</span><span style="color:#f92672">&lt;</span>Output <span style="color:#f92672">=</span> T<span style="color:#f92672">&gt;</span>    <span style="color:#75715e">// Specify &#34;trait bounds&#34;: A trait is like an
+</span><span style="color:#75715e"></span>        <span style="color:#f92672">+</span> Sub<span style="color:#f92672">&lt;</span>Output <span style="color:#f92672">=</span> T<span style="color:#f92672">&gt;</span> <span style="color:#75715e">// interface. It specifies the behavior (method
+</span><span style="color:#75715e"></span>        <span style="color:#f92672">+</span> Mul<span style="color:#f92672">&lt;</span>Output <span style="color:#f92672">=</span> T<span style="color:#f92672">&gt;</span> <span style="color:#75715e">// signatures) a type must implement. Here we&#39;re
+</span><span style="color:#75715e"></span>        <span style="color:#f92672">+</span> Div<span style="color:#f92672">&lt;</span>Output <span style="color:#f92672">=</span> T<span style="color:#f92672">&gt;</span> <span style="color:#75715e">// saying `T` is a type that must implement addition,
+</span><span style="color:#75715e"></span>        <span style="color:#f92672">+</span> Copy            <span style="color:#75715e">// subtraction, multiplication, and division, in each
+</span><span style="color:#75715e"></span>        <span style="color:#f92672">+</span> Clone           <span style="color:#75715e">// case returning the same type. It must also
+</span><span style="color:#75715e"></span>        <span style="color:#f92672">+</span> PartialEq,      <span style="color:#75715e">// allow the value to be copied and cloned, and
+</span><span style="color:#75715e"></span>{                         <span style="color:#75715e">// compared for equality (used by `assert_eq!` ↓).
+</span><span style="color:#75715e"></span>    GotMathed {
+        added: <span style="color:#a6e22e">num_1</span> <span style="color:#f92672">+</span> num_2,
+        subtracted: <span style="color:#a6e22e">num_1</span> <span style="color:#f92672">-</span> num_2,
+        divided: <span style="color:#a6e22e">num_1</span> <span style="color:#f92672">/</span> num_2,
+        multiplied: <span style="color:#a6e22e">num_1</span> <span style="color:#f92672">*</span> num_2,
     }
 }
 
-fn main() {
-    let x: f32 = 7.0;
-    let y: f32 = 5.0;
+<span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">main</span>() {
+    <span style="color:#66d9ef">let</span> x: <span style="color:#66d9ef">f32</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">7.0</span>;
+    <span style="color:#66d9ef">let</span> y: <span style="color:#66d9ef">f32</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">5.0</span>;
 
-    assert_eq!(
+    assert_eq<span style="color:#f92672">!</span>(
         math_it_for_me(x, y),
         GotMathed {
-            added: 12.0,
-            subtracted: 2.0,
-            divided: 1.4,
-            multiplied: 35.0,
+            added: <span style="color:#ae81ff">12.0</span>,
+            subtracted: <span style="color:#ae81ff">2.0</span>,
+            divided: <span style="color:#ae81ff">1.4</span>,
+            multiplied: <span style="color:#ae81ff">35.0</span>,
         }
     );
 }
-</code></pre>
-
-<p>Here we have brought our intent, expectations, and understanding into
+</code></pre></div><p>Here we have brought our intent, expectations, and understanding into
 alignment. We are communicating to the computer what our function needs to be
 able to do and how we intend to do it; the computer will now make sure that
 we are able to do what we promised with the types our function will accept.
 We have put ourselves in a position where the computer can help us. We are
 also communicating to other people what our function is <em>for</em> based on what
 kinds of arguments are acceptable and what they can expect it to return.</p>
-
 <p>Note that we are now describing what kinds of arguments are appropriate in
-<em>precisely</em> the terms that make sense. We&rsquo;re no longer talking about
+<em>precisely</em> the terms that make sense. We're no longer talking about
 arbitrary concretions: we are talking about the arguments at exactly the
-level of abstraction that ought to define them.<sup class="footnote-ref" id="fnref:Cf-the-Dependenc"><a href="#fn:Cf-the-Dependenc">1</a></sup></p>
-
+level of abstraction that ought to define them.<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
 <p>We have specified the arguments that <code>math_it_for_me</code> takes in terms of
 <em>behavior</em>, and in so doing have aligned our intent with our understanding
 and expectations. We could alter the code so that <code>num_1</code> and <code>num_2</code> could
 be different numeric types, but that would force us to consider edge cases
 and typecasts, and so it is reasonable to limit our code the way we have, out
-to the limit of undefined or tricky behavior that we&rsquo;re not interested in
+to the limit of undefined or tricky behavior that we're not interested in
 dealing with. And all of these positive changes were driven by the type
-system&rsquo;s pressure to define things explicitly, together with its allowing
+system's pressure to define things explicitly, together with its allowing
 us to describe acceptable arguments at the right level of abstraction.</p>
-
 <h2 id="good-type-systems-remind-us-to-think-about-things-we-might-otherwise-forget">Good type systems remind us to think about things we might otherwise forget.</h2>
-
 <p>Type systems with <code>Option</code>/<code>Maybe</code> and <code>Result</code>/<code>Either</code> are a good example
 of how type systems can force us to handle all possible results. For example, Rust
 defines the <code>Option</code> type:</p>
-
-<pre><code class="language-rust">enum Option&lt;T&gt; {
-    // Enums in Rust can contain values. Here the `Some` variant contains a
-    // value of the generic type `T`.
-    Some(T),
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#66d9ef">enum</span> Option<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> {
+    <span style="color:#75715e">// Enums in Rust can contain values. Here the `Some` variant contains a
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">// value of the generic type `T`.
+</span><span style="color:#75715e"></span>    Some(T),
     None
 }
-</code></pre>
-
-<p>There is no <code>null</code> in Rust. A function that can fail to return a value of
+</code></pre></div><p>There is no <code>null</code> in Rust. A function that can fail to return a value of
 type <code>T</code> must return an <code>Option&lt;T&gt;</code> (or similar) rather than a <code>T</code>. If you
 write a function that is supposed to return a <code>T</code> but there is any code path
 in the function that would fail to return a <code>T</code>, the compiler will yell at
-you for not satisfying the function&rsquo;s type signature. If the caller of that
+you for not satisfying the function's type signature. If the caller of that
 function tries to treat its return type like a <code>T</code> rather than an
-<code>Option&lt;T&gt;</code>, you will likely get a type error.<sup class="footnote-ref" id="fnref:If-you-just-so-h"><a href="#fn:If-you-just-so-h">2</a></sup></p>
-
+<code>Option&lt;T&gt;</code>, you will likely get a type error.<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></p>
 <p>So unless you follow the antipattern of calling <code>unwrap()</code> or <code>expect()</code> with
-your <code>Option</code> type,<sup class="footnote-ref" id="fnref:If-you-call-eith"><a href="#fn:If-you-call-eith">3</a></sup> the compiler will hound you until you
+your <code>Option</code> type,<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup> the compiler will hound you until you
 have dealt with the <code>null</code> case. Libertine Rubyists and Pythonistas may
-object and say that they always handle their <code>nil</code>s. But that&rsquo;s not what the
-runtime logs say for any of the applications I&rsquo;ve worked on in any of my
-programming jobs.<sup class="footnote-ref" id="fnref:Rich-Hickey-http"><a href="#fn:Rich-Hickey-http">4</a></sup></p>
-
-<h2 id="specifying-types-in-terms-of-interfaces-traits-or-typeclasses-is-the-same-thing-as-duck-typing-except-it-s-harder-to-screw-up">Specifying types in terms of interfaces, traits, or typeclasses is the same thing as duck typing, except it&rsquo;s harder to screw up.</h2>
-
+object and say that they always handle their <code>nil</code>s. But that's not what the
+runtime logs say for any of the applications I've worked on in any of my
+programming jobs.<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup></p>
+<h2 id="specifying-types-in-terms-of-interfaces-traits-or-typeclasses-is-the-same-thing-as-duck-typing-except-its-harder-to-screw-up">Specifying types in terms of interfaces, traits, or typeclasses is the same thing as duck typing, except it's harder to screw up.</h2>
 <p>In dynamically typed languages, duck types</p>
-
 <blockquote>
 <p>are abstract; this gives them strength as a design tool but this very
 abstraction makes the duck type less than obvious in code. [¶] When you
 create duck types you must document <em>and</em> test their public interfaces.
 Fortunately, good tests are the best documentation, so you are already
-halfway done; you need only write the tests.<sup class="footnote-ref" id="fnref:implicit-duck"><a href="#fn:implicit-duck">5</a></sup></p>
+halfway done; you need only write the tests.<sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup></p>
 </blockquote>
-
 <p><em>Pace</em> the brilliant Sandi Metz, types are better documentation than tests,
 at least for the kinds of things types help us with. Unlike tests, types are
 nearby, facilitate our tooling, and provide a consistent means of
@@ -431,185 +229,112 @@ communication. Tests and types are both better than documentation, but types
 are documentation attached to our code like PostIt notes, while tests are
 like books down in the stacks that we have to go looking for, hoping that the
 card catalog will help us find them.</p>
-
-<p>Elsewhere, Metz writes,<sup class="footnote-ref" id="fnref:I-m-Sandi-Metz-A"><a href="#fn:I-m-Sandi-Metz-A">6</a></sup></p>
-
+<p>Elsewhere, Metz writes,<sup id="fnref:6"><a href="#fn:6" class="footnote-ref" role="doc-noteref">6</a></sup></p>
 <blockquote>
-<p>[I]n my code, I don&rsquo;t get run-time type errors. Because my experience is
+<p>[I]n my code, I don't get run-time type errors. Because my experience is
 that dynamic typing is perfectly safe, I find myself resenting having to
 enter type annotations when I work in statically typed languages. While I
-appreciate the fact that static typing means that I don&rsquo;t have to write some
+appreciate the fact that static typing means that I don't have to write some
 tests, I hate having to add this extra code.</p>
-
 <p>Having said that, I realize that many folks have had different experiences
-with dynamic typing. I write trustworthy code where objects behave like you&rsquo;d
-expect. This means that I can trust that any object with which I&rsquo;m
-interacting just works. This, in turn, means that I don&rsquo;t have to check if
-objects behave the right way. Sadly, I&rsquo;ve seen many OO applications where
-these things were not true. Folks fall into the trap of writing code that&rsquo;s
-not trustworthy. Because they can&rsquo;t trust message sends to return objects
+with dynamic typing. I write trustworthy code where objects behave like you'd
+expect. This means that I can trust that any object with which I'm
+interacting just works. This, in turn, means that I don't have to check if
+objects behave the right way. Sadly, I've seen many OO applications where
+these things were not true. Folks fall into the trap of writing code that's
+not trustworthy. Because they can't trust message sends to return objects
 that behave correctly, they have to check the type of the return of messages
 sends. This leads to a descending spiral of manually adding type checking,
 and code which ultimately breaks in confusing and painful ways.</p>
 </blockquote>
-
-<p>I&rsquo;m not as good a programmer as Sandi Metz is, and you probably aren&rsquo;t,
-either. It may be like the case of the great athlete who can&rsquo;t coach
-inferior talents because she didn&rsquo;t have to learn to work with the same
+<p>I'm not as good a programmer as Sandi Metz is, and you probably aren't,
+either. It may be like the case of the great athlete who can't coach
+inferior talents because she didn't have to learn to work with the same
 limitations.</p>
-
 <p>But even if your code is Metzian in its brilliance, implicit interfaces are
 like verbal contracts: a fine way to get confused about what has been promised.
 Worse, the absence of a rigorous and explicit definition for your interface
 means your computer is powerless to help you get it right. Remember, types are
 <em>for people</em>.</p>
-
 <h2 id="types-are-not-a-panacea">Types are not a panacea.</h2>
-
 <p>There are some limitations to type systems, and I should acknowledge them to
 show that I am not enamored of a caricature of types. The problems are real,
 but they are worth it.</p>
-
-<h3 id="sometimes-types-aren-t-for-people-sometimes-they-are-about-the-programmer-helping-the-computer">Sometimes types aren&rsquo;t for people; sometimes they are about the programmer helping the computer.</h3>
-
+<h3 id="sometimes-types-arent-for-people-sometimes-they-are-about-the-programmer-helping-the-computer">Sometimes types aren't for people; sometimes they are about the programmer helping the computer.</h3>
 <p>In Rust, if you have a function that can return more than one error type, you
 must in some cases put the error in a
 <a href="https://doc.rust-lang.org/rust-by-example/error/multiple_error_types/boxing_errors.html"><code>Box</code></a>.
 That is because different errors are different sizes, and the return type of
 a Rust function must be of a size known at compile-time. So the indirection
 of a <code>Box</code> (which is a pointer) means that the compiler knows how big the
-return value is. You have to help the compiler know what&rsquo;s going on—you&rsquo;re
+return value is. You have to help the compiler know what's going on—you're
 helping the computer rather than the reverse.</p>
-
-<p>This is annoying. But even Ruby and Python aren&rsquo;t written in English
+<p>This is annoying. But even Ruby and Python aren't written in English
 sentences. Semicolons and curly braces are mostly there to help the computer,
-too. Just because types are <em>sometimes</em> for computers doesn&rsquo;t mean than types
-aren&rsquo;t mostly useful for people.<sup class="footnote-ref" id="fnref:The-title-Types"><a href="#fn:The-title-Types">7</a></sup></p>
-
-<h3 id="types-can-t-help-you-with-all-your-business-logic">Types can&rsquo;t help you with all your business logic.</h3>
-
-<p>I once used a <code>u8</code> (an 8-bit, unsigned integer) to represent people&rsquo;s ages.
-Because people haven&rsquo;t lived past 122, 255 seemed like plenty of room. Fair
+too. Just because types are <em>sometimes</em> for computers doesn't mean than types
+aren't mostly useful for people.^[The title &ldquo;Types Are Mostly for People,
+Though Occasionally for Computers, Which can Be a Pain&rdquo; seemed less punchy.]</p>
+<h3 id="types-cant-help-you-with-all-your-business-logic">Types can't help you with all your business logic.</h3>
+<p>I once used a <code>u8</code> (an 8-bit, unsigned integer) to represent people's ages.
+Because people haven't lived past 122, 255 seemed like plenty of room. Fair
 enough. But I also saw it as a way of embedding business logic into the type.
-It just so happens that 255 is not an insane limit for validating a person&rsquo;s
+It just so happens that 255 is not an insane limit for validating a person's
 age. If you input <code>-50</code> or <code>3000</code>, you have probably made a mistake.</p>
-
 <p>That got me thinking: What if I could somehow define a 7-bit unsigned
 integer. Then I could use the type system to do a kind of validation.</p>
-
 <p>I now see that this was colossally wrongheaded. This is mixing levels of
-abstraction in the wrong way. It&rsquo;s like noticing that motor oil and coffee
+abstraction in the wrong way. It's like noticing that motor oil and coffee
 are about the same color, so they should be interchangeable to keep your car
 running and to perk you up in the morning.</p>
-
-<p>Types are not for fine-grained validation. They&rsquo;re not a replacement for
+<p>Types are not for fine-grained validation. They're not a replacement for
 tests.</p>
-
 <p>But when you use them for their proper purposes, types can help you talk to
 yourself, your computer, and other people; they can catch certain kinds of
 errors; and they can put pressure on you to think, design, and communicate
-more clearly. That&rsquo;s enough to make them a great tool that most programmers
+more clearly. That's enough to make them a great tool that most programmers
 should use.</p>
-<div class="footnotes">
-
-<hr />
-
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:Cf-the-Dependenc"><em>Cf.</em> the <a href="https://en.wikipedia.org/wiki/Dependency_inversion_principle">Dependency Inversion Principle</a>. <a class="footnote-return" href="#fnref:Cf-the-Dependenc"><sup>[return]</sup></a></li>
-<li id="fn:If-you-just-so-h">If you just so happened to treat your <code>Option&lt;T&gt;</code> in a way that is fully compatible with <code>T</code>, the type system would not catch it. <a class="footnote-return" href="#fnref:If-you-just-so-h"><sup>[return]</sup></a></li>
-<li id="fn:If-you-call-eith">If you call either with a <code>None</code> type, you get a panic, which is like an unhandled exception. <a class="footnote-return" href="#fnref:If-you-call-eith"><sup>[return]</sup></a></li>
-<li id="fn:Rich-Hickey-http"><a href="https://www.youtube.com/watch?v=YR5WdGrpoug">Rich Hickey</a> doesn&rsquo;t like this pattern, and TypeScript handles nullability a <a href="https://www.typescriptlang.org/docs/handbook/advanced-types.html#nullable-types">different way</a>, but at bottom any alternative approach should require handling the <code>null</code> case. <a class="footnote-return" href="#fnref:Rich-Hickey-http"><sup>[return]</sup></a></li>
-<li id="fn:implicit-duck">Sandi Metz, <em>Practical Object-oriented Design in Ruby: An Agile Primer</em> 98 (2013).
- <a class="footnote-return" href="#fnref:implicit-duck"><sup>[return]</sup></a></li>
-<li id="fn:I-m-Sandi-Metz-A"><a href="https://dev.to/sandimetz/im-sandi-metz-ask-me-anything-4ff9">I&rsquo;m Sandi Metz, Ask Me Anything!</a>, (Jan. 24, 2018). <a class="footnote-return" href="#fnref:I-m-Sandi-Metz-A"><sup>[return]</sup></a></li>
-<li id="fn:The-title-Types">The title &ldquo;Types Are Mostly for People, Though Occasionally for Computers, Which can Be a Pain&rdquo; seemed less punchy. <a class="footnote-return" href="#fnref:The-title-Types"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p><em>Cf.</em> the <a href="https://en.wikipedia.org/wiki/Dependency_inversion_principle">Dependency Inversion Principle</a>.] <a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p>If you just so happened to treat your <code>Option&lt;T&gt;</code> in a way that is fully compatible with <code>T</code>, the type system would not catch it. <a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3" role="doc-endnote">
+<p>If you call either with a <code>None</code> type, you get a panic, which is like an unhandled exception. <a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:4" role="doc-endnote">
+<p><a href="https://www.youtube.com/watch?v=YR5WdGrpoug">Rich Hickey</a> doesn't like this pattern, and TypeScript handles nullability a <a href="https://www.typescriptlang.org/docs/handbook/advanced-types.html#nullable-types">different way</a>, but at bottom any alternative approach should require handling the <code>null</code> case. <a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:5" role="doc-endnote">
+<p>Sandi Metz, <em>Practical Object-oriented Design in Ruby: An Agile Primer</em> 98 (2013). <a href="#fnref:5" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:6" role="doc-endnote">
+<p><a href="https://dev.to/sandimetz/im-sandi-metz-ask-me-anything-4ff9">I'm Sandi Metz, Ask Me Anything!</a>, (Jan. 24, 2018). <a href="#fnref:6" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 
 
-        
+		
+	</div>
 
-        
+	<div class="pagination">
+		<a href="/posts/mutation_scopes/" class="left arrow">&#8592;</a>
+		<a href="/posts/priors/" class="right arrow">&#8594;</a>
 
-        
-      </article>
-
-      
-        <ul class="pager blog-pager">
-          
-            <li class="previous">
-              <a href="https://ethankent.dev/posts/mutation_scopes/" data-toggle="tooltip" data-placement="top" title="Limiting the scope of mutation">&larr; Previous Post</a>
-            </li>
-          
-          
-            <li class="next">
-              <a href="https://ethankent.dev/posts/priors/" data-toggle="tooltip" data-placement="top" title="Priors">Next Post &rarr;</a>
-            </li>
-          
-        </ul>
-      
+		<a href="#" class="top">Top</a>
+	</div>
+</main>
 
 
-      
+        		<footer>
+			<span>
+			&copy; <time datetime="2019-12-15 17:25:52.358099 -0600 CST m=&#43;0.209113849">2019</time> Ethan Kent. Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
+			</span>
+		</footer>
 
-    </div>
-  </div>
-</div>
-
-      
-<footer>
-  <div class="container">
-    <div class="row">
-      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-        <ul class="list-inline text-center footer-links">
-          
-          
-        </ul>
-        <p class="credits copyright text-muted">
-          
-            
-              Ethan Kent
-            
-          
-
-          &nbsp;&bull;&nbsp;&copy;
-          
-            2019
-          
-
-          
-            &nbsp;&bull;&nbsp;
-            <a href="https://ethankent.dev">Ethan Kent&#39;s Blog</a>
-          
-        </p>
-        
-        <p class="credits theme-by text-muted">
-          <a href="https://gohugo.io">Hugo v0.59.1</a> powered &nbsp;&bull;&nbsp; Theme <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> adapted from <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
-          
-        </p>
-      </div>
-    </div>
-  </div>
-</footer><script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.js" integrity="sha384-K3vbOmF2BtaVai+Qk37uypf7VrgBubhQreNQe9aGsz9lB63dIFiQVlJbr92dw2Lx" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/contrib/auto-render.min.js" integrity="sha384-kmZOZB5ObwgQnS/DuDg6TScgOiWWBiVt0plIRkZCmE6rDZGrEOQeHM5PcHi+nyqe" crossorigin="anonymous"></script>
-<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-
-<script src="https://ethankent.dev/js/main.js"></script>
-<script src="https://ethankent.dev/js/highlight.min.js"></script>
-<script> hljs.initHighlightingOnLoad(); </script>
-<script> $(document).ready(function() {$("pre.chroma").css("padding","0");}); </script><script> renderMathInElement(document.body); </script><script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js" integrity="sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js" integrity="sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q" crossorigin="anonymous"></script><script src="https://ethankent.dev/js/load-photoswipe.js"></script>
-
-
-
-
-
-
-
-
-
-    
-  </body>
+    </body>
 </html>
-

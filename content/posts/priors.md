@@ -1,15 +1,18 @@
 ---
 title: "Priors"
 date: 2019-12-02T12:50:00-06:00
+author: Ethan Kent
 draft: false
 ---
 
-There's a lyric in a They Might Be Giants song:
+There's a lyric in a They Might Be Giants song:[^tmbg]
 
 > Now you're the only one here,<br>
 > Who can tell me if it's true:<br>
 > That you love me,<br>
-> And I love me.^[[_Kiss Me, Son of God_](https://youtu.be/gLcp8Dm-ejU?t=67), _Lincoln_ (Bar/None Records 1988).]
+> And I love me.
+
+[^tmbg]: [_Kiss Me, Son of God_](https://youtu.be/gLcp8Dm-ejU?t=67), _Lincoln_ (Bar/None Records 1988).
 
 The lyric is effective because it uses our expectations of rhyme scheme,
 parallelism, and reciprocity to have us all but certain that the final line
@@ -99,10 +102,11 @@ statement if you're doing this, but that is super easy to miss."
 My strong prior is that it is an extremely common error to use `=` instead of
 `==` in a conditional. Another (albeit weaker) prior is that code will
 generally separate distinct kinds of operations—avoiding things like
-assignment within control flow.^[That is, unless language constructs exist to
-do exactly that, as in `match` and `if let` statements in some languages.]
-Here, things run so strongly against my priors that I may not even see what's
-going on: my eyes don't see that single equals sign the first time around.
+assignment within control flow.[^match] Here, things run so strongly against
+my priors that I may not even see what's going on: my eyes don't see that
+single equals sign the first time around.
+
+[^match]: That is, unless language constructs exist to do exactly that, as in `match` and `if let` statements in some languages.
 
 <center>❧&nbsp;❧&nbsp;❧</center>
 

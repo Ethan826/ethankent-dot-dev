@@ -1,7 +1,7 @@
 baseURL = "https://ethankent.dev"
 languageCode = "en-us"
 title = "Ethan Kent's Blog"
-theme = "beautiful"
+theme = "tale-hugo"
 
 [Params]
 useHLJS = true

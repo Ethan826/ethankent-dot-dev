@@ -1,6 +1,7 @@
 ---
 title: "Limiting the scope of mutation"
 date: 2019-11-05T15:05:29-06:00
+author: Ethan Kent
 draft: false
 ---
 

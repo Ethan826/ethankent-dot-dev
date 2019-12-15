@@ -7,3 +7,21 @@
 [submodule "beautiful"]
 	path = beautiful
 	url = https://github.com/halogenica/beautifulhugo.git
+[submodule "simple-a"]
+	path = simple-a
+	url = https://github.com/AlexFinn/simple-a
+[submodule "themes/simple-a"]
+	path = themes/simple-a
+	url = https://github.com/AlexFinn/simple-a
+[submodule "themes/hugo-material-blog"]
+	path = themes/hugo-material-blog
+	url = https://github.com/Xzya/hugo-material-blog
+[submodule "themes/hugo-kiera"]
+	path = themes/hugo-kiera
+	url = https://github.com/funkydan2/hugo-kiera
+[submodule "themes/hugo_theme_pickles"]
+	path = themes/hugo_theme_pickles
+	url = https://github.com/mismith0227/hugo_theme_pickles
+[submodule "themes/tale-hugo"]
+	path = themes/tale-hugo
+	url = https://github.com/EmielH/tale-hugo

@@ -1,18 +1,14 @@
 ---
 title: "I fold!"
 date: 2019-12-08T14:14:00-06:00
+author: Ethan Kent
 draft: false
 ---
 
 This article is a love letter to `fold`, a.k.a. `reduce`, a.k.a.
-`inject`.^[It is unclear to me why Ruby thinks all of the big higher-order
-functions must end in _–ect_: `collect` (`map`), `select` (`filter`), `inject`
-(`fold`/`reduce`), and `reject` (like `filter`, but retain only values for
-which the closure returns `false`). I will admit that `reject` is pretty
-useful and well named, but those other ones seem pretty
-bloody-minded—particularly `collect`, a name much better suited to the way
-Rust [uses
-it](https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.collect).]
+`inject`.[^1]
+
+[^1]: It is unclear to me why Ruby thinks all of the big higher-order functions must end in _–ect_: `collect` (`map`), `select` (`filter`), `inject` (`fold`/`reduce`), and `reject` (like `filter`, but retain only values for which the closure returns `false`). I will admit that `reject` is pretty useful and well named, but those other ones seem pretty bloody-minded—particularly `collect`, a name much better suited to the way Rust [uses it](https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.collect).
 
 I love fold for three reasons. First, it is useful in a wide variety of
 programming contexts. Second, it is a ladder between different levels of
@@ -34,7 +30,7 @@ way (not necessarily the most efficient or with all the bells and whistles):
 const iterativeFold = (array, fn, initialAccumulator) => {
   let accumulator =
     typeof initialAccumulator === "undefined" ? [] : initialAccumulator;
-  for (element of array) {
+  for (const element of array) {
     accumulator = fn(accumulator, element);
   }
   return accumulator;
@@ -51,11 +47,10 @@ const recursiveFold = ([head, ...tail], fn, initialAccumulator) => {
 
 Notice that although `recursiveFold` makes its recursive call from the tail
 position, most JavaScript engines don't support tail-call
-optimization.^[_See_ Juriy Zaytsev, Leon Arnott, Denis Pushkarev, [ECMAScript
-6 compatibility
-table](http://kangax.github.io/compat-table/es6/#test-proper_tail_calls_%28tail_call_optimisation%29)
-(last visited Dec. 5, 2019).] But that would be a necessary feature in order
+optimization.[^2] But that would be a necessary feature in order
 to make the recursive definition usable with large collections.
+
+[^2]: _See_ Juriy Zaytsev, Leon Arnott, Denis Pushkarev, [ECMAScript 6 compatibility table](http://kangax.github.io/compat-table/es6/#test-proper_tail_calls_%28tail_call_optimisation%29) (last visited Dec. 5, 2019).
 
 ## `fold` can be used to define all the other important higher-order functions.
 
@@ -111,7 +106,7 @@ const any = (array, fn) => {
 };
 ```
 
-My next article will deal with the problem attentive readers may notice:
+My [next article](https://ethankent.dev/breaking_fold/) will deal with the problem attentive readers may notice:
 these `any` and `all` functions don't short-circuit; we can reduce the
 constant factor associated with our time complexity if we allow these
 functions to `break`. The problem, fundamentally, is that we can't reach from
@@ -132,10 +127,11 @@ When I need to operate on a collection, I generally use this rule of thumb:
 ### `fold` is useful to combine multiple transformations.
 
 In some languages, calling `filter` and then `map` requires two iterations of
-the collection.^[This is the power of `collect()` in Rust and `lazy` in
-Ruby.] While this does not change the runtime complexity from a Big-O
-perspective, (`O(n)` == `O(2n)`), constant factors are often relevant in
-practical applications.
+the collection.[^3] While this does not change the runtime complexity from a
+Big-O perspective, (`O(n)` == `O(2n)`), constant factors are often relevant
+in practical applications.
+
+[^3]: This is the power of `collect()` in Rust and `lazy` in Ruby.
 
 Consider this code:
 
@@ -297,81 +293,7 @@ You can use `fold` to help attach a scope for mutating an object in a scope
 that ends when you're done mutating it. That was the topic of [another
 article](https://ethankent.dev/posts/mutation_scopes/#better-yet-put-mutation-in-a-scope-attached-to-the-declaration).
 
-<center>❧&nbsp;❧&nbsp;❧</center>
+❧&nbsp;❧&nbsp;❧
 
 I will admit to overusing `fold` a bit. But I hope you can see why its
 versatility is appealing, both from a pragmatic and an aesthetic perspective.
-
-<!--
-#### `fold` has a problem with short-circuiting.
-
-Notice that our `any` and `all` don't short circuit. We get a better constant
-factor for our time complexity if we can short-circuit our `any` or `all`.
-Let's see if we can do this with Ruby (using the build-in `reduce` method):
-
-```ruby
-# `any` using `reduce`; we're going to skip the actual function definition as I
-# don't want to distract with Ruby's weird blocks and lambdas.
-!![false, true, false, false, false].reduce(false) do |a, e|
-  puts e ? "Breaking" : "Continuing"
-  break true if e
-  a # We'd actually use `each_with_object`, but that's not the point here.
-end
-
-# Continuing
-# Continuing
-# Continuing
-# Continuing
-# Continuing
-# => false
-
-!![false, true, false, false, false].reduce(false) do |a, e|
-  puts e ? "Breaking" : "Continuing"
-  break true if e
-  a
-end
-# Continuing
-# Breaking
-# => true
-
-# "Breaking" + no more output means short circuiting. Voila!
-```
-
-In other words, Ruby gives us a version of `fold` that allows us to
-short-circuit the looping. This isn't possible in all languages, however.
-Consider this JavaScript:
-
-```javascript
-const any = (array, fn) => {
-  return fold(
-    array,
-    (accumulator, element) => {
-      if (fn(element)) {
-        break true; // This isn't valid syntax.
-      }
-      return accumulator;
-    },
-    false,
-  );
-};
-```
-
-In Ruby, putting `break` in a block is pretty powerful. It causes a return
-from the function that `yield`ed to that `block`. In other words, it _reaches
-outside of its own scope_ and makes the function that called _it_ return.
-What's more, `break` is an expression that can make that outer function
-return the value you give it: `break true`, for example. If this seems subtle
-and in the weeds, the takeaway is that Ruby lets you hit the eject button
-from way down inside the code run with each iteration of `reduce` and make
-the whole `reduce` bail out.
-
-That simply isn't possible in JavaScript as a `break` doesn't have the power
-to cause an outer function to return. The JavaScript interpreter looks at the
-`break` and thinks we must be talking about the closure, the one that begins
-`(accumulator, element) =>`. And it says, "What do you mean, break? I don't
-see any loop inside my scope. The interpreter doesn't take any notice of the
-fact that the closure is called from inside a loop. That's a different scope,
-and as I said, JavaScript doesn't let something inside the closure pop its
-head out of its own scope and then tinker with the control flow of the loop
-it's situated inside of, namely the `reduce` itself.
- -->

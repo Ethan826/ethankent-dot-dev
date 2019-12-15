@@ -1,6 +1,7 @@
 ---
 title: Types Are for People, not Computers
 date: 2019-11-14T09:00:00-06:00
+author: Ethan Kent
 draft: false
 ---
 
@@ -158,9 +159,9 @@ kinds of arguments are acceptable and what they can expect it to return.
 Note that we are now describing what kinds of arguments are appropriate in
 _precisely_ the terms that make sense. We're no longer talking about
 arbitrary concretions: we are talking about the arguments at exactly the
-level of abstraction that ought to define them.^[_Cf._ the [Dependency
-Inversion
-Principle](https://en.wikipedia.org/wiki/Dependency_inversion_principle).]
+level of abstraction that ought to define them.[^dip]
+
+[^dip]: _Cf._ the [Dependency Inversion Principle](https://en.wikipedia.org/wiki/Dependency_inversion_principle).]
 
 We have specified the arguments that `math_it_for_me` takes in terms of
 _behavior_, and in so doing have aligned our intent with our understanding
@@ -193,21 +194,19 @@ write a function that is supposed to return a `T` but there is any code path
 in the function that would fail to return a `T`, the compiler will yell at
 you for not satisfying the function's type signature. If the caller of that
 function tries to treat its return type like a `T` rather than an
-`Option<T>`, you will likely get a type error.^[If you just so happened to
-treat your `Option<T>` in a way that is fully compatible with `T`, the type
-system would not catch it.]
+`Option<T>`, you will likely get a type error.[^works-by-accident]
+
+[^works-by-accident]: If you just so happened to treat your `Option<T>` in a way that is fully compatible with `T`, the type system would not catch it.
 
 So unless you follow the antipattern of calling `unwrap()` or `expect()` with
-your `Option` type,^[If you call either with a `None` type, you get a panic,
-which is like an unhandled exception.] the compiler will hound you until you
+your `Option` type,[^unwrap] the compiler will hound you until you
 have dealt with the `null` case. Libertine Rubyists and Pythonistas may
 object and say that they always handle their `nil`s. But that's not what the
 runtime logs say for any of the applications I've worked on in any of my
-programming jobs.^[[Rich Hickey](https://www.youtube.com/watch?v=YR5WdGrpoug)
-doesn't like this pattern, and TypeScript handles nullability a [different
-way](https://www.typescriptlang.org/docs/handbook/advanced-types.html#nullable-types),
-but at bottom any alternative approach should require handling the `null`
-case.]
+programming jobs.[^handle-nulls]
+
+[^unwrap]: If you call either with a `None` type, you get a panic, which is like an unhandled exception.
+[^handle-nulls]: [Rich Hickey](https://www.youtube.com/watch?v=YR5WdGrpoug) doesn't like this pattern, and TypeScript handles nullability a [different way](https://www.typescriptlang.org/docs/handbook/advanced-types.html#nullable-types), but at bottom any alternative approach should require handling the `null` case.
 
 ## Specifying types in terms of interfaces, traits, or typeclasses is the same thing as duck typing, except it's harder to screw up.
 
@@ -229,9 +228,9 @@ are documentation attached to our code like PostIt notes, while tests are
 like books down in the stacks that we have to go looking for, hoping that the
 card catalog will help us find them.
 
-Elsewhere, Metz writes,^[[I'm Sandi Metz, Ask Me
-Anything!](https://dev.to/sandimetz/im-sandi-metz-ask-me-anything-4ff9),
-(Jan. 24, 2018).]
+Elsewhere, Metz writes,[^metz-ama]
+
+[^metz-ama]: [I'm Sandi Metz, Ask Me Anything!](https://dev.to/sandimetz/im-sandi-metz-ask-me-anything-4ff9), (Jan. 24, 2018).
 
 > [I]n my code, I don't get run-time type errors. Because my experience is
 > that dynamic typing is perfectly safe, I find myself resenting having to
