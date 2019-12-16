@@ -24,7 +24,7 @@ fold has a problem with short-circuiting. In defining any and all by using fold,
     <item>
       <title>I fold!</title>
       <link>https://ethankent.dev/posts/i_fold/</link>
-      <pubDate>Sun, 08 Dec 2019 14:14:00 -0600</pubDate>
+      <pubDate>Sun, 08 Dec 2019 14:15:00 -0600</pubDate>
       
       <guid>https://ethankent.dev/posts/i_fold/</guid>
       <description>This article is a love letter to fold, a.k.a. reduce, a.k.a. inject.1
