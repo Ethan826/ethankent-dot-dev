@@ -235,10 +235,11 @@ max([3, 0, 10, 2, 1001, -1000, 1000]);
 // => 1001
 ```
 
-Or, imagine a game in which you must collect one `tinyBooomer` or two
-`megaBoomer`s to win.^[To make this efficient we'd want to be able to
-short-circuit, which will be the subject of the next article.] A `nothing`
-does nothing and a `whammy` makes you lose, assuming you haven't yet won.
+Or, imagine a game in which you must collect two `tinyBooomer`s or one
+`megaBoomer` to win. A `nothing` does nothing and a `whammy` makes you lose,
+assuming you haven't yet won.[^need-short]
+
+[^need-short]: To make this efficient we'd want to be able to short-circuit, which will be the subject of the next article.]
 
 There are refactors to be done by extracting some classes, etc., but here's
 an illustration of what I mean:

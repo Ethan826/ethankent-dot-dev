@@ -244,7 +244,7 @@ like a `goto`; it's now a message being passed.
 
 We can do the same kind of thing for our "game" from the [previous
 post](https://ethankent.dev/posts/i_fold#fold-is-useful-when-we-must-iterate-with-a-flag-or-intermediate-result),
-in which you must collect one `tinyBooomer` or two `megaBoomers` to win, a
+in which you must collect one `tinyBoomer` or two `megaBoomers` to win, a
 `nothing` does nothing and a `whammy` makes you lose, assuming you haven’t
 yet won.
 
