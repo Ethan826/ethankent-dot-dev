@@ -1,7 +1,8 @@
 ---
 title: "That's my bag, baby"
-date: 2019-12-19T12:13:12-06:00
-draft: true
+date: 2020-01-01T12:13:12-06:00
+author: Ethan Kent
+draft: false
 ---
 
 When we want a collection with elements that may repeat, we generally reach
@@ -18,11 +19,11 @@ about insertion order, we can get faster performance.
 
 [^collisions]: I say "something close to" because if you had very bad luck, a bad hashing algorithm, too few buckets, etc., you can wind up with all the elements hashing to the same bucket, meaning that the retrieval and search time will be linear. If you're unfamiliar with how hashmaps and hashsets work, read up on that because it's pretty easy to understand and super cool. The Wikipedia [article](https://en.wikipedia.org/wiki/Hash_table) is a good starting point. Stay tuned for a similar implementation of a related data structure below.
 
-In short, when we don't care about neither insertion order nor repeats, we
-use a set. But what if we don't care about insertion order but _do_ care
-about repeats? Say, for example, we wanted to know how many cars a dealership
-has, but not in what order they were acquired?[^weird] In that case, there is a data
-structure we could use: a bag, also called a multiset.
+In short, when we care about neither insertion order nor repeats, we use a
+set. But what if we don't care about insertion order but _do_ care about
+repeats? Say, for example, we wanted to know how many cars a dealership has,
+but not in what order they were acquired?[^weird] In that case, there is a
+data structure we could use: a bag, also called a multiset.
 
 [^weird]: It's unclear in retrospect why I chose this example, as I don't have any special interest in cars and this seems like a wildly naïve view of how car dealership software works. Car dealership inventory systems might even be so fancy as to use a database with the ability to `COUNT` entries. Let's just go with it.
 
@@ -86,52 +87,7 @@ method.[^contains] This does what we want.
 
 ## How you might implement a bag
 
-An implementation might start out like this:
-
-```typescript
-interface Hashable {
-  hashCode: () => number;
-  maximumHashValue: number;
-  minimumHashValue: number;
-}
-
-class Bag<T extends Hashable> {
-  constructor(private numBuckets = 100) {
-    hashTable = Array(numBuckets);
-    this.count = 0;
-  }
-
-  public insert(value: T): number {
-    const code = value.hashCode();
-    this.count += 1;
-  }
-
-  public contains(value: T): boolean {}
-
-  public delete(value: T): boolean {
-    this.count -= 1;
-  }
-
-  public count(value: T): number {}
-}
-
-// To allow monkey patching not to upset the type system.
-// TODO: Is there a way to say that String *is* a Hashable, DRY?
-interface String {
-  hashCode: () => number;
-  maximumHashValue: number;
-  minimumHashValue: number;
-}
-
-// https://stackoverflow.com/a/8076436/3396324
-String.prototype.hashCode = function() {
-  return [...this].reduce((hash, character) => {
-    hash = (hash << 5) - hash + character.charCodeAt(0);
-    return hash & hash;
-  }, 0);
-};
-
-String.prototype.minimumHashValue = -0x80000000;
-String.prototype.maximumHashValue = 0x7fffffff;
-// const myBag = new Bag<String>();
-```
+I am going to dedicate a few articles to running through what's going on
+here, but I have a working implementation of a bag
+[here](https://www.github.com/ethan826/bag). For now, you can clone it and
+run `yarn` and then `yarn test`.
