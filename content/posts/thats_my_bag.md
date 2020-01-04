@@ -5,6 +5,8 @@ author: Ethan Kent
 draft: false
 ---
 
+(This is part of a series of articles. The next one is [2]({{<relref "/implementing_a_bag">}})
+
 When we want a collection with elements that may repeat, we generally reach
 for an array, list, vector, etc. When we want a collection with elements that
 don't or whose repeats we don't care about, we generally reach for a set.
@@ -83,7 +85,7 @@ myDealership.hasVehicle("Yugo"); // => false
 C++'s Standard Template Library has a multiset with a `contains` and `count`
 method.[^contains] This does what we want.
 
-[^contains]: cppreference.com, std::multiset, https://en.cppreference.com/w/cpp/container/multiset (last visited Dec.~24, 2019). The `contains` method is part of the C++20 spec. _Id._ There is also a `find` method, which is a little confusing in that you might expect it to return the `key` you used to do the finding, which doesn't seem terribly useful. But it actually can return an iterator—but only over that element you used to do the finding, _and not repeats_; for that you use `equal_range`. So it actually is weird, maybe; I haven't researched it enough to understand the exact rationale.
+[^contains]: cppreference.com, std::multiset, https://en.cppreference.com/w/cpp/container/multiset (last visited Dec. 24, 2019). The `contains` method is part of the C++20 spec. _Id._ There is also a `find` method, which is a little confusing in that you might expect it to return the `key` you used to do the finding, which doesn't seem terribly useful. But it actually can return an iterator—but only over that element you used to do the finding, _and not repeats_; for that you use `equal_range`. So it actually is weird, maybe; I haven't researched it enough to understand the exact rationale.
 
 ## How you might implement a bag
 

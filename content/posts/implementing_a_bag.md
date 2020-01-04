@@ -1,6 +1,6 @@
 ---
 title: "Implementing a bag"
-date: 2020-01-03T07:23:09-08:00
+date: 2020-01-03T11:39:14-08:00
 author: Ethan Kent
 draft: false
 ---
@@ -10,7 +10,8 @@ data structure, which is like a set that allows repeated occurrences of the
 same value.
 
 In this post I will discuss my naïve implementation that has the
-goal of `O(1)` best case insertion, search, and deletion. You can follow along by viewing the code at https://www.github.com/ethan826/bag.
+goal of `O(1)` best case insertion, search, and deletion. You can follow
+along by viewing the code at https://www.github.com/ethan826/bag.
 
 In the next post I'll discuss improvements to consider, mostly around
 improving the hash function and considering load factor. For now we are using
@@ -169,3 +170,13 @@ difficult but important to test aspects that would have been part of the
 private API of `Bag` if it had been one giant class. The fact that something
 important to test is inside a private API is a sign that you should extract
 that logic into collaborator and probably inject that dependency.
+
+## Equality
+
+One other thing to notice here is that we are not preserving object identity.
+We are treating objects that are equal and that hash to the same bucket as
+being indistinguishable. In other words, as long as two objects have
+structural equality, we will allow all copies to be garbage collected. This
+is the same thing that happens in a set, but not the same thing that happens
+in an array. Using DDD terminology, a bag of this kind would be an
+inappropriate way to store entities but would be suitable for value objects.

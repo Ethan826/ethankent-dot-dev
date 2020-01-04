@@ -39,14 +39,15 @@
     <span>Written by</span>
         Ethan Kent
         <br>
-        <span>on&nbsp;</span><time datetime="2020-01-01 12:13:12 -0600 -0600">January 1, 2020</time>
+        <span>on&nbsp;</span><time datetime="2020-01-01 12:13:12 -0600 CST">January 1, 2020</time>
 </div>
 		<h1 class="post-title">That&#39;s my bag, baby</h1>
 <div class="post-line"></div>
 
 		
 
-		<p>When we want a collection with elements that may repeat, we generally reach
+		<p>(This is part of a series of articles. The next one is <a href="/posts/implementing_a_bag/">2</a></p>
+<p>When we want a collection with elements that may repeat, we generally reach
 for an array, list, vector, etc. When we want a collection with elements that
 don't or whose repeats we don't care about, we generally reach for a set.</p>
 <p>Efficient set implementations often don't track insertion order. For
@@ -122,7 +123,7 @@ run <code>yarn</code> and then <code>yarn test</code>.</p>
 <p>It's unclear in retrospect why I chose this example, as I don't have any special interest in cars and this seems like a wildly naïve view of how car dealership software works. Car dealership inventory systems might even be so fancy as to use a database with the ability to <code>COUNT</code> entries. Let's just go with it. <a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:3" role="doc-endnote">
-<p>cppreference.com, std::multiset, <a href="https://en.cppreference.com/w/cpp/container/multiset">https://en.cppreference.com/w/cpp/container/multiset</a> (last visited Dec.~24, 2019). The <code>contains</code> method is part of the C++20 spec. <em>Id.</em> There is also a <code>find</code> method, which is a little confusing in that you might expect it to return the <code>key</code> you used to do the finding, which doesn't seem terribly useful. But it actually can return an iterator—but only over that element you used to do the finding, <em>and not repeats</em>; for that you use <code>equal_range</code>. So it actually is weird, maybe; I haven't researched it enough to understand the exact rationale. <a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p>cppreference.com, std::multiset, <a href="https://en.cppreference.com/w/cpp/container/multiset">https://en.cppreference.com/w/cpp/container/multiset</a> (last visited Dec. 24, 2019). The <code>contains</code> method is part of the C++20 spec. <em>Id.</em> There is also a <code>find</code> method, which is a little confusing in that you might expect it to return the <code>key</code> you used to do the finding, which doesn't seem terribly useful. But it actually can return an iterator—but only over that element you used to do the finding, <em>and not repeats</em>; for that you use <code>equal_range</code>. So it actually is weird, maybe; I haven't researched it enough to understand the exact rationale. <a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 </ol>
 </section>
@@ -142,7 +143,7 @@ run <code>yarn</code> and then <code>yarn test</code>.</p>
 
         		<footer>
 			<span>
-			&copy; <time datetime="2020-01-04 10:24:44.049183 -0800 PST m=&#43;0.079000840">2020</time> Ethan Kent. Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
+			&copy; <time datetime="2020-01-04 15:00:01.006348 -0600 CST m=&#43;0.062921316">2020</time> Ethan Kent. Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
 			</span>
 		</footer>
 

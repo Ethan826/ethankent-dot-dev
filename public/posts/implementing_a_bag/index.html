@@ -39,7 +39,7 @@
     <span>Written by</span>
         Ethan Kent
         <br>
-        <span>on&nbsp;</span><time datetime="2020-01-03 07:23:09 -0800 PST">January 3, 2020</time>
+        <span>on&nbsp;</span><time datetime="2020-01-03 11:39:14 -0800 -0800">January 3, 2020</time>
 </div>
 		<h1 class="post-title">Implementing a bag</h1>
 <div class="post-line"></div>
@@ -50,7 +50,8 @@
 data structure, which is like a set that allows repeated occurrences of the
 same value.</p>
 <p>In this post I will discuss my naïve implementation that has the
-goal of <code>O(1)</code> best case insertion, search, and deletion. You can follow along by viewing the code at <a href="https://www.github.com/ethan826/bag">https://www.github.com/ethan826/bag</a>.</p>
+goal of <code>O(1)</code> best case insertion, search, and deletion. You can follow
+along by viewing the code at <a href="https://www.github.com/ethan826/bag">https://www.github.com/ethan826/bag</a>.</p>
 <p>In the next post I'll discuss improvements to consider, mostly around
 improving the hash function and considering load factor. For now we are using
 techniques you wouldn't want to use in production: among other things, we set
@@ -177,6 +178,14 @@ difficult but important to test aspects that would have been part of the
 private API of <code>Bag</code> if it had been one giant class. The fact that something
 important to test is inside a private API is a sign that you should extract
 that logic into collaborator and probably inject that dependency.</p>
+<h2 id="equality">Equality</h2>
+<p>One other thing to notice here is that we are not preserving object identity.
+We are treating objects that are equal and that hash to the same bucket as
+being indistinguishable. In other words, as long as two objects have
+structural equality, we will allow all copies to be garbage collected. This
+is the same thing that happens in a set, but not the same thing that happens
+in an array. Using DDD terminology, a bag of this kind would be an
+inappropriate way to store entities but would be suitable for value objects.</p>
 <section class="footnotes" role="doc-endnotes">
 <hr>
 <ol>
@@ -200,7 +209,7 @@ that logic into collaborator and probably inject that dependency.</p>
 
         		<footer>
 			<span>
-			&copy; <time datetime="2020-01-04 10:24:44.050413 -0800 PST m=&#43;0.080230908">2020</time> Ethan Kent. Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
+			&copy; <time datetime="2020-01-04 15:00:01.007717 -0600 CST m=&#43;0.064289632">2020</time> Ethan Kent. Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
 			</span>
 		</footer>
 
