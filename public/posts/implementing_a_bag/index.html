@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    <head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<title>Implementing a bag &middot; Ethan Kent&#39;s Blog</title>
+
+		
+  		<link rel="stylesheet" href="/css/style.css">
+		<link rel="stylesheet" href="/css/fonts.css">
+		
+		<link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+
+		
+		<link href="" rel="alternate" type="application/rss+xml" title="Ethan Kent&#39;s Blog" />
+	</head>
+
+    <body>
+        		<nav class="nav">
+			<div class="nav-container">
+				<a href="/">
+					<h2 class="nav-title">Ethan Kent&#39;s Blog</h2>
+				</a>
+				<ul>
+    
+    
+</ul>
+			</div>
+		</nav>
+
+        
+
+<main>
+	<div class="post">
+		<div class="post-info">
+    <span>Written by</span>
+        Ethan Kent
+        <br>
+        <span>on&nbsp;</span><time datetime="2020-01-03 07:23:09 -0800 PST">January 3, 2020</time>
+</div>
+		<h1 class="post-title">Implementing a bag</h1>
+<div class="post-line"></div>
+
+		
+
+		<p>In my previous <a href="/posts/thats_my_bag/">post</a>, I talked about a bag
+data structure, which is like a set that allows repeated occurrences of the
+same value.</p>
+<p>In this post I will discuss my naïve implementation that has the
+goal of <code>O(1)</code> best case insertion, search, and deletion. You can follow along by viewing the code at <a href="https://www.github.com/ethan826/bag">https://www.github.com/ethan826/bag</a>.</p>
+<p>In the next post I'll discuss improvements to consider, mostly around
+improving the hash function and considering load factor. For now we are using
+techniques you wouldn't want to use in production: among other things, we set
+a <code>numBuckets</code> value to 100 and never adjust that; and our hashing method may
+not be robust against collisions. I will also discuss testing in a future
+post.</p>
+<p>One other preliminary note: the easiest way to do this would be to wrap a
+hashmap/object.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-typescript" data-lang="typescript"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Bag</span><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">T</span><span style="color:#f92672">&gt;</span> {
+  <span style="color:#66d9ef">private</span> <span style="color:#a6e22e">bag</span>: <span style="color:#66d9ef">Object</span><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">T</span>, <span style="color:#66d9ef">number</span><span style="color:#f92672">&gt;</span>;
+
+  <span style="color:#66d9ef">constructor</span>() {
+    <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">bag</span> <span style="color:#f92672">=</span> {};
+  }
+
+  <span style="color:#a6e22e">insert</span>(<span style="color:#a6e22e">value</span>: <span style="color:#66d9ef">T</span>) {
+    <span style="color:#66d9ef">if</span> (<span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">bag</span>.<span style="color:#a6e22e">hasOwnProperty</span>(<span style="color:#a6e22e">value</span>)) {
+      <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">bag</span>[<span style="color:#a6e22e">value</span>] <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>;
+    } <span style="color:#66d9ef">else</span> {
+      <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">bag</span>[<span style="color:#a6e22e">value</span>] <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>;
+    }
+  }
+
+  <span style="color:#75715e">// And so on...
+</span><span style="color:#75715e"></span>}
+</code></pre></div><p>I wanted to learn a bit about how hashtable-based data structures worked, so
+I've rolled my own using arrays.</p>
+<h2 id="generic-bag">Generic bag</h2>
+<p>We want the bag to accept generic types, but we want to make sure that any
+type we use can be hashed. For the time being, it makes the most sense to
+require types to satisfy this requirement themselves: I don't care what kind
+of type you are so long as you implement the behavior we ask for. So
+throughout this project, the type signature is <code>T extends Hashable</code>, where
+<code>Hashable</code> is this:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-typescript" data-lang="typescript"><span style="color:#75715e">// src/Hashable/index.ts
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">/**
+</span><span style="color:#75715e"> * Represents a type that can be hashed to an integer value.
+</span><span style="color:#75715e"> */</span>
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">default</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Hashable</span> {
+  <span style="color:#a6e22e">hashCode</span><span style="color:#f92672">:</span> () <span style="color:#f92672">=</span><span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">number</span>;
+  <span style="color:#a6e22e">maximumHashValue</span>: <span style="color:#66d9ef">number</span>;
+  <span style="color:#a6e22e">minimumHashValue</span>: <span style="color:#66d9ef">number</span>;
+}
+</code></pre></div><p>So a type that extends <code>Hashable</code> is one that (1) can hash itself, and (2)
+can tell you where that hashed value fits in with the range of possible
+outputs from the hashing function. This is an example of asking &ldquo;who needs to
+know this?&rdquo; Should <code>Bag</code> and its collaborators know how to hash every
+possible type? Should a person creating a new type have to write code in
+<code>Bag</code> or one of its collaborators? No. This is also an example of the <em>O</em> in
+<em>SOLID</em>.</p>
+<p>That allows the <code>HashTable</code> class to work out what bucket the value belongs
+in:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-typescript" data-lang="typescript"><span style="color:#75715e">// src/Bag/HashTable.ts
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">/**
+</span><span style="color:#75715e">  * Determine what bucket—meaning the index of `hashTable`—the `value` belongs
+</span><span style="color:#75715e">  * in. This is the result of taking the hashcode for `value` and determining
+</span><span style="color:#75715e">  * proprotionately how far between the minimum and maximum `hashCode` values
+</span><span style="color:#75715e">  * that `value` falls, then finding what integer that falls into from zero to
+</span><span style="color:#75715e">  * `numBuckets`.
+</span><span style="color:#75715e">  *
+</span><span style="color:#75715e">  * @param value - The value to determine the bucket for.
+</span><span style="color:#75715e">  * @returns The bucket number, meaning the index for `hashTable`.
+</span><span style="color:#75715e">  */</span>
+<span style="color:#66d9ef">private</span> <span style="color:#a6e22e">computeBucket</span>(<span style="color:#a6e22e">value</span>: <span style="color:#66d9ef">T</span>)<span style="color:#f92672">:</span> <span style="color:#66d9ef">number</span> {
+  <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">sizeOfRange</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">value</span>.<span style="color:#a6e22e">maximumHashValue</span> <span style="color:#f92672">-</span> <span style="color:#a6e22e">value</span>.<span style="color:#a6e22e">minimumHashValue</span>;
+  <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">distanceFromFloor</span> <span style="color:#f92672">=</span>
+    (<span style="color:#a6e22e">value</span>.<span style="color:#a6e22e">hashCode</span>() <span style="color:#f92672">-</span> <span style="color:#a6e22e">value</span>.<span style="color:#a6e22e">minimumHashValue</span>) <span style="color:#f92672">/</span> <span style="color:#a6e22e">sizeOfRange</span>;
+  <span style="color:#66d9ef">return</span> Math.<span style="color:#a6e22e">floor</span>(<span style="color:#a6e22e">distanceFromFloor</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">numBuckets</span>);
+}
+</code></pre></div><p>This is also an example of &ldquo;describing what kinds of arguments are
+appropriate in <em>precisely</em> the terms that make sense&rdquo; that I referred to in
+an earlier <a href="/posts/types_are_for_people/">post</a>.</p>
+<h2 id="design">Design</h2>
+<p>Recall that hash tables work a bit like libraries. You look up a book by call
+number, which lets you end up standing in front of the right bookshelf. Then
+you look at the books that are present to find the one you want. For our
+implementation,</p>
+<ul>
+<li><code>Bag</code> is the library: it contains the bookshelves and the card catalog, and
+keeps track of the overall status of things (for example, it might track
+how many total books are present).</li>
+<li><code>HashTable</code> is the card catalog: it helps you go from knowing what book
+title you want to standing in front of the correct shelf.</li>
+<li><code>Bucket</code> is the shelf: it's what actually holds a small subset of the
+library's books, and the thing from which books are actually inserted and
+removed.</li>
+</ul>
+<h3 id="bag"><code>Bag</code></h3>
+<p><code>Bag</code> exposes methods like <code>insert(value: T)</code>, <code>delete(value: T)</code>,
+<code>deleteAll(value: T)</code>, and <code>count(value: T)</code>. <code>Bag</code>—after doing its own
+bookkeeping (for example increasing the value returned by
+<code>length()</code>—delegates all these methods to the same methods on <code>Bucket</code>. <code>Bag</code>
+also directly delegates <code>toArray()</code> to <code>HashTable</code>.</p>
+<h3 id="hashtable"><code>HashTable</code></h3>
+<p><code>HashTable</code> maintains the array of buckets and knows how to fetch a <code>Bucket</code>
+based on a <code>value</code>. It simply organizes buckets and passes them up to <code>Bag</code>.
+It calls <code>hashCode()</code> on values, then figures out proportionately where that
+fits given the number of buckets (if the value hashes to 9,999 in a range of
+10,000 possible hash codes, and there are ten buckets, <code>HashTable</code> figures
+out that we want the tenth bucket).</p>
+<h3 id="bucket"><code>Bucket</code></h3>
+<p>In an ideal world a <code>Bucket</code> would contain only a few values. If there were
+only one bucket or if the hashing algorithm always returned the same value,
+all entries in the <code>HashTable</code> (and therefore the <code>Bag</code>) would be in a single
+bucket. That's why the worst-case performance for common operations is
+<code>O(n)</code>.</p>
+<p><code>Bucket</code> exposes a similar public API as <code>Bag</code> does, and that's because <code>Bag</code>
+uses <code>HashTable</code> to find the right <code>Bucket</code>, then asks <code>Bucket</code> to do the
+work of inserting, deleting, counting, etc.</p>
+<p><code>Bucket</code> also hides the detail mentioned in the previous
+<a href="/posts/thats_my_bag/">post</a>, namely avoiding the presumption that something is intended by the difference between a value that's missing from the data structure versus a value that reports zero occurrences.<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
+<h2 id="injectability">Injectability</h2>
+<p><code>Bag</code> allows us to inject the <code>HashTable</code> implementation. A good refactor
+would be to define <code>HashTable</code> as an interface and make the parameter generic
+over <code>HashTable</code> interfaces. Similarly, <code>HashTable</code> allows us to inject
+<code>Bucket</code>'s constructor. The same refactor applies here.</p>
+<p>The goal with this is to satisfy the <em>D</em> of <em>SOLID</em>, which brings along
+benefits when testing, as I shall take up in a future post.</p>
+<p>I arrived at this overall architecture by applying the <em>extract class</em>
+refactor two times. What drove me to that was that I realized it was
+difficult but important to test aspects that would have been part of the
+private API of <code>Bag</code> if it had been one giant class. The fact that something
+important to test is inside a private API is a sign that you should extract
+that logic into collaborator and probably inject that dependency.</p>
+<section class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1" role="doc-endnote">
+<p>See my earlier <a href="/posts/priors/">post</a> about avoiding differences that don't mean anything. <a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</section>
+
+
+		
+	</div>
+
+	<div class="pagination">
+		<a href="/posts/thats_my_bag/" class="left arrow">&#8592;</a>
+
+		<a href="#" class="top">Top</a>
+	</div>
+</main>
+
+
+        		<footer>
+			<span>
+			&copy; <time datetime="2020-01-04 10:24:44.050413 -0800 PST m=&#43;0.080230908">2020</time> Ethan Kent. Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
+			</span>
+		</footer>
+
+    </body>
+</html>

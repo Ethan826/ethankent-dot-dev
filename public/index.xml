@@ -6,10 +6,21 @@
     <description>Recent content on Ethan Kent&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 01 Jan 2020 12:13:12 -0600</lastBuildDate>
+    <lastBuildDate>Fri, 03 Jan 2020 07:23:09 -0800</lastBuildDate>
     
 	<atom:link href="https://ethankent.dev/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Implementing a bag</title>
+      <link>https://ethankent.dev/posts/implementing_a_bag/</link>
+      <pubDate>Fri, 03 Jan 2020 07:23:09 -0800</pubDate>
+      
+      <guid>https://ethankent.dev/posts/implementing_a_bag/</guid>
+      <description>In my previous post, I talked about a bag data structure, which is like a set that allows repeated occurrences of the same value.
+In this post I will discuss my naïve implementation that has the goal of O(1) best case insertion, search, and deletion. You can follow along by viewing the code at https://www.github.com/ethan826/bag.
+In the next post I&#39;ll discuss improvements to consider, mostly around improving the hash function and considering load factor.</description>
+    </item>
     
     <item>
       <title>That&#39;s my bag, baby</title>
