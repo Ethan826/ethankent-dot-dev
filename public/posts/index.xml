@@ -28,7 +28,7 @@ In the next post I&#39;ll discuss improvements to consider, mostly around improv
       <pubDate>Wed, 01 Jan 2020 12:13:12 -0600</pubDate>
       
       <guid>https://ethankent.dev/posts/thats_my_bag/</guid>
-      <description>(This is part of a series of articles. The next one is 2
+      <description>(This is part of a series of articles. The next one is here.)
 When we want a collection with elements that may repeat, we generally reach for an array, list, vector, etc. When we want a collection with elements that don&#39;t or whose repeats we don&#39;t care about, we generally reach for a set.
 Efficient set implementations often don&#39;t track insertion order. For hashsets, that&#39;s because they hash their input and organize based on that hashed value.</description>
     </item>
