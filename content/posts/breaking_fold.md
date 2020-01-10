@@ -161,33 +161,55 @@ accumulator in `Continue` or `Done`. Before the loop each iterates each time,
 it checks to see which wrapper the previous iteration returned. If it's a
 `Done`, the loop breaks.
 
-```javascript
-// The three classes are basically a poor man's enum (of the Rust type where the
-// variants can wrap values). We need the functionality provided in
-// `FoldWhileBaseContainer` and then the two subclasses just so we can switch on
-// type.
-class FoldWhileBaseContainer {
-  constructor(value) {
+```typescript
+// Our interface for `Continue` and `Done` will wrap a value that can be
+// unwrapped with `intoInner`, and also report whether we should continue or
+// not.
+interface IFoldWhile<T> {
+  intoInner: () => T;
+  shouldContinue: () => boolean;
+}
+
+// Implement the shared part of our functionality.
+abstract class FoldWhileBaseContainer<T> implements Partial<IFoldWhile<T>> {
+  private value: T;
+
+  constructor(value: T) {
     this.value = value;
   }
 
-  // Unwraps the `Continue` or `Done`.
   intoInner() {
     return this.value;
   }
 }
 
-// Once again, these only exist so we can switch on type.
-class FoldWhileContinue extends FoldWhileBaseContainer {}
-class FoldWhileDone extends FoldWhileBaseContainer {}
+class FoldWhileContinue<T> extends FoldWhileBaseContainer<T>
+  implements IFoldWhile<T> {
+  shouldContinue() {
+    return true;
+  }
+}
+
+class FoldWhileDone<T> extends FoldWhileBaseContainer<T>
+  implements IFoldWhile<T> {
+  shouldContinue() {
+    return false;
+  }
+}
 
 // Convenience factory helper thingies
-const Continue = value => new FoldWhileContinue(value);
-const Done = value => new FoldWhileDone(value);
+const Continue: <T>(value: T) => IFoldWhile<T> = <T>(value: T) =>
+  new FoldWhileContinue(value);
+const Done: <T>(value: T) => IFoldWhile<T> = <T>(value: T) =>
+  new FoldWhileDone(value);
 
 // Here's the actual `fold` function we're defining. The preceding has been
 // setup.
-const foldWhile = (array, fn, initialAccumulator) => {
+const foldWhile = <T, U>(
+  array: T[],
+  fn: (acc: U, el: T) => IFoldWhile<U>,
+  initialAccumulator: U,
+) => {
   let accumulator = Continue(
     typeof initialAccumulator === "undefined" ? [] : initialAccumulator,
   );
@@ -195,17 +217,14 @@ const foldWhile = (array, fn, initialAccumulator) => {
   for (const element of array) {
     // Are we supposed to `Continue`? If we get a `FoldWhileContinue`-wrapped
     // value from the previous iteration, we continue with the normal `fold`.
-    if (accumulator.constructor.name === FoldWhileContinue.name) {
-      accumulator = fn(accumulator.intoInner(), element);
+    if (accumulator.shouldContinue()) {
+      const continueValue = accumulator.intoInner() as U;
+      accumulator = fn(continueValue, element);
 
       // Or are we supposed to be `Done`? This is the key to short-circuiting.
       // If we get a `FoldWhileDone`-wrapped value, we `break`.
-    } else if (accumulator.constructor.name === FoldWhileDone.name) {
-      break;
-
-      // Or did somebody mess up?
     } else {
-      throw new TypeError(); // Helpful message goes here.
+      break;
     }
   }
 
@@ -213,7 +232,7 @@ const foldWhile = (array, fn, initialAccumulator) => {
 };
 
 // Now we can define a short-circuiting `any` based on `foldWhile`.
-const any = (array, fn) => {
+const any = <T>(array: T[], fn: <T>(value: T) => boolean) => {
   return foldWhile(
     array,
     (truthFlag, element) => {
@@ -224,7 +243,7 @@ const any = (array, fn) => {
   ).intoInner();
 };
 
-any([false, false, false, false, true], x => x);
+any([false, false, false, false, true], x => !!x);
 // Running
 // Running
 // Running
@@ -232,7 +251,7 @@ any([false, false, false, false, true], x => x);
 // Running
 // => true
 
-any([true, false, false, false, false], x => x);
+any([true, false, false, false, false], x => !!x);
 // Running
 // => true
 ```

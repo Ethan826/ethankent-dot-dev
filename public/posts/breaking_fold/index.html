@@ -170,61 +170,80 @@ Rust's <code>itertools</code> concept, in JS. The upshot is that we will wrap th
 accumulator in <code>Continue</code> or <code>Done</code>. Before the loop each iterates each time,
 it checks to see which wrapper the previous iteration returned. If it's a
 <code>Done</code>, the loop breaks.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#75715e">// The three classes are basically a poor man&#39;s enum (of the Rust type where the
-</span><span style="color:#75715e"></span><span style="color:#75715e">// variants can wrap values). We need the functionality provided in
-</span><span style="color:#75715e"></span><span style="color:#75715e">// `FoldWhileBaseContainer` and then the two subclasses just so we can switch on
-</span><span style="color:#75715e"></span><span style="color:#75715e">// type.
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">FoldWhileBaseContainer</span> {
-  <span style="color:#a6e22e">constructor</span>(<span style="color:#a6e22e">value</span>) {
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-typescript" data-lang="typescript"><span style="color:#75715e">// Our interface for `Continue` and `Done` will wrap a value that can be
+</span><span style="color:#75715e"></span><span style="color:#75715e">// unwrapped with `intoInner`, and also report whether we should continue or
+</span><span style="color:#75715e"></span><span style="color:#75715e">// not.
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">IFoldWhile</span><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">T</span><span style="color:#f92672">&gt;</span> {
+  <span style="color:#a6e22e">intoInner</span><span style="color:#f92672">:</span> () <span style="color:#f92672">=</span><span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">T</span>;
+  <span style="color:#a6e22e">shouldContinue</span><span style="color:#f92672">:</span> () <span style="color:#f92672">=</span><span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">boolean</span>;
+}
+
+<span style="color:#75715e">// Implement the shared part of our functionality.
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">abstract</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">FoldWhileBaseContainer</span><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">T</span><span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">implements</span> <span style="color:#a6e22e">Partial</span><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">IFoldWhile</span><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">T</span><span style="color:#f92672">&gt;&gt;</span> {
+  <span style="color:#66d9ef">private</span> <span style="color:#a6e22e">value</span>: <span style="color:#66d9ef">T</span>;
+
+  <span style="color:#66d9ef">constructor</span>(<span style="color:#a6e22e">value</span>: <span style="color:#66d9ef">T</span>) {
     <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">value</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">value</span>;
   }
 
-  <span style="color:#75715e">// Unwraps the `Continue` or `Done`.
-</span><span style="color:#75715e"></span>  <span style="color:#a6e22e">intoInner</span>() {
+  <span style="color:#a6e22e">intoInner() {</span>
     <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">value</span>;
   }
 }
 
-<span style="color:#75715e">// Once again, these only exist so we can switch on type.
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">FoldWhileContinue</span> <span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">FoldWhileBaseContainer</span> {}
-<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">FoldWhileDone</span> <span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">FoldWhileBaseContainer</span> {}
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">FoldWhileContinue</span><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">T</span><span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">FoldWhileBaseContainer</span><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">T</span><span style="color:#f92672">&gt;</span>
+  <span style="color:#66d9ef">implements</span> <span style="color:#a6e22e">IFoldWhile</span><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">T</span><span style="color:#f92672">&gt;</span> {
+  <span style="color:#a6e22e">shouldContinue() {</span>
+    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">true</span>;
+  }
+}
+
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">FoldWhileDone</span><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">T</span><span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">FoldWhileBaseContainer</span><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">T</span><span style="color:#f92672">&gt;</span>
+  <span style="color:#66d9ef">implements</span> <span style="color:#a6e22e">IFoldWhile</span><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">T</span><span style="color:#f92672">&gt;</span> {
+  <span style="color:#a6e22e">shouldContinue() {</span>
+    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">false</span>;
+  }
+}
 
 <span style="color:#75715e">// Convenience factory helper thingies
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">Continue</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">value</span> =&gt; <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">FoldWhileContinue</span>(<span style="color:#a6e22e">value</span>);
-<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">Done</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">value</span> =&gt; <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">FoldWhileDone</span>(<span style="color:#a6e22e">value</span>);
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">Continue</span><span style="color:#f92672">:</span> <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">T</span><span style="color:#f92672">&gt;</span>(<span style="color:#a6e22e">value</span>: <span style="color:#66d9ef">T</span>) <span style="color:#f92672">=</span><span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">IFoldWhile</span><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">T</span><span style="color:#f92672">&gt;</span> <span style="color:#f92672">=</span> <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">T</span><span style="color:#f92672">&gt;</span>(<span style="color:#a6e22e">value</span>: <span style="color:#66d9ef">T</span>) <span style="color:#f92672">=</span><span style="color:#f92672">&gt;</span>
+  <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">FoldWhileContinue</span>(<span style="color:#a6e22e">value</span>);
+<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">Done</span><span style="color:#f92672">:</span> <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">T</span><span style="color:#f92672">&gt;</span>(<span style="color:#a6e22e">value</span>: <span style="color:#66d9ef">T</span>) <span style="color:#f92672">=</span><span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">IFoldWhile</span><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">T</span><span style="color:#f92672">&gt;</span> <span style="color:#f92672">=</span> <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">T</span><span style="color:#f92672">&gt;</span>(<span style="color:#a6e22e">value</span>: <span style="color:#66d9ef">T</span>) <span style="color:#f92672">=</span><span style="color:#f92672">&gt;</span>
+  <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">FoldWhileDone</span>(<span style="color:#a6e22e">value</span>);
 
 <span style="color:#75715e">// Here&#39;s the actual `fold` function we&#39;re defining. The preceding has been
 </span><span style="color:#75715e"></span><span style="color:#75715e">// setup.
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">foldWhile</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">array</span>, <span style="color:#a6e22e">fn</span>, <span style="color:#a6e22e">initialAccumulator</span>) =&gt; {
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">foldWhile</span> <span style="color:#f92672">=</span> <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">T</span>, <span style="color:#a6e22e">U</span><span style="color:#f92672">&gt;</span>(
+  <span style="color:#a6e22e">array</span>: <span style="color:#66d9ef">T</span>[],
+  <span style="color:#a6e22e">fn</span><span style="color:#f92672">:</span> (<span style="color:#a6e22e">acc</span>: <span style="color:#66d9ef">U</span>, <span style="color:#a6e22e">el</span>: <span style="color:#66d9ef">T</span>) <span style="color:#f92672">=</span><span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">IFoldWhile</span><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">U</span><span style="color:#f92672">&gt;</span>,
+  <span style="color:#a6e22e">initialAccumulator</span>: <span style="color:#66d9ef">U</span>,
+) <span style="color:#f92672">=</span><span style="color:#f92672">&gt;</span> {
   <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">accumulator</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">Continue</span>(
     <span style="color:#66d9ef">typeof</span> <span style="color:#a6e22e">initialAccumulator</span> <span style="color:#f92672">===</span> <span style="color:#e6db74">&#34;undefined&#34;</span> <span style="color:#f92672">?</span> [] <span style="color:#f92672">:</span> <span style="color:#a6e22e">initialAccumulator</span>,
   );
 
-  <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">element</span> <span style="color:#66d9ef">of</span> <span style="color:#a6e22e">array</span>) {
+  <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">element</span> <span style="color:#a6e22e">of</span> <span style="color:#a6e22e">array</span>) {
     <span style="color:#75715e">// Are we supposed to `Continue`? If we get a `FoldWhileContinue`-wrapped
 </span><span style="color:#75715e"></span>    <span style="color:#75715e">// value from the previous iteration, we continue with the normal `fold`.
-</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">accumulator</span>.<span style="color:#a6e22e">constructor</span>.<span style="color:#a6e22e">name</span> <span style="color:#f92672">===</span> <span style="color:#a6e22e">FoldWhileContinue</span>.<span style="color:#a6e22e">name</span>) {
-      <span style="color:#a6e22e">accumulator</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">fn</span>(<span style="color:#a6e22e">accumulator</span>.<span style="color:#a6e22e">intoInner</span>(), <span style="color:#a6e22e">element</span>);
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">accumulator</span>.<span style="color:#a6e22e">shouldContinue</span>()) {
+      <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">continueValue</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">accumulator</span>.<span style="color:#a6e22e">intoInner</span>() <span style="color:#66d9ef">as</span> <span style="color:#a6e22e">U</span>;
+      <span style="color:#a6e22e">accumulator</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">fn</span>(<span style="color:#a6e22e">continueValue</span>, <span style="color:#a6e22e">element</span>);
 
       <span style="color:#75715e">// Or are we supposed to be `Done`? This is the key to short-circuiting.
 </span><span style="color:#75715e"></span>      <span style="color:#75715e">// If we get a `FoldWhileDone`-wrapped value, we `break`.
-</span><span style="color:#75715e"></span>    } <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">accumulator</span>.<span style="color:#a6e22e">constructor</span>.<span style="color:#a6e22e">name</span> <span style="color:#f92672">===</span> <span style="color:#a6e22e">FoldWhileDone</span>.<span style="color:#a6e22e">name</span>) {
-      <span style="color:#66d9ef">break</span>;
-
-      <span style="color:#75715e">// Or did somebody mess up?
 </span><span style="color:#75715e"></span>    } <span style="color:#66d9ef">else</span> {
-      <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">TypeError</span>(); <span style="color:#75715e">// Helpful message goes here.
-</span><span style="color:#75715e"></span>    }
+      <span style="color:#66d9ef">break</span>;
+    }
   }
 
   <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">accumulator</span>;
 };
 
 <span style="color:#75715e">// Now we can define a short-circuiting `any` based on `foldWhile`.
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">any</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">array</span>, <span style="color:#a6e22e">fn</span>) =&gt; {
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">any</span> <span style="color:#f92672">=</span> <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">T</span><span style="color:#f92672">&gt;</span>(<span style="color:#a6e22e">array</span>: <span style="color:#66d9ef">T</span>[], <span style="color:#a6e22e">fn</span><span style="color:#f92672">:</span> <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">T</span><span style="color:#f92672">&gt;</span>(<span style="color:#a6e22e">value</span>: <span style="color:#66d9ef">T</span>) <span style="color:#f92672">=</span><span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">boolean</span>) <span style="color:#f92672">=</span><span style="color:#f92672">&gt;</span> {
   <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">foldWhile</span>(
     <span style="color:#a6e22e">array</span>,
-    (<span style="color:#a6e22e">truthFlag</span>, <span style="color:#a6e22e">element</span>) =&gt; {
+    (<span style="color:#a6e22e">truthFlag</span>, <span style="color:#a6e22e">element</span>) <span style="color:#f92672">=</span><span style="color:#f92672">&gt;</span> {
       <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;Running&#34;</span>);
       <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">fn</span>(<span style="color:#a6e22e">element</span>) <span style="color:#f92672">?</span> <span style="color:#a6e22e">Done</span>(<span style="color:#66d9ef">true</span>) <span style="color:#f92672">:</span> <span style="color:#a6e22e">Continue</span>(<span style="color:#66d9ef">false</span>);
     },
@@ -232,7 +251,7 @@ it checks to see which wrapper the previous iteration returned. If it's a
   ).<span style="color:#a6e22e">intoInner</span>();
 };
 
-<span style="color:#a6e22e">any</span>([<span style="color:#66d9ef">false</span>, <span style="color:#66d9ef">false</span>, <span style="color:#66d9ef">false</span>, <span style="color:#66d9ef">false</span>, <span style="color:#66d9ef">true</span>], <span style="color:#a6e22e">x</span> =&gt; <span style="color:#a6e22e">x</span>);
+<span style="color:#a6e22e">any</span>([<span style="color:#66d9ef">false</span>, <span style="color:#66d9ef">false</span>, <span style="color:#66d9ef">false</span>, <span style="color:#66d9ef">false</span>, <span style="color:#66d9ef">true</span>], <span style="color:#a6e22e">x</span> <span style="color:#f92672">=</span><span style="color:#f92672">&gt;</span> <span style="color:#f92672">!</span><span style="color:#f92672">!</span><span style="color:#a6e22e">x</span>);
 <span style="color:#75715e">// Running
 </span><span style="color:#75715e"></span><span style="color:#75715e">// Running
 </span><span style="color:#75715e"></span><span style="color:#75715e">// Running
@@ -240,7 +259,7 @@ it checks to see which wrapper the previous iteration returned. If it's a
 </span><span style="color:#75715e"></span><span style="color:#75715e">// Running
 </span><span style="color:#75715e"></span><span style="color:#75715e">// =&gt; true
 </span><span style="color:#75715e"></span>
-<span style="color:#a6e22e">any</span>([<span style="color:#66d9ef">true</span>, <span style="color:#66d9ef">false</span>, <span style="color:#66d9ef">false</span>, <span style="color:#66d9ef">false</span>, <span style="color:#66d9ef">false</span>], <span style="color:#a6e22e">x</span> =&gt; <span style="color:#a6e22e">x</span>);
+<span style="color:#a6e22e">any</span>([<span style="color:#66d9ef">true</span>, <span style="color:#66d9ef">false</span>, <span style="color:#66d9ef">false</span>, <span style="color:#66d9ef">false</span>, <span style="color:#66d9ef">false</span>], <span style="color:#a6e22e">x</span> <span style="color:#f92672">=</span><span style="color:#f92672">&gt;</span> <span style="color:#f92672">!</span><span style="color:#f92672">!</span><span style="color:#a6e22e">x</span>);
 <span style="color:#75715e">// Running
 </span><span style="color:#75715e"></span><span style="color:#75715e">// =&gt; true
 </span></code></pre></div><p>The function passed to <code>fold</code> is no longer trying to alter control flow
@@ -392,7 +411,7 @@ the flag makes no sense.</p>
 
         		<footer>
 			<span>
-			&copy; <time datetime="2020-01-05 11:02:56.962669 -0600 CST m=&#43;0.392088561">2020</time> Ethan Kent. Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
+			&copy; <time datetime="2020-01-10 08:44:58.201747 -0600 CST m=&#43;0.228830958">2020</time> Ethan Kent. Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
 			</span>
 		</footer>
 
