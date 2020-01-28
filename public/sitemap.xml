@@ -3,17 +3,22 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://ethankent.dev/</loc>
-    <lastmod>2020-01-03T11:39:14-08:00</lastmod>
+    <loc>https://ethankent.dev/posts/carried_on_bags/</loc>
+    <lastmod>2020-01-28T12:38:22-06:00</lastmod>
   </url>
   
   <url>
-    <loc>https://ethankent.dev/posts/implementing_a_bag/</loc>
-    <lastmod>2020-01-03T11:39:14-08:00</lastmod>
+    <loc>https://ethankent.dev/</loc>
+    <lastmod>2020-01-28T12:38:22-06:00</lastmod>
   </url>
   
   <url>
     <loc>https://ethankent.dev/posts/</loc>
+    <lastmod>2020-01-28T12:38:22-06:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://ethankent.dev/posts/implementing_a_bag/</loc>
     <lastmod>2020-01-03T11:39:14-08:00</lastmod>
   </url>
   

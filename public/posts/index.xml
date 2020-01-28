@@ -6,10 +6,21 @@
     <description>Recent content in Posts on Ethan Kent&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 03 Jan 2020 11:39:14 -0800</lastBuildDate>
+    <lastBuildDate>Tue, 28 Jan 2020 12:38:22 -0600</lastBuildDate>
     
 	<atom:link href="https://ethankent.dev/posts/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Carried on: bags</title>
+      <link>https://ethankent.dev/posts/carried_on_bags/</link>
+      <pubDate>Tue, 28 Jan 2020 12:38:22 -0600</pubDate>
+      
+      <guid>https://ethankent.dev/posts/carried_on_bags/</guid>
+      <description>(This is part 3 of a series on the bag/multiset data structure. Check out parts 1 and 2.)
+Improving the hash function So our bag works per our tests. Let&#39;s take a look at the naïve implementation of hashing, at least for strings:
+// This is the equivalent of `impl`ing a trait in Rust. type String = Hashable; // https://stackoverflow.com/a/8076436/3396324 String.prototype.hashCode = function(): number { return [...this].reduce((hash, character) =&amp;gt; { hash = (hash &amp;lt;&amp;lt; 5) - hash + character.</description>
+    </item>
     
     <item>
       <title>Implementing a bag</title>
