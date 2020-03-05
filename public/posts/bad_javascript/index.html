@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    <head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<title>Bad javascript language design choices &middot; Ethan Kent&#39;s Blog</title>
+
+		
+  		<link rel="stylesheet" href="/css/style.css">
+		<link rel="stylesheet" href="/css/fonts.css">
+		
+		<link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+
+		
+		<link href="" rel="alternate" type="application/rss+xml" title="Ethan Kent&#39;s Blog" />
+	</head>
+
+    <body>
+        		<nav class="nav">
+			<div class="nav-container">
+				<a href="/">
+					<h2 class="nav-title">Ethan Kent&#39;s Blog</h2>
+				</a>
+				<ul>
+    
+    
+</ul>
+			</div>
+		</nav>
+
+        
+
+<main>
+	<div class="post">
+		<div class="post-info">
+    <span>Written by</span>
+        Ethan Kent
+        <br>
+        <span>on&nbsp;</span><time datetime="2020-03-05 13:34:49 -0600 CST">March 5, 2020</time>
+</div>
+		<h1 class="post-title">Bad javascript language design choices</h1>
+<div class="post-line"></div>
+
+		
+
+		<p>The category <em>discussions about weird JavaScript things</em> is a large and
+amusing one, probably best exemplified by Gary Bernhardt's
+<a href="https://www.destroyallsoftware.com/talks/wat">Wat</a> lightning talk.</p>
+<p>I'd like to focus on two I haven't seen discussed as much (though I may
+simply have overlooked the canonical article). First, <code>const</code> doesn't work
+the way it ought to, and second, <code>indexOf</code>'s magic number thing is godawful.</p>
+<h2 id="const-doesnt-solve-the-problem-it-ought-to-solve"><code>const</code> doesn't solve the problem it ought to solve.</h2>
+<p>Consider this situation:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">myArray</span> <span style="color:#f92672">=</span> [<span style="color:#ae81ff">3</span>, <span style="color:#66d9ef">null</span>, <span style="color:#ae81ff">5</span>, <span style="color:#ae81ff">7</span>, <span style="color:#66d9ef">null</span>, <span style="color:#ae81ff">10</span>];
+<span style="color:#a6e22e">printArrayWithNoNulls</span>(<span style="color:#a6e22e">myArray</span>);
+
+<span style="color:#75715e">// =&gt; null
+</span><span style="color:#75715e"></span><span style="color:#75715e">// =&gt; null
+</span><span style="color:#75715e"></span><span style="color:#75715e">// =&gt; null
+</span><span style="color:#75715e"></span><span style="color:#75715e">// =&gt; null
+</span><span style="color:#75715e"></span><span style="color:#75715e">// =&gt; null
+</span><span style="color:#75715e"></span><span style="color:#75715e">// =&gt; null
+</span><span style="color:#75715e"></span>
+<span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">myArray</span>);
+<span style="color:#75715e">// =&gt; [ null, null, null, null, null, null ]
+</span></code></pre></div><p>Wait, what happened!? Well, it turns out the method has a bug:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">printArrayWithNoNulls</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">arr</span>) =&gt; {
+    <span style="color:#66d9ef">for</span>(<span style="color:#66d9ef">let</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> <span style="color:#f92672">&lt;</span> <span style="color:#a6e22e">arr</span>.<span style="color:#a6e22e">length</span>; <span style="color:#f92672">++</span><span style="color:#a6e22e">i</span>) {
+        <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">arr</span>[<span style="color:#a6e22e">i</span>] <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span>) {
+            <span style="color:#66d9ef">continue</span>;
+        }
+        <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">arr</span>[<span style="color:#a6e22e">i</span>]);
+    }
+}
+</code></pre></div><p>Do you see it? We used <code>=</code> instead of <code>==</code> or <code>===</code>. Not only does the method
+not work, we've also lost our data.</p>
+<p>In JavaScript, arrays are pass-by-reference, with the pointer allowing
+mutation. Let's redefine our method so it requires a const reference:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">printArrayWithNoNulls</span> <span style="color:#f92672">=</span> (<span style="color:#66d9ef">const</span> <span style="color:#f92672">*</span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">arr</span>) =&gt; { <span style="color:#75715e">//...
+</span></code></pre></div><p>Haha, just kidding. There's no such thing. Okay, but here's the real problem:
+we should change our first line of code:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">myBulletproofArray</span> <span style="color:#f92672">=</span> [<span style="color:#ae81ff">3</span>, <span style="color:#66d9ef">null</span>, <span style="color:#ae81ff">5</span>, <span style="color:#ae81ff">7</span>, <span style="color:#66d9ef">null</span>, <span style="color:#ae81ff">10</span>];
+</code></pre></div><p>Let's do it again. Now at least we'll have a runtime error showing that we're
+trying to mutate our <code>const</code> value:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#a6e22e">printArrayWithNoNulls</span>(<span style="color:#a6e22e">myBulletproofArray</span>);
+<span style="color:#75715e">// =&gt; same output, no runtime error. Uh oh...
+</span><span style="color:#75715e"></span>
+<span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">myBulletproofArray</span>);
+</code></pre></div><p>So, uhh, <code>const</code>, not helping very much, are you?</p>
+<p>Okay, I'm going to make a protective copy, then go back to that if things go
+south.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">myArray</span> <span style="color:#f92672">=</span> [<span style="color:#ae81ff">3</span>, <span style="color:#66d9ef">null</span>, <span style="color:#ae81ff">5</span>, <span style="color:#ae81ff">7</span>, <span style="color:#66d9ef">null</span>, <span style="color:#ae81ff">10</span>];
+<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">backupArray</span> <span style="color:#f92672">=</span> [...<span style="color:#a6e22e">myArray</span>];
+
+<span style="color:#a6e22e">printArrayWithNoNulls</span>(<span style="color:#a6e22e">myArray</span>);
+
+<span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">myArray</span> <span style="color:#f92672">!==</span> <span style="color:#a6e22e">backupArray</span>) {
+    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">myArray</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">backupArray</span>;
+
+    <span style="color:#75715e">// =&gt; Thrown:
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">// =&gt;   TypeError: Assignment to constant variable.
+</span><span style="color:#75715e"></span>
+    <span style="color:#75715e">// Same eror without `const`
+</span><span style="color:#75715e"></span>}
+
+<span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">myArray</span>);
+</code></pre></div><p>Jeez JavaScript, <em>now</em> you pipe up?</p>
+<p>So that's my problem with <code>const</code>: I want it to be usable as a tool to
+protect against the (mandatory) pass-by-reference semantics for non-scalar
+values in JavaScript. The dangers in sharing a pointer to a mutable value are
+well known: race conditions and inadvertent mutation. In Rust (and C++,
+etc.), you must opt in to both pass-by-reference and mutability. In Rust you
+have to mark both things in the function definition: the parameter is mutable
+<em>and</em> pass-by-reference. You must also mark the variable to be passed to the
+function as mutable when you declare <em>it</em>, and <em>also</em> mark that the argument
+is mutable <em>and</em> pass-by-reference at the call site:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#75715e">// `&amp;` means pass-by-reference, `mut` means mutable
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">print_array</span>(arr: <span style="color:#66d9ef">&amp;</span><span style="color:#a6e22e">mut</span> Vec<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">i32</span><span style="color:#f92672">&gt;</span>) {
+    <span style="color:#66d9ef">for</span> val <span style="color:#66d9ef">in</span> arr {
+        println<span style="color:#f92672">!</span>(<span style="color:#e6db74">&#34;{}&#34;</span>, val);
+    }
+}
+
+<span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">main</span>() {
+    <span style="color:#75715e">// `mut` means mutable
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">let</span> <span style="color:#66d9ef">mut</span> my_array <span style="color:#f92672">=</span> vec<span style="color:#f92672">!</span>[<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">3</span>];
+    <span style="color:#75715e">// `&amp;` means pass-by-reference, `mut` means mutable
+</span><span style="color:#75715e"></span>    print_array(<span style="color:#f92672">&amp;</span><span style="color:#66d9ef">mut</span> my_array);
+}
+</code></pre></div><p>Indeed, <code>const</code> in JavaScript affects what may be the <em>least</em> important
+aspect of mutability: it simply prevents you from rebinding a different value
+to the same variable name. Indeed, in Rust, as long as you use <code>let</code> again to
+show that you're declaring a new variable (albeit one with the same name),
+you're fine:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#66d9ef">let</span> x <span style="color:#f92672">=</span> <span style="color:#ae81ff">7</span>;
+<span style="color:#66d9ef">let</span> x <span style="color:#f92672">=</span> <span style="color:#ae81ff">10</span>; <span style="color:#75715e">// No problem
+</span><span style="color:#75715e"></span>
+<span style="color:#66d9ef">let</span> y <span style="color:#f92672">=</span> <span style="color:#ae81ff">15</span>;
+y <span style="color:#f92672">=</span> <span style="color:#ae81ff">20</span>; <span style="color:#75715e">// error: cannot assign twice to immutable variable `y`
+</span><span style="color:#75715e"></span>
+<span style="color:#66d9ef">let</span> <span style="color:#66d9ef">mut</span> z <span style="color:#f92672">=</span> <span style="color:#ae81ff">20</span>;
+z <span style="color:#f92672">=</span> <span style="color:#ae81ff">30</span>; <span style="color:#75715e">// No problem
+</span></code></pre></div><h2 id="indexofs-magic-number-behavior-is-really-really-atrocious"><code>indexOf</code>'s magic number behavior is really, really atrocious.</h2>
+<p>Consider this:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">myArray</span> <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#34;foo&#34;</span>, <span style="color:#e6db74">&#34;bar&#34;</span>, <span style="color:#e6db74">&#34;baz&#34;</span>];
+
+<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">containsValue</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">arr</span>, <span style="color:#a6e22e">value</span>) =&gt; <span style="color:#f92672">!</span><span style="color:#f92672">!</span><span style="color:#a6e22e">arr</span>.<span style="color:#a6e22e">indexOf</span>(<span style="color:#a6e22e">value</span>);
+
+<span style="color:#a6e22e">containsValue</span>(<span style="color:#a6e22e">myArray</span>, <span style="color:#e6db74">&#34;bar&#34;</span>); <span style="color:#75715e">// =&gt; true
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">containsValue</span>(<span style="color:#a6e22e">myArray</span>, <span style="color:#e6db74">&#34;baz&#34;</span>); <span style="color:#75715e">// =&gt; true
+</span></code></pre></div><p>Excellent, ship it! Well, let's try to see if we get any false positives:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#a6e22e">containsValue</span>(<span style="color:#a6e22e">myArray</span>, <span style="color:#e6db74">&#34;quux&#34;</span>); <span style="color:#75715e">// =&gt; true
+</span></code></pre></div><p>Oh, shoot, looks like our code <em>always</em> returns <code>true</code>.</p>
+<p>But wait, we overlooked one test case:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#a6e22e">containsValue</span>(<span style="color:#a6e22e">myArray</span>, <span style="color:#e6db74">&#34;foo&#34;</span>); <span style="color:#75715e">// =&gt; false
+</span></code></pre></div><p>We have written a function that returns <code>true</code> in all cases except when we
+look for the first element of the array.</p>
+<p>Why? It has to do with <code>indexOf</code> returning a number—the index—not a boolean.</p>
+<p>What happens if a value is missing from the array? Given the foreseeable use
+cases, together with the fact that all JavaScript values can be implicitly
+coerced to booleans, surely care has been taken to ensure that the value
+returned is falsey. So does <code>indexOf</code> return <code>null</code> to indicate that there is
+no index that has our number? Or does it return <code>NaN</code> to signify that there
+is no number that can index us to where we want to go? Or <code>false</code> itself, to
+signify that it is <code>false</code> that the array has the value? All of those would
+coerce to false.</p>
+<p>No, none of those. It's a number.</p>
+<p>Okay, well I've got it then: of the 18,437,736,874,454,810,623 distinct
+numbers that can be expressed in JavaScript,<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup> precisely one is
+falsey: <code>0</code>. That has to be it, right?</p>
+<p>Nope, can't be: the item could be at the zeroth position of the array. It's
+starting to sound like this <em>shouldn't</em> be a number. What number is it,
+though? The answer is <code>-1</code>. As in, a truthy value. As in, an essentially
+random magic number. As in, a number whose only benefit is that it is not a
+valid index into an array. But of course that is also the case for <em>all</em>
+negative numbers, all floating-point numbers, and for <code>null</code>, <code>undefined</code>,
+<code>NaN</code>, and <code>false</code>.</p>
+<p>Now that magic constant, <code>-1</code>, has to leak into <em>our</em> code, which we
+otherwise endeavor to keep free of magic constants. And if we assume that
+since number coerce to booleans, we can rely on getting the right behavior
+for the <em>value not found</em> case, we're going to introduce a bug. Grotesque.</p>
+<section class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1" role="doc-endnote">
+<p>Jeffrey Sax, Answer, <em>How many distinct values can be stored in floating-point formats?</em>, Stack Overflow, <a href="https://stackoverflow.com/a/7744178/3396324">https://stackoverflow.com/a/7744178/3396324</a> (Oct. 12, 2011). <a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</section>
+
+
+		
+	</div>
+
+	<div class="pagination">
+		<a href="/posts/carried_on_bags/" class="left arrow">&#8592;</a>
+
+		<a href="#" class="top">Top</a>
+	</div>
+</main>
+
+
+        		<footer>
+			<span>
+			&copy; <time datetime="2020-03-05 16:18:23.481412 -0600 CST m=&#43;0.241989102">2020</time> Ethan Kent. Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
+			</span>
+		</footer>
+
+    </body>
+</html>

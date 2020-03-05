@@ -6,10 +6,21 @@
     <description>Recent content on Ethan Kent&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 28 Jan 2020 12:38:22 -0600</lastBuildDate>
+    <lastBuildDate>Thu, 05 Mar 2020 13:34:49 -0600</lastBuildDate>
     
 	<atom:link href="https://ethankent.dev/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Bad javascript language design choices</title>
+      <link>https://ethankent.dev/posts/bad_javascript/</link>
+      <pubDate>Thu, 05 Mar 2020 13:34:49 -0600</pubDate>
+      
+      <guid>https://ethankent.dev/posts/bad_javascript/</guid>
+      <description>The category discussions about weird JavaScript things is a large and amusing one, probably best exemplified by Gary Bernhardt&#39;s Wat lightning talk.
+I&#39;d like to focus on two I haven&#39;t seen discussed as much (though I may simply have overlooked the canonical article). First, const doesn&#39;t work the way it ought to, and second, indexOf&#39;s magic number thing is godawful.
+const doesn&#39;t solve the problem it ought to solve. Consider this situation:</description>
+    </item>
     
     <item>
       <title>Carried on: bags</title>
