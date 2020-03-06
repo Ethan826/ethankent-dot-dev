@@ -280,8 +280,9 @@ helping the computer rather than the reverse.
 This is annoying. But even Ruby and Python aren't written in English
 sentences. Semicolons and curly braces are mostly there to help the computer,
 too. Just because types are _sometimes_ for computers doesn't mean than types
-aren't mostly useful for people.^[The title "Types Are Mostly for People,
-Though Occasionally for Computers, Which can Be a Pain" seemed less punchy.]
+aren't mostly useful for people.[^title]
+
+[^title]: The title "Types Are Mostly for People, Though Occasionally for Computers, Which can Be a Pain" seemed less punchy.
 
 ### Types can't help you with all your business logic.
 
