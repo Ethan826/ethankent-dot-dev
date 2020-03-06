@@ -89,7 +89,8 @@ trying to mutate our <code>const</code> value:</p>
 <span style="color:#75715e">// =&gt; same output, no runtime error. Uh oh...
 </span><span style="color:#75715e"></span>
 <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">myBulletproofArray</span>);
-</code></pre></div><p>So, uhh, <code>const</code>, not helping very much, are you?</p>
+<span style="color:#75715e">// =&gt; [ null, null, null, null, null, null ]
+</span></code></pre></div><p>So, uhh, <code>const</code>, not helping very much, are you?</p>
 <p>Okay, I'm going to make a protective copy, then go back to that if things go
 south.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">myArray</span> <span style="color:#f92672">=</span> [<span style="color:#ae81ff">3</span>, <span style="color:#66d9ef">null</span>, <span style="color:#ae81ff">5</span>, <span style="color:#ae81ff">7</span>, <span style="color:#66d9ef">null</span>, <span style="color:#ae81ff">10</span>];
@@ -132,9 +133,9 @@ is mutable <em>and</em> pass-by-reference at the call site:</p>
 }
 </code></pre></div><p>Indeed, <code>const</code> in JavaScript affects what may be the <em>least</em> important
 aspect of mutability: it simply prevents you from rebinding a different value
-to the same variable name. Indeed, in Rust, as long as you use <code>let</code> again to
-show that you're declaring a new variable (albeit one with the same name),
-you're fine:</p>
+to the same variable name. And indeed, in Rust, as long as you use <code>let</code>
+again to show that you're declaring a new variable (albeit one with the same
+name), you're fine:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#66d9ef">let</span> x <span style="color:#f92672">=</span> <span style="color:#ae81ff">7</span>;
 <span style="color:#66d9ef">let</span> x <span style="color:#f92672">=</span> <span style="color:#ae81ff">10</span>; <span style="color:#75715e">// No problem
 </span><span style="color:#75715e"></span>
@@ -205,7 +206,7 @@ for the <em>value not found</em> case, we're going to introduce a bug. Grotesque
 
         		<footer>
 			<span>
-			&copy; <time datetime="2020-03-05 16:18:23.481412 -0600 CST m=&#43;0.241989102">2020</time> Ethan Kent. Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
+			&copy; <time datetime="2020-03-06 12:33:38.485601 -0600 CST m=&#43;0.744013876">2020</time> Ethan Kent. Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
 			</span>
 		</footer>
 

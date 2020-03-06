@@ -70,6 +70,7 @@ printArrayWithNoNulls(myBulletproofArray);
 // => same output, no runtime error. Uh oh...
 
 console.log(myBulletproofArray);
+// => [ null, null, null, null, null, null ]
 ```
 
 So, uhh, `const`, not helping very much, are you?
@@ -125,9 +126,9 @@ fn main() {
 
 Indeed, `const` in JavaScript affects what may be the _least_ important
 aspect of mutability: it simply prevents you from rebinding a different value
-to the same variable name. Indeed, in Rust, as long as you use `let` again to
-show that you're declaring a new variable (albeit one with the same name),
-you're fine:
+to the same variable name. And indeed, in Rust, as long as you use `let`
+again to show that you're declaring a new variable (albeit one with the same
+name), you're fine:
 
 ```rust
 let x = 7;
