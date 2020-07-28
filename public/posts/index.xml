@@ -6,10 +6,20 @@
     <description>Recent content in Posts on Ethan Kent&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 05 Mar 2020 13:34:49 -0600</lastBuildDate>
+    <lastBuildDate>Tue, 28 Jul 2020 07:31:48 -0500</lastBuildDate>
     
 	<atom:link href="https://ethankent.dev/posts/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Desire paths in code</title>
+      <link>https://ethankent.dev/posts/desire_paths/</link>
+      <pubDate>Tue, 28 Jul 2020 07:31:48 -0500</pubDate>
+      
+      <guid>https://ethankent.dev/posts/desire_paths/</guid>
+      <description>Have you noticed those bootleg paths that shortcut between two sidewalks? They&#39;re common in parks and on campuses. They&#39;re called desire paths. They show where the sidewalk should have been (sometimes the park or school will actually give in and pave them, leading to strange results when seen on a map).
+Programming languages have desire paths, too, and I&#39;d argue they demonstrate shortcomings in those languages. Indeed, people often claim that a language doesn&#39;t need a particular feature, but the desire paths in their code demonstrate otherwise.</description>
+    </item>
     
     <item>
       <title>Bad javascript language design choices</title>
