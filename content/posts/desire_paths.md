@@ -128,7 +128,7 @@ example, in Clojure, you'd do something like this:[^clojure]
     "We got that 3 and not 17 situation this time")
   (if (= 17 somethingElse)
     "We got that not 3 and yes 17 situation this time"
-    (let [bazArg (+22 moo)
+    (let [bazArg (+ 22 moo)
           bar (baz bazArg)
           args {:bar bar
                 :quux xyzzy
