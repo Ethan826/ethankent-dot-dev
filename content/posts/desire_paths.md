@@ -113,26 +113,34 @@ without any intermediate statements.
 [^should]: We should do that to get rid of the nested `if`s and clean things up. The discussion that follows assumes we're not going to do that.
 
 JavaScript lacks the ergonomics common to expression-based languages. For
-example, in Clojure, you'd do something like this (forgive any errors here, I
-don't have a Clojure environment set up to lint/indent this, so I did it by
-hand):
+example, in Clojure, you'd do something like this:[^clojure]
+
+[^clojure]: There's no React here; I'm pretending the components in the JSX code are function calls here. Also, please forgive errors: I don't have a Clojure environment set up to lint/indent this, so I did it by hand.
 
 ```clojure
 (if (= 3 something)
   (if (= 17 somethingElse)
     (let [fooTimesPi (* foo Math/PI)
           number (Math/floor fooTimesPi)]
-      (ThreeAnd17Thing {:number number} "3 and 17"))
-    "3 and not 17")
+      (ThreeAnd17Thing
+        {:number number}
+        "We got that 3 and 17 situation this time"))
+    "We got that 3 and not 17 situation this time")
   (if (= 17 somethingElse)
+    "We got that not 3 and yes 17 situation this time"
     (let [bazArg (+22 moo)
           bar (baz bazArg)
-          args {:bar bar :quux xyzzy :corge grault :thud wubble flob :garply}]
-      (NeitherThreeNor17Thing args "not 3 and 17"))
-    "not 3 and not 17"))
+          args {:bar bar
+                :quux xyzzy
+                :corge grault
+                :thud wubble
+                :flob garply}]
+      (NeitherThreeNor17Thing
+        args
+        "We got that not 3 and not 17 situation this time"))))
 ```
 
-Note that we can `let` bind locals within the expressions, so we can set the
+Note that we can `let`-bind locals within the expressions, so we can set the
 hot potato down, as it were—while the whole form remains an expression.
 
 In JavaScript, by contrast, the keywords `if` and `else` introduce statements, not

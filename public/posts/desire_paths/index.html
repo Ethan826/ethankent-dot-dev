@@ -127,22 +127,28 @@ component, and we aren't quite ready to extract a subcomponent,<sup id="fnref:2"
 we have a hot potato where we have to keep the code as a long expression
 without any intermediate statements.</p>
 <p>JavaScript lacks the ergonomics common to expression-based languages. For
-example, in Clojure, you'd do something like this (forgive any errors here, I
-don't have a Clojure environment set up to lint/indent this, so I did it by
-hand):</p>
+example, in Clojure, you'd do something like this:<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup></p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure">(<span style="color:#66d9ef">if </span>(= <span style="color:#ae81ff">3</span> something)
   (<span style="color:#66d9ef">if </span>(= <span style="color:#ae81ff">17</span> somethingElse)
     (<span style="color:#66d9ef">let </span>[fooTimesPi (* foo Math/PI)
           number (<span style="color:#a6e22e">Math/floor</span> fooTimesPi)]
-      (<span style="color:#a6e22e">ThreeAnd17Thing</span> {<span style="color:#e6db74">:number</span> number} <span style="color:#e6db74">&#34;3 and 17&#34;</span>))
-    <span style="color:#e6db74">&#34;3 and not 17&#34;</span>)
+      (<span style="color:#a6e22e">ThreeAnd17Thing</span>
+        {<span style="color:#e6db74">:number</span> number}
+        <span style="color:#e6db74">&#34;We got that 3 and 17 situation this time&#34;</span>))
+    <span style="color:#e6db74">&#34;We got that 3 and not 17 situation this time&#34;</span>)
   (<span style="color:#66d9ef">if </span>(= <span style="color:#ae81ff">17</span> somethingElse)
+    <span style="color:#e6db74">&#34;We got that not 3 and yes 17 situation this time&#34;</span>
     (<span style="color:#66d9ef">let </span>[bazArg (<span style="color:#a6e22e">+22</span> moo)
           bar (<span style="color:#a6e22e">baz</span> bazArg)
-          args {<span style="color:#e6db74">:bar</span> bar <span style="color:#e6db74">:quux</span> xyzzy <span style="color:#e6db74">:corge</span> grault <span style="color:#e6db74">:thud</span> wubble flob <span style="color:#e6db74">:garply</span>}]
-      (<span style="color:#a6e22e">NeitherThreeNor17Thing</span> args <span style="color:#e6db74">&#34;not 3 and 17&#34;</span>))
-    <span style="color:#e6db74">&#34;not 3 and not 17&#34;</span>))
-</code></pre></div><p>Note that we can <code>let</code> bind locals within the expressions, so we can set the
+          args {<span style="color:#e6db74">:bar</span> bar
+                <span style="color:#e6db74">:quux</span> xyzzy
+                <span style="color:#e6db74">:corge</span> grault
+                <span style="color:#e6db74">:thud</span> wubble
+                <span style="color:#e6db74">:flob</span> garply}]
+      (<span style="color:#a6e22e">NeitherThreeNor17Thing</span>
+        args
+        <span style="color:#e6db74">&#34;We got that not 3 and not 17 situation this time&#34;</span>))))
+</code></pre></div><p>Note that we can <code>let</code>-bind locals within the expressions, so we can set the
 hot potato down, as it were—while the whole form remains an expression.</p>
 <p>In JavaScript, by contrast, the keywords <code>if</code> and <code>else</code> introduce statements, not
 expressions, and we don't have a way of binding locals in an expression, so
@@ -193,6 +199,9 @@ proposal</a>.</p>
 <li id="fn:2" role="doc-endnote">
 <p>We should do that to get rid of the nested <code>if</code>s and clean things up. The discussion that follows assumes we're not going to do that. <a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
+<li id="fn:3" role="doc-endnote">
+<p>There's no React here; I'm pretending the components in the JSX code are function calls here. Also, please forgive errors: I don't have a Clojure environment set up to lint/indent this, so I did it by hand. <a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
 </section>
 
@@ -210,7 +219,7 @@ proposal</a>.</p>
 
         		<footer>
 			<span>
-			&copy; <time datetime="2020-07-28 10:20:43.887558 -0500 CDT m=&#43;0.150972781">2020</time> Ethan Kent. Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
+			&copy; <time datetime="2020-07-29 06:58:48.225639 -0500 CDT m=&#43;0.190291633">2020</time> Ethan Kent. Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
 			</span>
 		</footer>
 
