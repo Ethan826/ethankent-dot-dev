@@ -165,19 +165,19 @@ proposal](https://github.com/tc39/proposal-do-expressions).
         "We got that 3 and not 17 situation this time"
       }
     } else {
-      const bazArg = moo + 22;
-      const bar = baz(bazArg);
-      const args = {
-        bar,
-        quux: xyzzy,
-        corge: grault,
-        thud: wubble,
-        flob: garply
-      };
-
       if (somethingElse === 17) {
         "We got that not 3 and yes 17 situation this time"
       } else {
+        const bazArg = moo + 22;
+        const bar = baz(bazArg);
+        const args = {
+          bar,
+          quux: xyzzy,
+          corge: grault,
+          thud: wubble,
+          flob: garply
+        };
+
         <NeitherThreeNor17Thing {...args}>
           "We got that not 3 and not 17 situation this time"
         </NeitherThreeNor17Thing>
