@@ -329,7 +329,7 @@ pinoVersion(3, 5); // => returns 8
 // {"level":30,"time":1698808523506,"pid":9973,"hostname":"ethans-mbp.lan","msg":"Hey, did you know 3 + 5 = 8?"}
 ```
 
-Remember our "is it easy to update" question. Is this easy enough for you?
+Remember our "is it easy to update" question? Is this easy enough for you?
 
 ```ts
 const consoleVersion = heavilyInstrumentedAddition(ConsoleLoggingProvider);
