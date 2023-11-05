@@ -5,52 +5,52 @@ draft = false
 +++
 
 Among the coding principles you hear get tossed around, Dependency Inversion
-sounds boring and is hard to understand. I didn't really understand it until a
-year or two ago. But it is one of the most important tools for organizing your
+sounds boring and is hard to understand. I didn't understand it until a
+year or two ago. But it is one of the most valuable tools for organizing your
 software and making it easy to change.
 
-One of the hipster moves in programming is to tell people they don't really need
-to use a framework, especially for backend work. People who say stuff like that
-usually don't give concrete guidance on what you should do instead. One of the
-most obvious advantages of a framework is in providing an opinionated way to
-organize things in a consistent way that has worked in production. So if you're
+One of the hipster moves in programming is to tell people they don't need to use
+a framework, especially for backend work. People who say stuff like that don't
+typically give concrete guidance on what you should do instead. One of the most
+apparent advantages of a framework is providing an opinionated way to organize
+things consistently in a fashion that has worked in production. So if you're
 like me, you absorbed that meme about how using a framework makes you a little
 bit dumb, but you didn't know what to do instead---or you made a mess.
 
 In particular, organizing code can seem like organizing photos or music files
-into folders (don't call me "Boomer"). It seems like a matter of naming files in
-a reasonable way and creating folders that make sense. But that turns out to be
-a shallow understanding of how to organize code.
+into folders (don't call me "Boomer"). It seems like a matter of naming files
+reasonably and creating folders that make sense. But that turns out to be a
+shallow understanding of organizing code.
 
 The Dependency-Inversion Principle, and the "Dependency Rule" it implies, are
 powerful tools for organizing code.
 
-## The SOLID Principles are about making change easier
+## The SOLID Principles are about making change easier.
 
 The Dependency-Inversion Principle ("DIP") is the _D_ in the SOLID Principles.
 
-I get the sense that the SOLID Principles are seen as a bit fusty, maybe the
+I get the sense that people see the SOLID Principles as a bit fusty, maybe the
 domain of people with pleated pants working in cubicles, inclined to name things
 `StaticFactoryBeanFactoryFactory`, and wake up mumbling the names of Go4
-patterns. But in reality, they're simply good rules of thumb for designing code
-in a way that makes it easier to change the things that are likeliest to change.
-So the SOLID Principles are as applicable to functional programming as they are
-to OOP, to polymorphism through composition composition as to inheritance-based
-polymorphism, and to the 2020s as to the 1990s.
+patterns. But in reality, they’re good rules of thumb for designing code in a
+way that makes it easier to change the things that are likeliest to change. So
+the SOLID Principles are as applicable to functional programming as they are to
+OOP, to polymorphism through composition as to inheritance-based polymorphism,
+and to the 2020s as to the 1990s.
 
 Think of it this way: if you keep a stack of books and papers on your desk, it's
 best if they're organized so your daily planner and pocket dictionary are near
 the top, and the manual for an old car and the teacher-conference schedule from
-three years ago are towards the bottom. Otherwise you will have to put your
+three years ago are towards the bottom. Otherwise, you will have to put your
 hands on things that are less relevant to get to things that are more so. This
 is the Dependency Rule in a nutshell: depend in the direction of stability.
 
 The DIP, and the Clean/Onion/Hexagonal/Ports-and-Adapters Architecture, are
 simply elaborations on this idea.
 
-## Introducting an example
+## Introducing an example
 
-Let's start with this code. This creates a presigned POST URL in S3, meaning a
+Let's start with this code, which creates a presigned POST URL in S3, meaning a
 temporary URL you can pass on to a client to let them upload something—say, a
 photo—without a password. The `Key` value will be a UUID. We want to put that in
 a database table to associate it with the user later (so we can figure out all
@@ -118,8 +118,8 @@ Why is the code hard to test? It's because we're creating or accessing instances
 of `console`, the PostgreSQL `Client` class, the `S3Client` class, and the
 functions `randomUUID()` and `createPresignedPost()` in our function. To test
 these instances we need to use Jest's heavy-handed monkey-patching-based mocking
-setup. This is annoying and brittle. (For the record I'm experimenting with Bun,
-so I'm not actually using Jest with my example code.)
+setup. This approach is annoying and brittle. (For the record I'm experimenting
+with Bun, so I'm not actually using Jest with my example code.)
 
 ### Dependency-injected version
 
@@ -231,15 +231,15 @@ The steps we've taken so far are necessary but not sufficient to use the DIP.
 ## Dependency-inverted version
 
 Remember our two questions from earlier? We've made testing easier, but we're
-not in a good position to switch from `console` to Pino or from PostgreSQL to
+not in a good position to switch from `console` to Pino or PostgreSQL to
 MongoDB. We'd have to tear out most of our code and start again to accomplish
 that kind of thing.
 
 ### Using "services" and "providers" to invert dependencies
 
-The problem is we're relying to heavily on concrete things: the specific NPM
+The problem is we're relying too heavily on concrete things: the specific NPM
 library `pg`, the specific database PostgreSQL, the specific logger `console`,
-etc. What if we were more abstract, more declarative, more domain focused? What
+etc. What if we were more abstract, more declarative, more domain-focused? What
 if we defined the functionality we're using in terms of why and how we're using
 it?
 
@@ -247,9 +247,9 @@ For example, we don't want `console.log` per se. If a business stakeholder
 stopped us in the hallway and said, "What are you working on today," and we
 responded, "Our team is focused on making sure that `console.log` works
 properly," the business stakeholder's eyes would glaze over. But if we said,
-"Our team is making sure it's possible for our program to log information so we
-can see if it's working correctly," the business stakeholder would nod knowingly
-and go play a round of golf or buy a Tesla or whatever it is they get up to.
+"Our team is making sure our program can log information so we can see if it's
+working correctly," the business stakeholder would nod knowingly and go play a
+round of golf or buy a Tesla or whatever it is they get up to.
 
 #### `LoggingService` and its providers
 
@@ -278,7 +278,7 @@ const pinoInstance = pino();
 
 export const PinoLoggingProvider: LoggingService = {
   log: (message: string) => {
-    // Can't use destructuring pino instance because it's implemented weirdly
+    // Can't use destructuring Pino instance because it's implemented weirdly
     // for performance reasons.
     pinoInstance.info(message);
   },
@@ -317,8 +317,8 @@ export const heavilyInstrumentedAddition =
   };
 ```
 
-Now our function simply doesn't care how `LoggingService` is implemented as long
-as it is correctly implemented. To choose which one, we're still using
+Now our function doesn't care how `LoggingService` is implemented as long as the
+implementation satisfies the type. To choose which instance, we're still using
 dependency injection. Let's write our code to use `Pino`
 
 ```ts
@@ -355,11 +355,11 @@ Oh hey, let's check in on the stultifying-on-first-read definition of the DIP
 > - Abstractions should not depend on details. Details (concrete
 >   implementations) should depend on abstractions.
 
-Do you see that this is exactly what we're doing? Notice that
-`heavilyInstrumentedAddition()` doesn't say the name Pino, `console`, or
-Winston? Instead we name the abstraction/interface: `LoggingService`. And
-`LoggingService` has no knowledge of Pino, `console`, or Winston, either. There
-are now three things:
+Do you see that we’re doing exactly this? Notice that
+`heavilyInstrumentedAddition()` doesn't say the name _Pino_, `console`, or
+_Winston_? Instead, we name the abstraction/interface: `LoggingService`. And
+`LoggingService` does not know Pino, `console`, or Winston, either. There are
+now three things:
 
 1. Code that needs to log.
 2. Code that describe the ability to log abstractly.
@@ -373,8 +373,8 @@ things in and out.
 
 ### Defining more services and providers
 
-So let's define some more services. These are just sketches, and as we work through
-the problem we'll probably find problems. They also have fewer methods than real
+So let's define some more services. These are just sketches, and as we build
+this we'll probably find problems. They also have fewer methods than real
 services would have (though the Interface-Segregation Principle does counsel
 caution in making services too big).
 
@@ -421,22 +421,21 @@ export const S3BucketProvider: BucketService = {
 };
 ```
 
-This does satisfy the contract, but we're back to the testability/difficulty of
-change issue because we're no longer injecting our dependencies.
+This provider does satisfy the contract, but we're back to the
+testability/difficulty of change issue because we're no longer injecting our
+dependencies.
 
-If we look carefully, we'll see there are two different kinds of dependencies:
-those that correspond to the S3 Bucket concern and those that don't. It can be a
-valid design choice not to inject dependencies related to the concerns the
-"Provider" fulfills: after all, this one's entire job is to implement the
-capabilities of a `BucketService` for S3 in particular. It is unlikely to be a
-valid design choice to use non domain-related capabilities like UUID generation,
-for example.
+If we look carefully, we'll see two kinds of dependencies: those that correspond
+to the S3 Bucket concern and those that don't. It can be a valid design choice
+not to inject dependencies related to the concerns the "Provider" fulfills:
+after all, this one's entire job is to implement the capabilities of a
+`BucketService` for S3 in particular. It is unlikely to be a valid design choice
+to use non-domain-related capabilities like UUID generation, for example.
 
-I would argue, however, that injecting all of these dependencies is still the
-better practice. We can achieve this in a variety of ways, but I think it makes
-good sense to expose a constructor function for a provider that accepts the
-dependencies that provider requires. These dependencies can themselves include
-services.
+I argue, however, that injecting all of these dependencies is still the better
+practice. We can achieve this in various ways, but it makes good sense to expose
+a constructor function for a provider that accepts the dependencies that that
+provider requires. These dependencies can themselves include services.
 
 ```ts
 export interface UuidService {
@@ -469,11 +468,11 @@ export const createS3BucketProvider = ({
 ```
 
 Notice that I just whipped up a `UuidService`, defining it to do what I want.
-This is common: you may find yourself wishing you had another service. Well go
-ahead and define it—it's a great time because you have a clear understanding of
-its use case. Indeed, this is the ideal way to define services: keeping the
-focus on the service's users. You'll just need to implement it later. This is a
-kind of type-driven development.
+This situation is common: you may find yourself wishing you had another service.
+Well, go ahead and define it—it's a great time because you have a clear
+understanding of its use case. Indeed, this is the ideal way to define services:
+focusing on the service's users. You'll just need to implement it later. This is
+a kind of type-driven development.
 
 ```ts
 export const NodeUuidProvider: UuidService = {
@@ -509,8 +508,9 @@ export const createS3BucketProvider = ({
 
 Hold up, we've lost our logging. Well, no problem. We can set these providers up
 to require an instance of a `LoggingService`. Notice I said `LoggingService`,
-not a logging provider. This is key: depend on abstractions not concretions,
-remember?
+not a logging provider. This point is key: depend on abstractions not
+concretions, remember? It's also an illustration of the Dependency Rule: the
+service is more stable than the provider.
 
 ```ts
 export interface CreateS3BucketProviderDeps {
@@ -564,7 +564,7 @@ export const createPostgresUserDataService = ({
 
 ### Defining our main function and fine-tuning the services and providers
 
-Now let's define our main function. First I'll update the dependencies:
+Now let's define our main function. First, I'll update the dependencies.
 
 ```ts
 export interface CreateAndAssociatePresignedUrlDeps {
@@ -589,10 +589,10 @@ export const createAndAssociatePresignedUrl =
 
 Whoops. Looking at our original code, we see that we have to use the UUID that's
 currently being created inside `BucketService.createPresignedUrl()` in the call
-to `UserService.createPresignedUrl()`. This is an example of the positive
-knock-on effects that can happen with well-factored code. Creating a UUID inside
-`UserService.createPresignedUrl()` wasn't really the right design. The UUID
-should be passed in as an argument, and main itself should create it. The
+to `UserService.createPresignedUrl()`. This discovery is an example of the
+positive knock-on effects that can happen with well-factored code. Creating a
+UUID inside `UserService.createPresignedUrl()` wasn't really the right design.
+The UUID should an argument and the main function should create it.
 
 ```ts
 interface BucketService<A = PresignedUrlData> {
@@ -619,9 +619,9 @@ export const createS3BucketProvider = ({
 ```
 
 Now we're ready to define our main function. Notice that it still relies
-entirely on services. This may seem like a lot of overhead, but injecting
-dependencies even in our main function it is the best way to enable end to end
-tests using mock dependencies.
+entirely on services. This indirection may seem like a lot of overhead, but
+injecting dependencies even in our main function it is the best way to enable
+end to end tests using mock dependencies.
 
 ```ts
 export interface CreateAndAssociateBucketDeps {
@@ -688,9 +688,10 @@ updating the `prodDeps` object. For example, we could simply change
 ### Testing our solution
 
 Notice that our services and constructing our main function each have their own
-dependencies. This makes it easier to test at the correct level of abstraction.
-Our earlier test suite for the dependency-injected version required us to mock
-the specific dependencies, e.g. the PostgreSQL client and the S3 client.
+dependencies. This approach makes it easier to test at the correct level of
+abstraction. Our earlier test suite for the dependency-injected version required
+us to mock the specific dependencies, e.g., the PostgreSQL client and the S3
+client.
 
 Now, in our main function, we can mock at the level of abstraction that our
 services represent. That is, we can make `BucketService.createPresignedUrl()`
@@ -701,15 +702,16 @@ function's business logic.
 But at the provider level, we get in the weeds, ensuring that the provider
 behaves correctly given our various dependencies' return values.
 
-This is test isolation in a nutshell. We don't have to arrange complicated and
-brittle test mocks in order to check each code path in the high-level functions.
-And we don't have to find a way to make assertions about low-level dependencies
-in a giant function with a zillion moving pieces.
+This ability to use mocks at a level of abstraction that matches the
+functionality we're trying to test supports test isolation. We don't have to
+arrange complicated and brittle test mocks to check each code path in the
+high-level functions. And we don't have to find a way to make assertions about
+low-level dependencies in a giant function with a zillion moving pieces.
 
 For example, if I want to ensure that we're handling a database connection
-failure (spoiler: we aren't), I can test the wide variety of failure modes in
-the `S3BucketProvider` tests. I can then independently test that the
-main function handles any kind of failure from its `BucketService`.
+failure (spoiler: we aren't), I can test the various failure modes in the
+`S3BucketProvider` tests. I can then independently test that the main function
+handles any failure from its `BucketService`.
 
 Here's an "in the weeds" test of a provider.
 
@@ -808,7 +810,7 @@ We've seen the value of Dependency Inversion, how it relates to Dependency
 Injection, and how it leads to a "Services and Providers" (or similar)
 architecture.
 
-These same ideas are implemented in a variety of frameworks. For example,
+These same ideas exist in a variety of frameworks. For example,
 Nest.js and Angular use a runtime dependency-injection framework. I believe the
 JVM has a variety of runtime solutions. On the opposite end of the spectrum,
 tools like `fp-ts`'s Reader monad make this possible with type-level support at
@@ -821,5 +823,5 @@ This pattern is also the basis of the Clean/Onion/Hexagonal/Ports-and-Adapters
 Architecture.
 
 If you understand why and how to use this pattern, you're well on your way to
-writing more loosely coupled code and having a mental model of how to arrange
-the dependencies within your codebases.
+writing more loosely coupled code and having a mental model of arranging the
+dependencies within your codebases.
