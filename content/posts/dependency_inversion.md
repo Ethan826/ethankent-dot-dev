@@ -54,11 +54,11 @@ Let's start with this code, which creates a presigned POST URL in S3, meaning a
 temporary URL you can pass on to a client to let them upload something—say, a
 photo—without a password. The `Key` value will be a UUID. We want to put that in
 a database table to associate it with the user later (so we can figure out all
-the S3 buckets where we put that user's photos).
+the S3 locations where we put that user's photos).
 
 There are several things wrong with this code. There's no error handling, it
 does too many things in a single function, it connects to the database on every
-call rather than sharing a connection or pool, etc. But I want you to consider
+call rather than sharing a connection or pool, it puts everything in one hard-coded bucket, it isn't configured through the environment, etc. But I want you to consider
 two things as you read it.
 
 1. How hard is it to test this code?
@@ -366,7 +366,7 @@ now three things:
 3. Code that actually logs, but matches the abstract description from 2.
 
 By adding in 2., 1. and 3. are now loosely coupled. These terms—_loose
-coupling_, _abtraction_, _concretion_, _depend on_—all sound really... abstract.
+coupling_, _abstraction_, _concretion_, _depend on_—all sound really... abstract.
 But look at the example and see that by throwing in the middleman interface and
 using that as the glue to hold real code together, we make it very easy to swap
 things in and out.
