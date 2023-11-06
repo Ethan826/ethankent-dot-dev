@@ -362,7 +362,7 @@ _Winston_? Instead, we name the abstraction/interface: `LoggingService`. And
 now three things:
 
 1. Code that needs to log.
-2. Code that describe the ability to log abstractly.
+2. Code that describes the ability to log abstractly.
 3. Code that actually logs, but matches the abstract description from 2.
 
 By adding in 2., 1. and 3. are now loosely coupled. These terms—_loose
@@ -422,7 +422,7 @@ export const S3BucketProvider: BucketService = {
 ```
 
 This provider does satisfy the contract, but we're back to the
-testability/difficulty of change issue because we're no longer injecting our
+testability/difficulty-of-change issue because we're no longer injecting our
 dependencies.
 
 If we look carefully, we'll see two kinds of dependencies: those that correspond
@@ -621,7 +621,7 @@ export const createS3BucketProvider = ({
 
 Now we're ready to define our main function. Notice that it still relies
 entirely on services. This indirection may seem like a lot of overhead, but
-injecting dependencies even in our main function meets our two part test of
+injecting dependencies even in our main function meets our two-part test of
 making tests easier to write and dependencies easier to swap out.
 
 ```ts
