@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+    <title>That&#39;s my bag, baby - Ethan Kent&#39;s dev blog</title>
+
+    
+    
+    <meta name="description" content="(This is part of a series of articles. The next one is here.)
+When we want a collection with elements that may repeat, we generally reach for an array, list, vector, etc. When we want a collection with elements that don&rsquo;t or whose repeats we don&rsquo;t care about, we generally reach for a set.
+Efficient set implementations often don&rsquo;t track insertion order. For hashsets, that&rsquo;s because they hash their input and organize based on that hashed value." />
+    <meta name="author" content="Ethan Kent" />
+    
+
+    <link href="https://unpkg.com/@master/normal.css" rel="stylesheet">
+    <script src="https://unpkg.com/@master/style@1.5.0"></script>
+    <script src="https://unpkg.com/@master/styles@1.13.0"></script>
+    <script src="https://unpkg.com/master-styles-group"></script>
+    <script src="https://unpkg.com/themes.js"></script>
+    <script>window.themes = window.themes || new window.Themes()</script>
+
+    <style>
+        :root {
+            --font-sans: "Inter var", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+        }
+    </style></head>
+<body class="bg:fade-84@dark font:fade-16@dark font:sans">
+    <nav class="w:full h:90 fixed bg:fade-84/.95@dark bg:white z:1000">
+    <div class="
+        h:full
+        w:full
+        max-w:1200
+        mx:auto
+        px:32
+        d:flex
+        align-items:center
+    ">
+        <div>
+            <a href="/" class="mr-3 font:extralight">
+              
+              Ethan Kent&#39;s dev blog
+              
+            </a>
+        </div>
+
+        <div class="ml:auto">
+            
+            
+            
+        </div>
+    </div>
+</nav>
+<div class="d:flex flex:column@<=sm pt:90 px:24 jc:center gap:44 word-break:break-word">
+        <div class="max-w:700 w:full box:content-box">
+<article class="box:border-box pt:32">
+    <header class="mb:32">
+        <div class="font:40 font:extrabold">That&#39;s my bag, baby</div>
+        <div class="mt:16 f:fade-60">
+            <time>Jan 1, 2020</time>
+            </div>
+    </header><div class="
+    _:where(a):hover{text-decoration-color:fade}
+    _:where(a){text-decoration:2;underline;fade-10;_text-decoration-color:fade-70@dark}
+    _:where(blockquote){bl:5;solid;fade-76/.1;_bl:5;solid;fade-34/.1@dark}
+    _:where(code){font:90%;_v:middle}
+    _:where(code:not(.highlight_*,pre_*)){p:2;6;_r:4}
+    _:where(del){text-decoration:1;line-through;fade-68;_text-decoration-color:red-64@dark}
+    _:where(figcaption){text:14;_p:10;20;0;_width:fit;_mx:auto;_font:fade-56;_font:fade-57@dark}
+    _:where(h1){font:40;_font:extrabold}
+    _:where(h1,h2,h3)+:where(h1,h2,h3){mt:.5em}
+    _:where(h1,h2,h3,h4,h5,h6){mt:2em}
+    _:where(h2){mb:1em;_font:32}
+    _:where(h3){font:24}
+    _:where(h4){font:20}
+    _:where(h5){font:16}
+    _:where(h6){font:14}
+    _:where(li)::marker{font:fade-44;_font:fade-68@dark}
+    _:where(li){pl:.375em}
+    _:where(mark){text-decoration:1;underline;#fce016;_bg:transparent;_text-decoration-color:rgb(252;224;22/.5)@dark}
+    _:where(p,li){font:fade-76;_font:16;_line-height:1.65;_font:fade-34@dark}
+    _:where(p,pre,blockquote,figure,ul,ol,table){my:1.125em}
+    >:first-child{mt:0!}
+    _:where(pre){p:20;_r:8;_overflow:auto}
+    _:where(pre,code:not(.highlight_*)){bg:fade-2;_bg:fade-92!@dark}
+    _:where(strong,b,a,code:not(.highlight_*),mark,del){font:fade-92;_font:fade-12@dark}
+    _:where(table){width:full;_border-spacing:0}
+    _:where(td){v:baseline}
+    _:where(td,th):first-child{pl:0}
+    _:where(td,th):last-child{pr:0}
+    _:where(td,th){bb:1;solid;fade-92/.06;_p:6;_b:fade-4/.04@dark}
+    _:where(th){font:fade-78;_font:14;_text:left;_font:fade-12@dark}
+    _:where(th,p_code,li_code,a,mark){font:semibold;_font:medium@dark}
+    _:where(ul){list-style-type:disc}
+    _:where(ul,ol,blockquote){pl:1.5em}
+    _:where(video,img){max-width:full}
+    _:where(a,mark){text-underline-offset:3}
+    _:where(hr){h:2;_bg:fade-10;_bg:fade-70@dark;_my:3em}
+"><p>(This is part of a series of articles. The next one is <a href="/posts/implementing_a_bag/">here</a>.)</p>
+<p>When we want a collection with elements that may repeat, we generally reach
+for an array, list, vector, etc. When we want a collection with elements that
+don&rsquo;t or whose repeats we don&rsquo;t care about, we generally reach for a set.</p>
+<p>Efficient set implementations often don&rsquo;t track insertion order. For
+hashsets, that&rsquo;s because they hash their input and organize based on that
+hashed value. For binary tree sets, it&rsquo;s because inputs are sorted in a
+binary tree. A good hashset can insert, retrieve, and search for elements in
+something close to <code>O(1)</code> time.<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup> A balanced binary tree set can
+insert and retrieve elements in <code>O(log n)</code> time. In essence, by not caring
+about insertion order, we can get faster performance.</p>
+<p>In short, when we care about neither insertion order nor repeats, we use a
+set. But what if we don&rsquo;t care about insertion order but <em>do</em> care about
+repeats? Say, for example, we wanted to know how many cars a dealership has,
+but not in what order they were acquired?<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup> In that case, there is a
+data structure we could use: a bag, also called a multiset.</p>
+<h2 id="why-a-bag-seems-useful">Why a bag seems useful</h2>
+<p>I am puzzled this kind of data structure is uncommon, as its characteristics
+would seem to be a good match for a common use case. Probably the reason is
+that a hashmap with keys as entries and tallies as values does a pretty good
+job of satisfying that use case:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;Ford F150&#34;</span>: <span style="color:#ae81ff">0</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;Honda Fit&#34;</span>: <span style="color:#ae81ff">3</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;Honda Pilot&#34;</span>: <span style="color:#ae81ff">1</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;Toyota Camry&#34;</span>: <span style="color:#ae81ff">5</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>But it&rsquo;s not quite perfect as we may have an element be absent or have a
+tally of zero. Do we mean to signify something different about Ford F150s and
+Toyota Tacomas? Are we saying this dealership sometimes has F150s but never
+has Tacomas? It always starts to get dodgy when we embed semantic meaning in
+differences like that. But if there isn&rsquo;t a difference, what&rsquo;s the deal? We
+don&rsquo;t want to have to write code like this:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-typescript" data-lang="typescript"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Inventory</span> <span style="color:#f92672">=</span> { [<span style="color:#a6e22e">key</span>: <span style="color:#66d9ef">string</span>]<span style="color:#f92672">:</span> <span style="color:#66d9ef">number</span> };
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Dealership</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">constructor</span>(<span style="color:#66d9ef">private</span> <span style="color:#a6e22e">inventory</span>: <span style="color:#66d9ef">Inventory</span>) {}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">   *  Return whether the dealership has a particular vehicle.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">   */</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">hasVehicle</span>(<span style="color:#a6e22e">vehicleType</span>: <span style="color:#66d9ef">string</span>)<span style="color:#f92672">:</span> <span style="color:#66d9ef">boolean</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// This kind of stuff should be part of the bag / multiset&#39;s API
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">return</span> (
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">inventory</span>.<span style="color:#a6e22e">hasOwnProperty</span>(<span style="color:#a6e22e">vehicleType</span>) <span style="color:#f92672">&amp;&amp;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">inventory</span>[<span style="color:#a6e22e">vehicleType</span>] <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>    );
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">myDealership</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Dealership</span>({
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;Ford F150&#34;</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">0</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;Honda Fit&#34;</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">3</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;Honda Pilot&#34;</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">1</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;Toyota Camry&#34;</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">5</span>,
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">myDealership</span>.<span style="color:#a6e22e">hasVehicle</span>(<span style="color:#e6db74">&#34;Honda Fit&#34;</span>); <span style="color:#75715e">// =&gt; true
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">myDealership</span>.<span style="color:#a6e22e">hasVehicle</span>(<span style="color:#e6db74">&#34;Ford F150&#34;</span>); <span style="color:#75715e">// =&gt; false
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">myDealership</span>.<span style="color:#a6e22e">hasVehicle</span>(<span style="color:#e6db74">&#34;Yugo&#34;</span>); <span style="color:#75715e">// =&gt; false
+</span></span></span></code></pre></div><p>C++&rsquo;s Standard Template Library has a multiset with a <code>contains</code> and <code>count</code>
+method.<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup> This does what we want.</p>
+<h2 id="how-you-might-implement-a-bag">How you might implement a bag</h2>
+<p>I am going to dedicate a few articles to running through what&rsquo;s going on
+here, but I have a working implementation of a bag
+<a href="https://www.github.com/ethan826/bag">here</a>. For now, you can clone it and
+run <code>yarn</code> and then <code>yarn test</code>.</p>
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p>I say &ldquo;something close to&rdquo; because if you had very bad luck, a bad hashing algorithm, too few buckets, etc., you can wind up with all the elements hashing to the same bucket, meaning that the retrieval and search time will be linear. If you&rsquo;re unfamiliar with how hashmaps and hashsets work, read up on that because it&rsquo;s pretty easy to understand and super cool. The Wikipedia <a href="https://en.wikipedia.org/wiki/Hash_table">article</a> is a good starting point. Stay tuned for a similar implementation of a related data structure below.&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2">
+<p>It&rsquo;s unclear in retrospect why I chose this example, as I don&rsquo;t have any special interest in cars and this seems like a wildly naïve view of how car dealership software works. Car dealership inventory systems might even be so fancy as to use a database with the ability to <code>COUNT</code> entries. Let&rsquo;s just go with it.&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3">
+<p>cppreference.com, std::multiset, <a href="https://en.cppreference.com/w/cpp/container/multiset">https://en.cppreference.com/w/cpp/container/multiset</a> (last visited Dec. 24, 2019). The <code>contains</code> method is part of the C++20 spec. <em>Id.</em> There is also a <code>find</code> method, which is a little confusing in that you might expect it to return the <code>key</code> you used to do the finding, which doesn&rsquo;t seem terribly useful. But it actually can return an iterator—but only over that element you used to do the finding, <em>and not repeats</em>; for that you use <code>equal_range</code>. So it actually is weird, maybe; I haven&rsquo;t researched it enough to understand the exact rationale.&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
+</div></article>
+<footer class="py:24">
+    <div class="f:fade-30 f:14 mb:8"></div>
+    <div class="f:fade-60 f:12">Theme <a class="f:bold" href="https://github.com/serkodev/holy" _target="_blank">Holy</a></div>
+</footer></div>
+    </div>
+</body>
+
+</html>

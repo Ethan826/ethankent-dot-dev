@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on Ethan Kent&#39;s dev blog</title>
+    <link>http://localhost:1313/posts/</link>
+    <description>Recent content in Posts on Ethan Kent&#39;s dev blog</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 19 Nov 2023 19:58:08 -0500</lastBuildDate>
+    <atom:link href="http://localhost:1313/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Obligatory Monad post</title>
+      <link>http://localhost:1313/posts/obligatory-monad/</link>
+      <pubDate>Sun, 19 Nov 2023 19:58:08 -0500</pubDate>
+      <guid>http://localhost:1313/posts/obligatory-monad/</guid>
+      <description>In addition to its being good and useful, it’s also cursed and the curse of the monad is that once you get the epiphany, once you understand—&amp;ldquo;oh that&amp;rsquo;s what it is&amp;rdquo;—you lose the ability to explain it to anybody else.&#xA;– Douglas Crockford&#xA;It is a truth universally acknowledged, that a programmer in possession of a rudimentary knowledge of monads, must publish a dev blog post on that topic.</description>
+    </item>
+    <item>
+      <title>Dependency Inversion</title>
+      <link>http://localhost:1313/posts/dependency_inversion/</link>
+      <pubDate>Sat, 04 Nov 2023 18:54:36 -0400</pubDate>
+      <guid>http://localhost:1313/posts/dependency_inversion/</guid>
+      <description>Among the coding principles you hear get tossed around, Dependency Inversion sounds boring and is hard to understand. I didn&amp;rsquo;t understand it until a year or two ago. But it is one of the most valuable tools for organizing your software and making it easy to change.&#xA;One of the hipster moves in programming is to tell people they don&amp;rsquo;t need to use a framework, especially for backend work. People who say stuff like that don&amp;rsquo;t typically give concrete guidance on what you should do instead.</description>
+    </item>
+    <item>
+      <title>Desire paths in code</title>
+      <link>http://localhost:1313/posts/desire_paths/</link>
+      <pubDate>Tue, 28 Jul 2020 07:31:48 -0500</pubDate>
+      <guid>http://localhost:1313/posts/desire_paths/</guid>
+      <description>Have you noticed those bootleg paths that shortcut between two sidewalks? They&amp;rsquo;re common in parks and on campuses. They&amp;rsquo;re called desire paths. They show where the sidewalk should have been (sometimes the park or school will actually give in and pave them, leading to strange results when seen on a map).&#xA;Programming languages have desire paths, too, and I&amp;rsquo;d argue they demonstrate shortcomings in those languages. Indeed, people often claim that a language doesn&amp;rsquo;t need a particular feature, but the desire paths in their code demonstrate otherwise.</description>
+    </item>
+    <item>
+      <title>Bad javascript language design choices</title>
+      <link>http://localhost:1313/posts/bad_javascript/</link>
+      <pubDate>Thu, 05 Mar 2020 13:34:49 -0600</pubDate>
+      <guid>http://localhost:1313/posts/bad_javascript/</guid>
+      <description>The category discussions about weird JavaScript things is a large and amusing one, probably best exemplified by Gary Bernhardt&amp;rsquo;s Wat lightning talk.&#xA;I&amp;rsquo;d like to focus on two I haven&amp;rsquo;t seen discussed as much (though I may simply have overlooked the canonical article). First, const doesn&amp;rsquo;t work the way it ought to, and second, indexOf&amp;rsquo;s magic number thing is godawful.&#xA;const doesn&amp;rsquo;t solve the problem it ought to solve. Consider this situation:</description>
+    </item>
+    <item>
+      <title>Carried on: bags</title>
+      <link>http://localhost:1313/posts/carried_on_bags/</link>
+      <pubDate>Tue, 28 Jan 2020 12:38:22 -0600</pubDate>
+      <guid>http://localhost:1313/posts/carried_on_bags/</guid>
+      <description>(This is part 3 of a series on the bag/multiset data structure. Check out parts 1 and 2.)&#xA;Improving the hash function So our bag works per our tests. Let&amp;rsquo;s take a look at the naïve implementation of hashing, at least for strings:&#xA;// This is the equivalent of `impl`ing a trait in Rust. type String = Hashable; // https://stackoverflow.com/a/8076436/3396324 String.prototype.hashCode = function (): number { return [...this].reduce((hash, character) =&amp;gt; { hash = (hash &amp;lt;&amp;lt; 5) - hash + character.</description>
+    </item>
+    <item>
+      <title>Locker_analogy</title>
+      <link>http://localhost:1313/posts/locker_analogy/</link>
+      <pubDate>Fri, 24 Jan 2020 13:49:29 -0600</pubDate>
+      <guid>http://localhost:1313/posts/locker_analogy/</guid>
+      <description>An extremely long analogy Consider this the director&amp;rsquo;s cut of a strange story that includes a variety of alternative endings. The scene is set in a school with many floors and hallways, all lined with lockers. On the first day of class, you are trying to find a locker in which to store your backpack.&#xA;You say good morning to the teacher, and ask where you should put your backpack. The teacher returns your greeting, and tells you something unusual: &amp;ldquo;I don&amp;rsquo;t assign lockers.</description>
+    </item>
+    <item>
+      <title>You have to check that bag!</title>
+      <link>http://localhost:1313/posts/check_that_bag/</link>
+      <pubDate>Sat, 04 Jan 2020 11:32:33 -0800</pubDate>
+      <guid>http://localhost:1313/posts/check_that_bag/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Implementing a bag</title>
+      <link>http://localhost:1313/posts/implementing_a_bag/</link>
+      <pubDate>Fri, 03 Jan 2020 11:39:14 -0800</pubDate>
+      <guid>http://localhost:1313/posts/implementing_a_bag/</guid>
+      <description>In my previous post, I talked about a bag data structure, which is like a set that allows repeated occurrences of the same value.&#xA;In this post I will discuss my naïve implementation that has the goal of O(1) best case insertion, search, and deletion. You can follow along by viewing the code at https://www.github.com/ethan826/bag.&#xA;In the next post I&amp;rsquo;ll discuss improvements to consider, mostly around improving the hash function and considering load factor.</description>
+    </item>
+    <item>
+      <title>That&#39;s my bag, baby</title>
+      <link>http://localhost:1313/posts/thats_my_bag/</link>
+      <pubDate>Wed, 01 Jan 2020 12:13:12 -0600</pubDate>
+      <guid>http://localhost:1313/posts/thats_my_bag/</guid>
+      <description>(This is part of a series of articles. The next one is here.)&#xA;When we want a collection with elements that may repeat, we generally reach for an array, list, vector, etc. When we want a collection with elements that don&amp;rsquo;t or whose repeats we don&amp;rsquo;t care about, we generally reach for a set.&#xA;Efficient set implementations often don&amp;rsquo;t track insertion order. For hashsets, that&amp;rsquo;s because they hash their input and organize based on that hashed value.</description>
+    </item>
+    <item>
+      <title>Breaking out of the fold</title>
+      <link>http://localhost:1313/posts/breaking_fold/</link>
+      <pubDate>Sun, 15 Dec 2019 15:58:10 -0600</pubDate>
+      <guid>http://localhost:1313/posts/breaking_fold/</guid>
+      <description>This article addresses an issue alluded to in my previous one. Namely, we sometimes want to break out of the iteration within fold, but it is not easy to do that in many languages.&#xA;fold has a problem with short-circuiting. In defining any and all by using fold, as we did in the previous article, we did not short-circuit. But we&amp;rsquo;d get a better constant factor for our time complexity if we can break from those methods once we know the final outcome.</description>
+    </item>
+    <item>
+      <title>I fold!</title>
+      <link>http://localhost:1313/posts/i_fold/</link>
+      <pubDate>Sun, 08 Dec 2019 14:15:00 -0600</pubDate>
+      <guid>http://localhost:1313/posts/i_fold/</guid>
+      <description>This article is a love letter to fold, a.k.a. reduce, a.k.a. inject.1&#xA;I love fold for three reasons. First, it is useful in a wide variety of programming contexts. Second, it is a ladder between different levels of abstraction: it is simple to define, but allows operating on collections more abstractly. Third, it can have the same API but be defined based on looping or recursion, and so can help you solve similar problems in similar ways despite coding in different paradigms.</description>
+    </item>
+    <item>
+      <title>Priors</title>
+      <link>http://localhost:1313/posts/priors/</link>
+      <pubDate>Mon, 02 Dec 2019 12:50:00 -0600</pubDate>
+      <guid>http://localhost:1313/posts/priors/</guid>
+      <description>There&amp;rsquo;s a lyric in a They Might Be Giants song:1&#xA;Now you&amp;rsquo;re the only one here, Who can tell me if it&amp;rsquo;s true: That you love me, And I love me.&#xA;The lyric is effective because it uses our expectations of rhyme scheme, parallelism, and reciprocity to have us all but certain that the final line of the verse will end with you. And the surprise serves a purpose: it uses the flouting of our expectations as a way of making us feel the potency of the narrator&amp;rsquo;s self-centeredness.</description>
+    </item>
+    <item>
+      <title>Types Are for People, not Computers</title>
+      <link>http://localhost:1313/posts/types_are_for_people/</link>
+      <pubDate>Thu, 14 Nov 2019 09:00:00 -0600</pubDate>
+      <guid>http://localhost:1313/posts/types_are_for_people/</guid>
+      <description>Types—in the static-typing sense—are useful because they help people, not computers. Oh sure, we use them, in part, to subdue the compiler or meet some need peculiarly arising from our computer. But types are valuable because they are a way of communicating.&#xA;Type systems are a way of communicating. Type systems are a way of announcing what you understand, expect, or intend. Good type systems let you do so at the level of abstraction you choose.</description>
+    </item>
+    <item>
+      <title>Nulls</title>
+      <link>http://localhost:1313/posts/nulls/</link>
+      <pubDate>Wed, 13 Nov 2019 12:54:37 -0600</pubDate>
+      <guid>http://localhost:1313/posts/nulls/</guid>
+      <description>Consider this example, in which we deserialize some JSON into a struct and then cast one of the values from a string to an integer:&#xA;use serde::Deserialize; // Define a struct that has the shape of our JSON. By deriving the `Deserialize` // trait from the `serde` library, Rust now knows how to take JSON and put it // into this struct. #[derive(Deserialize)] #[serde(rename_all = &amp;#34;camelCase&amp;#34;)] // JSON&amp;#39;s camelcase -&amp;gt; Rust&amp;#39;s snake case.</description>
+    </item>
+    <item>
+      <title>Limiting the scope of mutation</title>
+      <link>http://localhost:1313/posts/mutation_scopes/</link>
+      <pubDate>Tue, 05 Nov 2019 15:05:29 -0600</pubDate>
+      <guid>http://localhost:1313/posts/mutation_scopes/</guid>
+      <description>Functional programming teaches us about the dangers of mutability. But some object-oriented code mutates variables freely, in different scopes, along different code paths, and in many places.&#xA;To maintain our ability to reason about code, we can learn from functional programming and treat mutation as a risk to be managed. Even if we stop short of mandatory immutability and using constructs like monads, we can still manage mutations and recognize them as a source of bugs and confusion.</description>
+    </item>
+  </channel>
+</rss>

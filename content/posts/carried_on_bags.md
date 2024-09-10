@@ -6,8 +6,7 @@ draft: false
 ---
 
 (This is part 3 of a series on the bag/multiset data structure. Check out
-parts [1]({{<relref "/thats_my_bag">}}) and [2]({{<relref
-"/implementing_a_bag">}}).)
+parts [1]({{<relref "thats_my_bag">}}) and [2]({{<relref "implementing_a_bag">}}).)
 
 ## Improving the hash function
 
@@ -19,7 +18,7 @@ of hashing, at least for strings:
 type String = Hashable;
 
 // https://stackoverflow.com/a/8076436/3396324
-String.prototype.hashCode = function(): number {
+String.prototype.hashCode = function (): number {
   return [...this].reduce((hash, character) => {
     hash = (hash << 5) - hash + character.charCodeAt(0);
     return hash & hash;

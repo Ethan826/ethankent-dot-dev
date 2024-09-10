@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+    <title>I fold! - Ethan Kent&#39;s dev blog</title>
+
+    
+    
+    <meta name="description" content="This article is a love letter to fold, a.k.a. reduce, a.k.a. inject.1
+I love fold for three reasons. First, it is useful in a wide variety of programming contexts. Second, it is a ladder between different levels of abstraction: it is simple to define, but allows operating on collections more abstractly. Third, it can have the same API but be defined based on looping or recursion, and so can help you solve similar problems in similar ways despite coding in different paradigms." />
+    <meta name="author" content="Ethan Kent" />
+    
+
+    <link href="https://unpkg.com/@master/normal.css" rel="stylesheet">
+    <script src="https://unpkg.com/@master/style@1.5.0"></script>
+    <script src="https://unpkg.com/@master/styles@1.13.0"></script>
+    <script src="https://unpkg.com/master-styles-group"></script>
+    <script src="https://unpkg.com/themes.js"></script>
+    <script>window.themes = window.themes || new window.Themes()</script>
+
+    <style>
+        :root {
+            --font-sans: "Inter var", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+        }
+    </style></head>
+<body class="bg:fade-84@dark font:fade-16@dark font:sans">
+    <nav class="w:full h:90 fixed bg:fade-84/.95@dark bg:white z:1000">
+    <div class="
+        h:full
+        w:full
+        max-w:1200
+        mx:auto
+        px:32
+        d:flex
+        align-items:center
+    ">
+        <div>
+            <a href="/" class="mr-3 font:extralight">
+              
+              Ethan Kent&#39;s dev blog
+              
+            </a>
+        </div>
+
+        <div class="ml:auto">
+            
+            
+            
+        </div>
+    </div>
+</nav>
+<div class="d:flex flex:column@<=sm pt:90 px:24 jc:center gap:44 word-break:break-word">
+        <div class="max-w:700 w:full box:content-box">
+<article class="box:border-box pt:32">
+    <header class="mb:32">
+        <div class="font:40 font:extrabold">I fold!</div>
+        <div class="mt:16 f:fade-60">
+            <time>Dec 8, 2019</time>
+            </div>
+    </header><div class="
+    _:where(a):hover{text-decoration-color:fade}
+    _:where(a){text-decoration:2;underline;fade-10;_text-decoration-color:fade-70@dark}
+    _:where(blockquote){bl:5;solid;fade-76/.1;_bl:5;solid;fade-34/.1@dark}
+    _:where(code){font:90%;_v:middle}
+    _:where(code:not(.highlight_*,pre_*)){p:2;6;_r:4}
+    _:where(del){text-decoration:1;line-through;fade-68;_text-decoration-color:red-64@dark}
+    _:where(figcaption){text:14;_p:10;20;0;_width:fit;_mx:auto;_font:fade-56;_font:fade-57@dark}
+    _:where(h1){font:40;_font:extrabold}
+    _:where(h1,h2,h3)+:where(h1,h2,h3){mt:.5em}
+    _:where(h1,h2,h3,h4,h5,h6){mt:2em}
+    _:where(h2){mb:1em;_font:32}
+    _:where(h3){font:24}
+    _:where(h4){font:20}
+    _:where(h5){font:16}
+    _:where(h6){font:14}
+    _:where(li)::marker{font:fade-44;_font:fade-68@dark}
+    _:where(li){pl:.375em}
+    _:where(mark){text-decoration:1;underline;#fce016;_bg:transparent;_text-decoration-color:rgb(252;224;22/.5)@dark}
+    _:where(p,li){font:fade-76;_font:16;_line-height:1.65;_font:fade-34@dark}
+    _:where(p,pre,blockquote,figure,ul,ol,table){my:1.125em}
+    >:first-child{mt:0!}
+    _:where(pre){p:20;_r:8;_overflow:auto}
+    _:where(pre,code:not(.highlight_*)){bg:fade-2;_bg:fade-92!@dark}
+    _:where(strong,b,a,code:not(.highlight_*),mark,del){font:fade-92;_font:fade-12@dark}
+    _:where(table){width:full;_border-spacing:0}
+    _:where(td){v:baseline}
+    _:where(td,th):first-child{pl:0}
+    _:where(td,th):last-child{pr:0}
+    _:where(td,th){bb:1;solid;fade-92/.06;_p:6;_b:fade-4/.04@dark}
+    _:where(th){font:fade-78;_font:14;_text:left;_font:fade-12@dark}
+    _:where(th,p_code,li_code,a,mark){font:semibold;_font:medium@dark}
+    _:where(ul){list-style-type:disc}
+    _:where(ul,ol,blockquote){pl:1.5em}
+    _:where(video,img){max-width:full}
+    _:where(a,mark){text-underline-offset:3}
+    _:where(hr){h:2;_bg:fade-10;_bg:fade-70@dark;_my:3em}
+"><p>This article is a love letter to <code>fold</code>, a.k.a. <code>reduce</code>, a.k.a.
+<code>inject</code>.<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
+<p>I love fold for three reasons. First, it is useful in a wide variety of
+programming contexts. Second, it is a ladder between different levels of
+abstraction: it is simple to define, but allows operating on collections more
+abstractly. Third, it can have the same API but be defined based on looping
+or recursion, and so can help you solve similar problems in similar ways
+despite coding in different paradigms.</p>
+<p>I&rsquo;ll explain what I mean in the opposite order. I will not take up the topic
+of folding infinite collections, laziness, <code>foldl</code> vs. <code>foldr</code>, etc.; perhaps
+I will write about these ideas another time.</p>
+<h2 id="fold-provides-the-same-abstraction-across-programming-paradigms"><code>fold</code> provides the same abstraction across programming paradigms.</h2>
+<p>We can define <code>fold</code> iteratively or recursively. Let&rsquo;s define <code>fold</code> in each
+way (not necessarily the most efficient or with all the bells and whistles):</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">iterativeFold</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">array</span>, <span style="color:#a6e22e">fn</span>, <span style="color:#a6e22e">initialAccumulator</span>) =&gt; {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">accumulator</span> <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">typeof</span> <span style="color:#a6e22e">initialAccumulator</span> <span style="color:#f92672">===</span> <span style="color:#e6db74">&#34;undefined&#34;</span> <span style="color:#f92672">?</span> [] <span style="color:#f92672">:</span> <span style="color:#a6e22e">initialAccumulator</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">element</span> <span style="color:#66d9ef">of</span> <span style="color:#a6e22e">array</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">accumulator</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">fn</span>(<span style="color:#a6e22e">accumulator</span>, <span style="color:#a6e22e">element</span>);
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">accumulator</span>;
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">recursiveFold</span> <span style="color:#f92672">=</span> ([<span style="color:#a6e22e">head</span>, ...<span style="color:#a6e22e">tail</span>], <span style="color:#a6e22e">fn</span>, <span style="color:#a6e22e">initialAccumulator</span>) =&gt; {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">accumulator</span> <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">typeof</span> <span style="color:#a6e22e">initialAccumulator</span> <span style="color:#f92672">===</span> <span style="color:#e6db74">&#34;undefined&#34;</span> <span style="color:#f92672">?</span> [] <span style="color:#f92672">:</span> <span style="color:#a6e22e">initialAccumulator</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">head</span> <span style="color:#f92672">===</span> <span style="color:#66d9ef">undefined</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">?</span> <span style="color:#a6e22e">accumulator</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">:</span> <span style="color:#a6e22e">recursiveFold</span>(<span style="color:#a6e22e">tail</span>, <span style="color:#a6e22e">fn</span>, <span style="color:#a6e22e">fn</span>(<span style="color:#a6e22e">accumulator</span>, <span style="color:#a6e22e">head</span>));
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>Notice that although <code>recursiveFold</code> makes its recursive call from the tail
+position, most JavaScript engines don&rsquo;t support tail-call
+optimization.<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup> But that would be a necessary feature in order
+to make the recursive definition usable with large collections.</p>
+<h2 id="fold-can-be-used-to-define-all-the-other-important-higher-order-functions"><code>fold</code> can be used to define all the other important higher-order functions.</h2>
+<p>Now that we have two definitions of <code>fold</code> with the same API and equivalent
+logic, we can use that to define other important higher-order functions.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#75715e">// Assume that `fold` is now the name of whichever of the above implementations
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// you want. Also notice that we&#39;re ignoring the perfectly good `reduce` method
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// on JavaScript iterables and are defining one ourselves.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">map</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">array</span>, <span style="color:#a6e22e">fn</span>) =&gt; {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">fold</span>(<span style="color:#a6e22e">array</span>, (<span style="color:#a6e22e">accumulator</span>, <span style="color:#a6e22e">element</span>) =&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Rebuild our array with every element after applying `fn`
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">accumulator</span>.<span style="color:#a6e22e">push</span>(<span style="color:#a6e22e">fn</span>(<span style="color:#a6e22e">element</span>));
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">accumulator</span>;
+</span></span><span style="display:flex;"><span>  });
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">filter</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">array</span>, <span style="color:#a6e22e">fn</span>) =&gt; {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">fold</span>(<span style="color:#a6e22e">array</span>, (<span style="color:#a6e22e">accumulator</span>, <span style="color:#a6e22e">element</span>) =&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Rebuild our array with only those elements that return truthy values when
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// `fn` is called with them.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">fn</span>(<span style="color:#a6e22e">element</span>)) <span style="color:#a6e22e">accumulator</span>.<span style="color:#a6e22e">push</span>(<span style="color:#a6e22e">element</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">accumulator</span>;
+</span></span><span style="display:flex;"><span>  });
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">all</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">array</span>, <span style="color:#a6e22e">fn</span>) =&gt; {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">fold</span>(
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">array</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Accumulator is initialized to `true`. If we ever encounter an element
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// that causes `fn` to return a falsey value, we coerce that value to
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// Boolean and replace the accumulator with that. Then, no matter how many
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// truthy values we later encounter, the accumulator is now locked in as
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// `false`, which is the appropriate behavior for `all`.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    (<span style="color:#a6e22e">accumulator</span>, <span style="color:#a6e22e">element</span>) =&gt; <span style="color:#a6e22e">accumulator</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#f92672">!!</span><span style="color:#a6e22e">fn</span>(<span style="color:#a6e22e">element</span>),
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">true</span>,
+</span></span><span style="display:flex;"><span>  );
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">any</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">array</span>, <span style="color:#a6e22e">fn</span>) =&gt; {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">fold</span>(
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">array</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Accumulator is initialized to `false`. If we ever encounter an element
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// that causes `fn` to return a truthy value, we coerce that value to
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// Boolean and replace the accumulator with that. Then, no matter how many
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// truthy values we later encounter, the accumulator is now locked in as
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// `true`, which is the appropriate behavior for `any`.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    (<span style="color:#a6e22e">accumulator</span>, <span style="color:#a6e22e">element</span>) =&gt; <span style="color:#a6e22e">accumulator</span> <span style="color:#f92672">||</span> <span style="color:#f92672">!!</span><span style="color:#a6e22e">fn</span>(<span style="color:#a6e22e">element</span>),
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">false</span>,
+</span></span><span style="display:flex;"><span>  );
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>My <a href="https://ethankent.dev/breaking_fold/">next article</a> will deal with the problem attentive readers may notice:
+these <code>any</code> and <code>all</code> functions don&rsquo;t short-circuit; we can reduce the
+constant factor associated with our time complexity if we allow these
+functions to <code>break</code>. The problem, fundamentally, is that we can&rsquo;t reach from
+within the closure to <code>fold</code> to cause the looping in <code>fold</code> itself to break.</p>
+<h2 id="fold-is-useful-in-a-wide-variety-of-circumstances"><code>fold</code> is useful in a wide variety of circumstances.</h2>
+<p>When I need to operate on a collection, I generally use this rule of thumb:</p>
+<ul>
+<li>Do I want to return the same collection type with the same number of
+elements, but with the elements themselves changed? Use <code>map</code>.</li>
+<li>Do I want to return the same collection type with a subset of the original
+elements? Use <code>filter</code>.</li>
+<li>Do I want to do something else (e.g. return a different type, return a
+collection with a subset of the original elements and with the elements
+changed, iterate with a flag or intermediate result, etc.)? Use <code>reduce</code>.</li>
+</ul>
+<h3 id="fold-is-useful-to-combine-multiple-transformations"><code>fold</code> is useful to combine multiple transformations.</h3>
+<p>In some languages, calling <code>filter</code> and then <code>map</code> requires two iterations of
+the collection.<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup> While this does not change the runtime complexity from a
+Big-O perspective, (<code>O(n)</code> == <code>O(2n)</code>), constant factors are often relevant
+in practical applications.</p>
+<p>Consider this code:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * From an array of integers, return only the even integers, divided by two.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * @param {Integer[]} numbers - The integers to operate on.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * @returns {Integer[]} The even integers only, divided by two.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">halveEvens</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">numbers</span> =&gt; {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">iterationSteps</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">numbers</span>
+</span></span><span style="display:flex;"><span>    .<span style="color:#a6e22e">filter</span>(<span style="color:#a6e22e">number</span> =&gt; {
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`Inside filter; on iterationStep </span><span style="color:#e6db74">${</span><span style="color:#f92672">++</span><span style="color:#a6e22e">iterationSteps</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>);
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">number</span> <span style="color:#f92672">%</span> <span style="color:#ae81ff">2</span> <span style="color:#f92672">===</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>    })
+</span></span><span style="display:flex;"><span>    .<span style="color:#a6e22e">map</span>(<span style="color:#a6e22e">number</span> =&gt; {
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`Inside map; on iterationStep </span><span style="color:#e6db74">${</span><span style="color:#f92672">++</span><span style="color:#a6e22e">iterationSteps</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>);
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">number</span> <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>;
+</span></span><span style="display:flex;"><span>    });
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">halveEvens</span>([<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">4</span>, <span style="color:#ae81ff">5</span>, <span style="color:#ae81ff">6</span>]);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Inside filter; on iterationStep 1
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Inside filter; on iterationStep 2
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Inside filter; on iterationStep 3
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Inside filter; on iterationStep 4
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Inside filter; on iterationStep 5
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Inside filter; on iterationStep 6
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Inside map; on iterationStep 7
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Inside map; on iterationStep 8
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Inside map; on iterationStep 9
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// =&gt; [ 1, 2, 3 ]
+</span></span></span></code></pre></div><p>This code logs 9 iteration steps.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * From an array of integers, return only the even integers, divided by two.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * @param {Integer[]} numbers - The integers to operate on.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * @returns {Integer[]} The even integers only, divided by two.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">halveEvens</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">numbers</span> =&gt; {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">iterationStep</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">fold</span>(<span style="color:#a6e22e">numbers</span>, (<span style="color:#a6e22e">accumulator</span>, <span style="color:#a6e22e">element</span>) =&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`Inside fold; on iteration step </span><span style="color:#e6db74">${</span><span style="color:#f92672">++</span><span style="color:#a6e22e">iterationStep</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">element</span> <span style="color:#f92672">%</span> <span style="color:#ae81ff">2</span> <span style="color:#f92672">===</span> <span style="color:#ae81ff">0</span>) {
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">accumulator</span>.<span style="color:#a6e22e">push</span>(<span style="color:#a6e22e">element</span> <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">accumulator</span>;
+</span></span><span style="display:flex;"><span>  });
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">halveEvens</span>([<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">4</span>, <span style="color:#ae81ff">5</span>, <span style="color:#ae81ff">6</span>]);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Inside fold; on iteration step 1
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Inside fold; on iteration step 2
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Inside fold; on iteration step 3
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Inside fold; on iteration step 4
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Inside fold; on iteration step 5
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Inside fold; on iteration step 6
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// =&gt; [ 1, 2, 3 ]
+</span></span></span></code></pre></div><p>This code logs 6 iteration steps, the minimum possible.</p>
+<h3 id="fold-is-useful-when-we-want-to-operate-on-a-collection-to-return-a-different-type"><code>fold</code> is useful when we want to operate on a collection to return a different type.</h3>
+<p>To sum the elements of an array, we can use <code>fold</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">sum</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">numbers</span> =&gt; {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">fold</span>(<span style="color:#a6e22e">numbers</span>, (<span style="color:#a6e22e">total</span>, <span style="color:#a6e22e">number</span>) =&gt; <span style="color:#a6e22e">total</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">number</span>, <span style="color:#ae81ff">0</span>);
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">sum</span>([<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">4</span>, <span style="color:#ae81ff">5</span>, <span style="color:#ae81ff">6</span>, <span style="color:#ae81ff">7</span>, <span style="color:#ae81ff">8</span>, <span style="color:#ae81ff">9</span>, <span style="color:#ae81ff">10</span>]);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// =&gt; 55
+</span></span></span></code></pre></div><h3 id="fold-is-useful-when-we-must-iterate-with-a-flag-or-intermediate-result"><code>fold</code> is useful when we must iterate with a flag or intermediate result.</h3>
+<p>We can implement <code>max</code> and <code>min</code> with <code>fold</code> by making the max or min so far
+encountered take the place of the accumulator.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">max</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">numbers</span> =&gt; {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">fold</span>(
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">numbers</span>,
+</span></span><span style="display:flex;"><span>    (<span style="color:#a6e22e">bestSoFar</span>, <span style="color:#a6e22e">current</span>) =&gt; (<span style="color:#a6e22e">current</span> <span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">bestSoFar</span> <span style="color:#f92672">?</span> <span style="color:#a6e22e">current</span> <span style="color:#f92672">:</span> <span style="color:#a6e22e">bestSoFar</span>),
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">-</span><span style="color:#66d9ef">Infinity</span>,
+</span></span><span style="display:flex;"><span>  );
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">max</span>([<span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">10</span>, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">1001</span>, <span style="color:#f92672">-</span><span style="color:#ae81ff">1000</span>, <span style="color:#ae81ff">1000</span>]);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// =&gt; 1001
+</span></span></span></code></pre></div><p>Or, imagine a game in which you must collect two <code>tinyBooomer</code>s or one
+<code>megaBoomer</code> to win. A <code>nothing</code> does nothing and a <code>whammy</code> makes you lose,
+assuming you haven&rsquo;t yet won.<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup></p>
+<p>There are refactors to be done by extracting some classes, etc., but here&rsquo;s
+an illustration of what I mean:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">tinyBoomer</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">Symbol</span>(<span style="color:#e6db74">&#34;tinyBoomer&#34;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">megaBoomer</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">Symbol</span>(<span style="color:#e6db74">&#34;megaBoomer&#34;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">nothing</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">Symbol</span>(<span style="color:#e6db74">&#34;nothing&#34;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">whammy</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">Symbol</span>(<span style="color:#e6db74">&#34;whammy&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">isWinningGame</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">gameTape</span> =&gt; {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">fold</span>(
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">gameTape</span>,
+</span></span><span style="display:flex;"><span>    (<span style="color:#a6e22e">status</span>, <span style="color:#a6e22e">event</span>) =&gt; {
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">gameOver</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">status</span>.<span style="color:#a6e22e">hasWon</span> <span style="color:#f92672">||</span> <span style="color:#a6e22e">status</span>.<span style="color:#a6e22e">hasLost</span>;
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span><span style="color:#a6e22e">gameOver</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">switch</span> (<span style="color:#a6e22e">event</span>) {
+</span></span><span style="display:flex;"><span>          <span style="color:#66d9ef">case</span> <span style="color:#a6e22e">whammy</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">status</span>.<span style="color:#a6e22e">hasLost</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">true</span>;
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">break</span>;
+</span></span><span style="display:flex;"><span>          <span style="color:#66d9ef">case</span> <span style="color:#a6e22e">megaBoomer</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">status</span>.<span style="color:#a6e22e">hasWon</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">true</span>;
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">break</span>;
+</span></span><span style="display:flex;"><span>          <span style="color:#66d9ef">case</span> <span style="color:#a6e22e">tinyBoomer</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">status</span>.<span style="color:#a6e22e">tinyBoomerCount</span> <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>;
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">status</span>.<span style="color:#a6e22e">tinyBoomerCount</span> <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">2</span>) <span style="color:#a6e22e">status</span>.<span style="color:#a6e22e">hasWon</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">true</span>;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>      }
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">status</span>;
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">hasWon</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">false</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">hasLost</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">false</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">tinyBoomerCount</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">0</span>,
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>  ).<span style="color:#a6e22e">hasWon</span>;
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">winner</span> <span style="color:#f92672">=</span> [<span style="color:#a6e22e">tinyBoomer</span>, <span style="color:#a6e22e">nothing</span>, <span style="color:#a6e22e">nothing</span>, <span style="color:#a6e22e">tinyBoomer</span>, <span style="color:#a6e22e">whammy</span>];
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">loser</span> <span style="color:#f92672">=</span> [<span style="color:#a6e22e">tinyBoomer</span>, <span style="color:#a6e22e">nothing</span>, <span style="color:#a6e22e">whammy</span>, <span style="color:#a6e22e">tinyBoomer</span>, <span style="color:#a6e22e">megaBoomer</span>];
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">isWinningGame</span>(<span style="color:#a6e22e">winner</span>);
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">isWinningGame</span>(<span style="color:#a6e22e">loser</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// =&gt; true
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// =&gt; false
+</span></span></span></code></pre></div><h3 id="attach-a-mutable-scope">Attach a mutable scope</h3>
+<p>You can use <code>fold</code> to help attach a scope for mutating an object in a scope
+that ends when you&rsquo;re done mutating it. That was the topic of <a href="https://ethankent.dev/posts/mutation_scopes/#better-yet-put-mutation-in-a-scope-attached-to-the-declaration">another
+article</a>.</p>
+<p>❧ ❧ ❧</p>
+<p>I will admit to overusing <code>fold</code> a bit. But I hope you can see why its
+versatility is appealing, both from a pragmatic and an aesthetic perspective.</p>
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p>It is unclear to me why Ruby thinks all of the big higher-order functions must end in <em>–ect</em>: <code>collect</code> (<code>map</code>), <code>select</code> (<code>filter</code>), <code>inject</code> (<code>fold</code>/<code>reduce</code>), and <code>reject</code> (like <code>filter</code>, but retain only values for which the closure returns <code>false</code>). I will admit that <code>reject</code> is pretty useful and well named, but those other ones seem pretty bloody-minded—particularly <code>collect</code>, a name much better suited to the way Rust <a href="https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.collect">uses it</a>.&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2">
+<p><em>See</em> Juriy Zaytsev, Leon Arnott, Denis Pushkarev, <a href="http://kangax.github.io/compat-table/es6/#test-proper_tail_calls_%28tail_call_optimisation%29">ECMAScript 6 compatibility table</a> (last visited Dec. 5, 2019).&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3">
+<p>This is the power of <code>collect()</code> in Rust and <code>lazy</code> in Ruby.&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:4">
+<p>To make this efficient we&rsquo;d want to be able to short-circuit, which will be the subject of the next article.]&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
+</div></article>
+<footer class="py:24">
+    <div class="f:fade-30 f:14 mb:8"></div>
+    <div class="f:fade-60 f:12">Theme <a class="f:bold" href="https://github.com/serkodev/holy" _target="_blank">Holy</a></div>
+</footer></div>
+    </div>
+</body>
+
+</html>

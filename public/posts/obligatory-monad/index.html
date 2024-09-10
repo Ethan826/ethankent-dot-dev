@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+    <title>Obligatory Monad explainer - Ethan Kent&#39;s dev blog</title>
+
+    
+    
+    <meta name="description" content="In addition to its being good and useful, it’s also cursed and the curse of the monad is that once you get the epiphany, once you understand—&ldquo;oh that&rsquo;s what it is&rdquo;—you lose the ability to explain it to anybody else.
+– Douglas Crockford
+It is a truth universally acknowledged, that a programmer in possession of a rudimentary knowledge of monads, must publish a dev blog post on that topic." />
+    <meta name="author" content="" />
+    
+
+    <link href="https://unpkg.com/@master/normal.css" rel="stylesheet">
+    <script src="https://unpkg.com/@master/style@1.5.0"></script>
+    <script src="https://unpkg.com/@master/styles@1.13.0"></script>
+    <script src="https://unpkg.com/master-styles-group"></script>
+    <script src="https://unpkg.com/themes.js"></script>
+    <script>window.themes = window.themes || new window.Themes()</script>
+
+    <style>
+        :root {
+            --font-sans: "Inter var", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+        }
+    </style></head>
+<body class="bg:fade-84@dark font:fade-16@dark font:sans">
+    <nav class="w:full h:90 fixed bg:fade-84/.95@dark bg:white z:1000">
+    <div class="
+        h:full
+        w:full
+        max-w:1200
+        mx:auto
+        px:32
+        d:flex
+        align-items:center
+    ">
+        <div>
+            <a href="/" class="mr-3 font:extralight">
+              
+              Ethan Kent&#39;s dev blog
+              
+            </a>
+        </div>
+
+        <div class="ml:auto">
+            
+            
+            
+        </div>
+    </div>
+</nav>
+<div class="d:flex flex:column@<=sm pt:90 px:24 jc:center gap:44 word-break:break-word">
+        <div class="max-w:700 w:full box:content-box">
+<article class="box:border-box pt:32">
+    <header class="mb:32">
+        <div class="font:40 font:extrabold">Obligatory Monad explainer</div>
+        <div class="mt:16 f:fade-60">
+            <time>Sep 10, 2024</time>
+            </div>
+    </header><div class="
+    _:where(a):hover{text-decoration-color:fade}
+    _:where(a){text-decoration:2;underline;fade-10;_text-decoration-color:fade-70@dark}
+    _:where(blockquote){bl:5;solid;fade-76/.1;_bl:5;solid;fade-34/.1@dark}
+    _:where(code){font:90%;_v:middle}
+    _:where(code:not(.highlight_*,pre_*)){p:2;6;_r:4}
+    _:where(del){text-decoration:1;line-through;fade-68;_text-decoration-color:red-64@dark}
+    _:where(figcaption){text:14;_p:10;20;0;_width:fit;_mx:auto;_font:fade-56;_font:fade-57@dark}
+    _:where(h1){font:40;_font:extrabold}
+    _:where(h1,h2,h3)+:where(h1,h2,h3){mt:.5em}
+    _:where(h1,h2,h3,h4,h5,h6){mt:2em}
+    _:where(h2){mb:1em;_font:32}
+    _:where(h3){font:24}
+    _:where(h4){font:20}
+    _:where(h5){font:16}
+    _:where(h6){font:14}
+    _:where(li)::marker{font:fade-44;_font:fade-68@dark}
+    _:where(li){pl:.375em}
+    _:where(mark){text-decoration:1;underline;#fce016;_bg:transparent;_text-decoration-color:rgb(252;224;22/.5)@dark}
+    _:where(p,li){font:fade-76;_font:16;_line-height:1.65;_font:fade-34@dark}
+    _:where(p,pre,blockquote,figure,ul,ol,table){my:1.125em}
+    >:first-child{mt:0!}
+    _:where(pre){p:20;_r:8;_overflow:auto}
+    _:where(pre,code:not(.highlight_*)){bg:fade-2;_bg:fade-92!@dark}
+    _:where(strong,b,a,code:not(.highlight_*),mark,del){font:fade-92;_font:fade-12@dark}
+    _:where(table){width:full;_border-spacing:0}
+    _:where(td){v:baseline}
+    _:where(td,th):first-child{pl:0}
+    _:where(td,th):last-child{pr:0}
+    _:where(td,th){bb:1;solid;fade-92/.06;_p:6;_b:fade-4/.04@dark}
+    _:where(th){font:fade-78;_font:14;_text:left;_font:fade-12@dark}
+    _:where(th,p_code,li_code,a,mark){font:semibold;_font:medium@dark}
+    _:where(ul){list-style-type:disc}
+    _:where(ul,ol,blockquote){pl:1.5em}
+    _:where(video,img){max-width:full}
+    _:where(a,mark){text-underline-offset:3}
+    _:where(hr){h:2;_bg:fade-10;_bg:fade-70@dark;_my:3em}
+"><blockquote>
+<p>In addition to its being good and useful, it’s also cursed and the curse of
+the monad is that once you get the epiphany, once you understand—&ldquo;oh that&rsquo;s
+what it is&rdquo;—you lose the ability to explain it to anybody else.</p>
+</blockquote>
+<p>– <a href="https://youtu.be/dkZFtimgAcM&amp;t=42">Douglas Crockford</a></p>
+<blockquote>
+<p>It is a truth universally acknowledged, that a programmer in possession of a
+rudimentary knowledge of monads, must publish a dev blog post on that topic.</p>
+</blockquote>
+<p>– Jane Austen, more or less.</p>
+<h1 id="the-idea-of-a-thing-you-can-map-over">The idea of a &ldquo;thing you can <code>map()</code> over&rdquo;</h1>
+<p>The superpower of the FP community is spotting abstracter abstractions than
+everybody else. Let&rsquo;s start this monad explainer using <code>map()</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span>[<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>].<span style="color:#a6e22e">map</span>((<span style="color:#a6e22e">x</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#ae81ff">2</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">x</span>);
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// =&gt; [2, 4]
+</span></span></span></code></pre></div><p>Array&rsquo;s <code>map()</code> lets us perform a function on each element of the array. Notice
+that the <code>map()</code> method knows things about arrays. We don&rsquo;t have to do stuff
+with <code>for</code> loops or any of that. By contrast, the function we pass to <code>map()</code>,
+namely—</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span>(<span style="color:#a6e22e">x</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#ae81ff">2</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">x</span>;
+</span></span></code></pre></div><p>doesn&rsquo;t know stuff about arrays.</p>
+<p>Keep that in mind as we look at promises:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">myPromise</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">Promise</span>.<span style="color:#a6e22e">resolve</span>(<span style="color:#ae81ff">3</span>);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">result</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">myPromise</span>.<span style="color:#a6e22e">then</span>((<span style="color:#a6e22e">x</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#ae81ff">2</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">x</span>);
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">result</span>);
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// =&gt; 6
+</span></span></span></code></pre></div><p>Same concepts: the <code>then()</code> method knows stuff about promises. We don&rsquo;t have to
+do stuff with the microtasks queue or any of that. By contrast, the function we
+pass to <code>then()</code>, namely—</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span>(<span style="color:#a6e22e">x</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#ae81ff">2</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">x</span>;
+</span></span></code></pre></div><p>doesn&rsquo;t know stuff about promises.</p>
+<p>Remember how I said that the FP smarties&rsquo; superpower is abstracter abstractions?
+They noticed the usefulness of this general concept of <em>a thing that you can
+<code>map()</code> over</em>: that&rsquo;s called a functor.</p>
+<p>Let&rsquo;s just make up a type that has this functor-y-ness:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Box</span>&lt;<span style="color:#f92672">A</span>&gt; {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">constructor</span>(<span style="color:#66d9ef">private</span> <span style="color:#a6e22e">value</span>: <span style="color:#66d9ef">A</span>) {}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">map</span>&lt;<span style="color:#f92672">B</span>&gt;(<span style="color:#a6e22e">theFunction</span><span style="color:#f92672">:</span> (<span style="color:#a6e22e">a</span>: <span style="color:#66d9ef">A</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">B</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Box</span>(<span style="color:#a6e22e">theFunction</span>(<span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">value</span>));
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">box</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Box</span>(<span style="color:#ae81ff">10</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">box</span>.<span style="color:#a6e22e">map</span>((<span style="color:#a6e22e">x</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#ae81ff">2</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">x</span>));
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// =&gt; Box: { &#34;value&#34;: 20 }
+</span></span></span></code></pre></div><h1 id="the-idea-of-a-thing-you-can-flatmap-over">The idea of a &ldquo;thing you can <code>flatMap()</code> over&rdquo;</h1>
+<p>Now let&rsquo;s consider mapping a function over an array, but that function also
+returns an array. Let&rsquo;s say we have a function that assigns roles to a user (in
+an admittedly contrived way):</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">assignRoles</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">user</span>: <span style="color:#66d9ef">string</span>) <span style="color:#f92672">=&gt;</span>
+</span></span><span style="display:flex;"><span>  [<span style="color:#e6db74">&#34;admin&#34;</span>, <span style="color:#e6db74">&#34;editor&#34;</span>, <span style="color:#e6db74">&#34;viewer&#34;</span>].<span style="color:#a6e22e">map</span>((<span style="color:#a6e22e">role</span>) <span style="color:#f92672">=&gt;</span> ({ <span style="color:#a6e22e">user</span>, <span style="color:#a6e22e">role</span> }));
+</span></span></code></pre></div><p>This works fine for a single user:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#a6e22e">assignRoles</span>(<span style="color:#e6db74">&#34;Ethan&#34;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// =&gt; [
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//      { user: &#34;Ethan&#34;, role: &#34;admin&#34; },
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//      { user: &#34;Ethan&#34;, role: &#34;editor&#34; },
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//      { user: &#34;Ethan&#34;, role: &#34;viewer&#34; },
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//    ];
+</span></span></span></code></pre></div><p>But let&rsquo;s say we want to create an array with all permissions for several users
+for later processing:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#a6e22e">assignRoles</span>([<span style="color:#e6db74">&#34;Anita&#34;</span>, <span style="color:#e6db74">&#34;Brad&#34;</span>, <span style="color:#e6db74">&#34;Cindy&#34;</span>]);
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// =&gt; [
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//      [
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//        { user: &#34;Anita&#34;, role: &#34;admin&#34; },
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//        { user: &#34;Anita&#34;, role: &#34;editor&#34; },
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//        { user: &#34;Anita&#34;, role: &#34;viewer&#34; },
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//      ],
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//      [
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//        { user: &#34;Brad&#34;, role: &#34;admin&#34; },
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//        { user: &#34;Brad&#34;, role: &#34;editor&#34; },
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//        { user: &#34;Brad&#34;, role: &#34;viewer&#34; },
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//      ],
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//      [
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//        { user: &#34;Cindy&#34;, role: &#34;admin&#34; },
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//        { user: &#34;Cindy&#34;, role: &#34;editor&#34; },
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//        { user: &#34;Cindy&#34;, role: &#34;viewer&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//        },
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//      ],
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//    ];
+</span></span></span></code></pre></div><p>Whoops, we didn&rsquo;t account for the nested arrays. Well, don&rsquo;t worry: recent JS
+runtimes give us a <code>flatMap()</code> method:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span>[<span style="color:#e6db74">&#34;Anita&#34;</span>, <span style="color:#e6db74">&#34;Brad&#34;</span>, <span style="color:#e6db74">&#34;Cindy&#34;</span>].<span style="color:#a6e22e">flatMap</span>(<span style="color:#a6e22e">assignRoles</span>);
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// =&gt; [
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//      { user: &#34;Anita&#34;, role: &#34;admin&#34; },
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//      { user: &#34;Anita&#34;, role: &#34;editor&#34; },
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//      { user: &#34;Anita&#34;, role: &#34;viewer&#34; },
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//      { user: &#34;Brad&#34;, role: &#34;admin&#34; },
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//      { user: &#34;Brad&#34;, role: &#34;editor&#34; },
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//      { user: &#34;Brad&#34;, role: &#34;viewer&#34; },
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//      { user: &#34;Cindy&#34;, role: &#34;admin&#34; },
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//      { user: &#34;Cindy&#34;, role: &#34;editor&#34; },
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//      { user: &#34;Cindy&#34;, role: &#34;viewer&#34; },
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//    ];
+</span></span></span></code></pre></div><p>Pretty straightforward. This function just makes sure that the outer and inner
+arrays get smashed together.</p>
+<p>Now let&rsquo;s implement <code>flatMap()</code> for our <code>Box</code> type:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Box</span>&lt;<span style="color:#f92672">A</span>&gt; {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">constructor</span>(<span style="color:#66d9ef">private</span> <span style="color:#a6e22e">value</span>: <span style="color:#66d9ef">A</span>) {}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">map</span>&lt;<span style="color:#f92672">B</span>&gt;(<span style="color:#a6e22e">theFunction</span><span style="color:#f92672">:</span> (<span style="color:#a6e22e">a</span>: <span style="color:#66d9ef">A</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">B</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Box</span>(<span style="color:#a6e22e">theFunction</span>(<span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">value</span>));
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">flatMap</span>&lt;<span style="color:#f92672">B</span>&gt;(<span style="color:#a6e22e">theFunction</span><span style="color:#f92672">:</span> (<span style="color:#a6e22e">a</span>: <span style="color:#66d9ef">A</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">Box</span>&lt;<span style="color:#f92672">B</span>&gt;) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">theFunction</span>(<span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">value</span>);
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">boxedDoubler</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">x</span>: <span style="color:#66d9ef">number</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Box</span>(<span style="color:#ae81ff">2</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">x</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">box</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Box</span>(<span style="color:#ae81ff">10</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Whoops, inadvertently nested
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">box</span>.<span style="color:#a6e22e">map</span>(<span style="color:#a6e22e">boxedDoubler</span>));
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// =&gt; Box: { &#34;value&#34;: { &#34;value&#34;: 20 } }
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Ahh, that&#39;s better
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">box</span>.<span style="color:#a6e22e">flatMap</span>(<span style="color:#a6e22e">boxedDoubler</span>));
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// =&gt; Box: { &#34;value&#34;: 20 }
+</span></span></span></code></pre></div><p>Remember how I said that the FP smarties&rsquo; superpower is abstracter abstractions?
+They noticed the usefulness of this general concept of <em>a thing that you can
+<code>flatMap()</code> over</em>: that&rsquo;s called a monad.</p>
+<p>Mic drop.</p>
+<h1 id="some-loose-ends">Some loose ends</h1>
+<p>You&rsquo;ve now gotten the minimum viable monad explainer. The rest is optional
+reading.</p>
+<h2 id="so-what">So what?</h2>
+<p>If you&rsquo;re not a math or FP theory person, this may seem bloody-minded. Why in
+the world do I care? I can give two reasons in brief. I may write a follow-up
+post on this.</p>
+<ul>
+<li>Spotting abstractions is useful. If your type has a functor instance, I know I
+can give you a function to work with the data inside your type and you&rsquo;ll deal
+with the plumbing of calling my function on the data inside your type. You&rsquo;ll
+figure out how to iterate your array, or await your async code, or whatever
+your type is all about.</li>
+<li>Monads in particular allow sequencing computations, with each subsequent
+computation able to use the results of the previous computation. This provides
+the necessary framework to abstract over side effects and impurity in a way
+that, as if by magic, lets you write pure code to work with impure data. This
+is a deep subject.</li>
+</ul>
+<h2 id="a-little-bit-to-assuage-the-fp-nerds">A little bit to assuage the FP nerds</h2>
+<p>This is the simplest version of the main idea of a monad: a type that you can
+<code>flatMap()</code> over. But I&rsquo;m of course leaving out some details.</p>
+<p>Also, <code>flatMap()</code> is called <code>bind</code> and looks like <code>&gt;&gt;=</code>, and its arguments are
+in a different order, and it&rsquo;s a function, not a method. Here are a few more
+nuances.</p>
+<h3 id="type-classes">Type classes</h3>
+<p>What is the sort of thing that a functor and a monad are? In Haskell, they&rsquo;re
+called <em>type classes</em>. The terminology here is, &ldquo;array has an instance of the
+functor type class,&rdquo; &ldquo;my type <code>Box</code> has an instance of the functor type class,&rdquo;
+etc.</p>
+<p>A strong instinct for type classes comes from an interface in an OOP language.
+But if you experiment with trying to actually do an interface for functors in
+TypeScript, you&rsquo;ll realize you don&rsquo;t have a spot to put the two &ldquo;layers&rdquo; of
+generic parameters: a functor needs to be generic over the type (array, <code>Box</code>)
+and also the type <em>in the type</em> (an array of numbers, a <code>Box</code> with a string).
+You just can&rsquo;t do that with off-the-shelf TypeScript. The feature that&rsquo;s missing
+is called <em>higher-kinded types</em>, which Haskell has.</p>
+<h3 id="hierarchies">Hierarchies</h3>
+<p>Monads also have to be functors. In OOP we&rsquo;d say that monad <em>extends</em> functor,
+but in FP we&rsquo;d say functor is a superclass of monad. We&rsquo;re also leaving out a
+thing called applicative: all monads are applicatives, all applicatives are
+functors.</p>
+<h3 id="additional-methods">Additional methods</h3>
+<p>Monad also has a method for putting something in the type, which in Haskell can
+be called <code>pure</code>. You can think of it as a constructor for the type.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Box</span>&lt;<span style="color:#f92672">A</span>&gt; {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">constructor</span>(<span style="color:#66d9ef">private</span> <span style="color:#a6e22e">value</span>: <span style="color:#66d9ef">A</span>) {}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// Technically `pure` comes from applicative, and monad, for historical
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#75715e">// reasons, has a method called `return` that does the same thing. Okay, now
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#75715e">// forget I said anything.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#a6e22e">pure</span>&lt;<span style="color:#f92672">A</span>&gt;(<span style="color:#a6e22e">value</span>: <span style="color:#66d9ef">A</span>)<span style="color:#f92672">:</span> <span style="color:#a6e22e">Box</span>&lt;<span style="color:#f92672">A</span>&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Box</span>(<span style="color:#a6e22e">value</span>);
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">map</span>&lt;<span style="color:#f92672">B</span>&gt;(<span style="color:#a6e22e">theFunction</span><span style="color:#f92672">:</span> (<span style="color:#a6e22e">a</span>: <span style="color:#66d9ef">A</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">B</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Box</span>(<span style="color:#a6e22e">theFunction</span>(<span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">value</span>));
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">flatMap</span>&lt;<span style="color:#f92672">B</span>&gt;(<span style="color:#a6e22e">theFunction</span><span style="color:#f92672">:</span> (<span style="color:#a6e22e">a</span>: <span style="color:#66d9ef">A</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">Box</span>&lt;<span style="color:#f92672">B</span>&gt;) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">theFunction</span>(<span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">value</span>);
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="laws">Laws</h3>
+<p>In addition to what I&rsquo;ve already said, type classes also have &ldquo;laws.&rdquo; These
+express invariants that the language can&rsquo;t directly enforce.</p>
+<p>For example, a functor isn&rsquo;t lawful if, when you <code>map()</code> the <code>id</code> function (<code>a =&gt; a</code>), you get something different back. That one is called the <em>identity law</em>
+(they also have a <em>composition law</em>).</p>
+<p>When implementing a type class for a type, implementers must make sure they
+follow the appropriate laws, or code using that type class may do weird stuff.</p>
+<h2 id="for-promises-then-is-both-map-and-flatmap">For promises, <code>then()</code> is both <code>map()</code> and <code>flatMap()</code></h2>
+<p>What about promises—are they monads or functors? It turns out promises don&rsquo;t let
+themselves get nested. The JS runtime just sands off this rough edge.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">asyncDoubler</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">x</span>: <span style="color:#66d9ef">number</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">Promise</span>.<span style="color:#a6e22e">resolve</span>(<span style="color:#ae81ff">2</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">x</span>);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">myPromise</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">Promise</span>.<span style="color:#a6e22e">resolve</span>(<span style="color:#ae81ff">3</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">result</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">myPromise</span>.<span style="color:#a6e22e">then</span>(<span style="color:#a6e22e">asyncDoubler</span>);
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">result</span>);
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// =&gt; 6
+</span></span></span></code></pre></div><p>So actually, <code>then()</code> is like <code>map()</code> and <code>flatMap()</code>. It is not a lawful monad,
+though it is akin to a lawful functor.</p>
+</div></article>
+<footer class="py:24">
+    <div class="f:fade-30 f:14 mb:8"></div>
+    <div class="f:fade-60 f:12">Theme <a class="f:bold" href="https://github.com/serkodev/holy" _target="_blank">Holy</a></div>
+</footer></div>
+    </div>
+</body>
+
+</html>

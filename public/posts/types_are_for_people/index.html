@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+    <title>Types Are for People, not Computers - Ethan Kent&#39;s dev blog</title>
+
+    
+    
+    <meta name="description" content="Types—in the static-typing sense—are useful because they help people, not computers. Oh sure, we use them, in part, to subdue the compiler or meet some need peculiarly arising from our computer. But types are valuable because they are a way of communicating.
+Type systems are a way of communicating. Type systems are a way of announcing what you understand, expect, or intend. Good type systems let you do so at the level of abstraction you choose." />
+    <meta name="author" content="Ethan Kent" />
+    
+
+    <link href="https://unpkg.com/@master/normal.css" rel="stylesheet">
+    <script src="https://unpkg.com/@master/style@1.5.0"></script>
+    <script src="https://unpkg.com/@master/styles@1.13.0"></script>
+    <script src="https://unpkg.com/master-styles-group"></script>
+    <script src="https://unpkg.com/themes.js"></script>
+    <script>window.themes = window.themes || new window.Themes()</script>
+
+    <style>
+        :root {
+            --font-sans: "Inter var", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+        }
+    </style></head>
+<body class="bg:fade-84@dark font:fade-16@dark font:sans">
+    <nav class="w:full h:90 fixed bg:fade-84/.95@dark bg:white z:1000">
+    <div class="
+        h:full
+        w:full
+        max-w:1200
+        mx:auto
+        px:32
+        d:flex
+        align-items:center
+    ">
+        <div>
+            <a href="/" class="mr-3 font:extralight">
+              
+              Ethan Kent&#39;s dev blog
+              
+            </a>
+        </div>
+
+        <div class="ml:auto">
+            
+            
+            
+        </div>
+    </div>
+</nav>
+<div class="d:flex flex:column@<=sm pt:90 px:24 jc:center gap:44 word-break:break-word">
+        <div class="max-w:700 w:full box:content-box">
+<article class="box:border-box pt:32">
+    <header class="mb:32">
+        <div class="font:40 font:extrabold">Types Are for People, not Computers</div>
+        <div class="mt:16 f:fade-60">
+            <time>Nov 14, 2019</time>
+            </div>
+    </header><div class="
+    _:where(a):hover{text-decoration-color:fade}
+    _:where(a){text-decoration:2;underline;fade-10;_text-decoration-color:fade-70@dark}
+    _:where(blockquote){bl:5;solid;fade-76/.1;_bl:5;solid;fade-34/.1@dark}
+    _:where(code){font:90%;_v:middle}
+    _:where(code:not(.highlight_*,pre_*)){p:2;6;_r:4}
+    _:where(del){text-decoration:1;line-through;fade-68;_text-decoration-color:red-64@dark}
+    _:where(figcaption){text:14;_p:10;20;0;_width:fit;_mx:auto;_font:fade-56;_font:fade-57@dark}
+    _:where(h1){font:40;_font:extrabold}
+    _:where(h1,h2,h3)+:where(h1,h2,h3){mt:.5em}
+    _:where(h1,h2,h3,h4,h5,h6){mt:2em}
+    _:where(h2){mb:1em;_font:32}
+    _:where(h3){font:24}
+    _:where(h4){font:20}
+    _:where(h5){font:16}
+    _:where(h6){font:14}
+    _:where(li)::marker{font:fade-44;_font:fade-68@dark}
+    _:where(li){pl:.375em}
+    _:where(mark){text-decoration:1;underline;#fce016;_bg:transparent;_text-decoration-color:rgb(252;224;22/.5)@dark}
+    _:where(p,li){font:fade-76;_font:16;_line-height:1.65;_font:fade-34@dark}
+    _:where(p,pre,blockquote,figure,ul,ol,table){my:1.125em}
+    >:first-child{mt:0!}
+    _:where(pre){p:20;_r:8;_overflow:auto}
+    _:where(pre,code:not(.highlight_*)){bg:fade-2;_bg:fade-92!@dark}
+    _:where(strong,b,a,code:not(.highlight_*),mark,del){font:fade-92;_font:fade-12@dark}
+    _:where(table){width:full;_border-spacing:0}
+    _:where(td){v:baseline}
+    _:where(td,th):first-child{pl:0}
+    _:where(td,th):last-child{pr:0}
+    _:where(td,th){bb:1;solid;fade-92/.06;_p:6;_b:fade-4/.04@dark}
+    _:where(th){font:fade-78;_font:14;_text:left;_font:fade-12@dark}
+    _:where(th,p_code,li_code,a,mark){font:semibold;_font:medium@dark}
+    _:where(ul){list-style-type:disc}
+    _:where(ul,ol,blockquote){pl:1.5em}
+    _:where(video,img){max-width:full}
+    _:where(a,mark){text-underline-offset:3}
+    _:where(hr){h:2;_bg:fade-10;_bg:fade-70@dark;_my:3em}
+"><p>Types—in the static-typing sense—are useful because they help people, not
+computers. Oh sure, we use them, in part, to subdue the compiler or meet some
+need peculiarly arising from our computer. But types are valuable because
+they are a way of communicating.</p>
+<h2 id="type-systems-are-a-way-of-communicating">Type systems are a way of communicating.</h2>
+<p>Type systems are a way of announcing what you understand, expect, or intend.
+Good type systems let you do so at the level of abstraction you choose. And
+they let you describe these things based on what things <em>are</em> or what they
+<em>do</em>.</p>
+<p>So if types are a way of communicating, who or what are you talking <em>to</em>?
+Several audiences. You are talking to yourself—leaving notes. You are also
+talking to the computer—but often for your sake rather than its. You are
+asking it to hold you accountable to what you told it you understood,
+expected, or intended. Finally, you are talking to other developers
+(including future you).</p>
+<h2 id="we-can-match-how-we-use-the-type-system-with-what-we-understand-expect-or-intend-of-our-objects">We can match how we use the type system with what we understand, expect, or intend of our objects.</h2>
+<p>Consider this JavaScript code:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">mathItForMe</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">a</span>, <span style="color:#a6e22e">b</span>) =&gt; {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">return</span> { <span style="color:#a6e22e">added</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">a</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">b</span>, <span style="color:#a6e22e">subtracted</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">a</span> <span style="color:#f92672">-</span> <span style="color:#a6e22e">b</span>, <span style="color:#a6e22e">multiplied</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">a</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">b</span>, <span style="color:#a6e22e">divided</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">a</span> <span style="color:#f92672">/</span> <span style="color:#a6e22e">b</span> };
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">mathItForMe</span>(<span style="color:#ae81ff">5</span>, <span style="color:#e6db74">&#34;3&#34;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// =&gt; { added: &#39;53&#39;, subtracted: 2, multiplied: 15, divided: 1.6666666666666667 }
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">mathItForMe</span>(<span style="color:#66d9ef">true</span>, <span style="color:#ae81ff">7</span>);
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// =&gt; { added: 8, subtracted: -6, multiplied: 7, divided: 0.14285714285714285 }
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">mathItForMe</span>(<span style="color:#e6db74">&#34;3&#34;</span>, <span style="color:#66d9ef">true</span>);
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// =&gt; { added: &#39;3true&#39;, subtracted: 2, multiplied: 3, divided: 3 }
+</span></span></span></code></pre></div><p>In what programming context is the desired behavior for using <code>+</code> with a
+string and a boolean to coerce the boolean into the string <code>true</code> or <code>false</code>
+and concatenate it to the string? It&rsquo;s madness. But then again, all implicit
+coercion is the same kind of insanity; some instances are just more florid
+than others. Using types imposes some discipline:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#75715e">#[derive(Debug, PartialEq)]</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">GotMathed</span> {
+</span></span><span style="display:flex;"><span>    added: <span style="color:#66d9ef">i32</span>,
+</span></span><span style="display:flex;"><span>    subtracted: <span style="color:#66d9ef">i32</span>,
+</span></span><span style="display:flex;"><span>    divided: <span style="color:#66d9ef">i32</span>,
+</span></span><span style="display:flex;"><span>    multiplied: <span style="color:#66d9ef">i32</span>,
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">math_it_for_me</span>(num_1: <span style="color:#66d9ef">i32</span>, num_2: <span style="color:#66d9ef">i32</span>) -&gt; <span style="color:#a6e22e">GotMathed</span> {
+</span></span><span style="display:flex;"><span>    GotMathed {
+</span></span><span style="display:flex;"><span>        added: <span style="color:#a6e22e">num_1</span> <span style="color:#f92672">+</span> num_2,
+</span></span><span style="display:flex;"><span>        subtracted: <span style="color:#a6e22e">num_1</span> <span style="color:#f92672">-</span> num_2,
+</span></span><span style="display:flex;"><span>        divided: <span style="color:#a6e22e">num_1</span> <span style="color:#f92672">/</span> num_2,
+</span></span><span style="display:flex;"><span>        multiplied: <span style="color:#a6e22e">num_1</span> <span style="color:#f92672">*</span> num_2,
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> x: <span style="color:#66d9ef">i32</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">7</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> y: <span style="color:#66d9ef">i32</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">5</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    assert_eq!(
+</span></span><span style="display:flex;"><span>        math_it_for_me(x, y),
+</span></span><span style="display:flex;"><span>        GotMathed {
+</span></span><span style="display:flex;"><span>            added: <span style="color:#ae81ff">12</span>,
+</span></span><span style="display:flex;"><span>            subtracted: <span style="color:#ae81ff">2</span>,
+</span></span><span style="display:flex;"><span>            divided: <span style="color:#ae81ff">1</span>,
+</span></span><span style="display:flex;"><span>            multiplied: <span style="color:#ae81ff">35</span>,
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    );
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>But notice that we aren&rsquo;t necessarily capturing our intent. What if, instead
+of a signed 32-bit integer (an <code>i32</code>), we use an unsigned, 64-bit integer (a
+<code>u64</code>)? Or a 32-bit float (an <code>f32</code>)? Our function doesn&rsquo;t work—but it
+probably should. This function isn&rsquo;t <em>about</em> doing math on 32-bit integers,
+it&rsquo;s about doing math on numbers.</p>
+<p>The type system has helped us figure out what our function ought to do by
+requiring us to describe it explicitly. Here we&rsquo;ve gone too narrow. This is
+worlds better than a function that takes types we didn&rsquo;t even consider, like
+the JavaScript example. The behavior there was pathological because we were
+too accepting.</p>
+<p>But now the type system is putting pressure on us to think about exactly what
+this function ought to do. If it were part of a private API—a private method
+in a class or a non <code>pub</code> function in an <code>impl</code> block in Rust—we might accept
+that it places arbitrary limits on the types it accepts in order to
+streamline implementation or avoid premature optimization. Plus, we would
+have additional context and the method&rsquo;s restricted visibility means we
+wouldn&rsquo;t be beholden to others who rely on the code.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#66d9ef">use</span> core::ops::{Add, Div, Mul, Sub};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#[derive(Debug, PartialEq)]</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">GotMathed</span><span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> {
+</span></span><span style="display:flex;"><span>    added: <span style="color:#a6e22e">T</span>,
+</span></span><span style="display:flex;"><span>    subtracted: <span style="color:#a6e22e">T</span>,
+</span></span><span style="display:flex;"><span>    divided: <span style="color:#a6e22e">T</span>,
+</span></span><span style="display:flex;"><span>    multiplied: <span style="color:#a6e22e">T</span>,
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">math_it_for_me</span><span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span>(num_1: <span style="color:#a6e22e">T</span>, num_2: <span style="color:#a6e22e">T</span>) -&gt; <span style="color:#a6e22e">GotMathed</span><span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">where</span>
+</span></span><span style="display:flex;"><span>    T: <span style="color:#a6e22e">Add</span><span style="color:#f92672">&lt;</span>Output <span style="color:#f92672">=</span> T<span style="color:#f92672">&gt;</span>    <span style="color:#75715e">// Specify &#34;trait bounds&#34;: A trait is like an
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#f92672">+</span> Sub<span style="color:#f92672">&lt;</span>Output <span style="color:#f92672">=</span> T<span style="color:#f92672">&gt;</span> <span style="color:#75715e">// interface. It specifies the behavior (method
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#f92672">+</span> Mul<span style="color:#f92672">&lt;</span>Output <span style="color:#f92672">=</span> T<span style="color:#f92672">&gt;</span> <span style="color:#75715e">// signatures) a type must implement. Here we&#39;re
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#f92672">+</span> Div<span style="color:#f92672">&lt;</span>Output <span style="color:#f92672">=</span> T<span style="color:#f92672">&gt;</span> <span style="color:#75715e">// saying `T` is a type that must implement addition,
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#f92672">+</span> Copy            <span style="color:#75715e">// subtraction, multiplication, and division, in each
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#f92672">+</span> Clone           <span style="color:#75715e">// case returning the same type. It must also
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#f92672">+</span> PartialEq,      <span style="color:#75715e">// allow the value to be copied and cloned, and
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>{                         <span style="color:#75715e">// compared for equality (used by `assert_eq!` ↓).
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    GotMathed {
+</span></span><span style="display:flex;"><span>        added: <span style="color:#a6e22e">num_1</span> <span style="color:#f92672">+</span> num_2,
+</span></span><span style="display:flex;"><span>        subtracted: <span style="color:#a6e22e">num_1</span> <span style="color:#f92672">-</span> num_2,
+</span></span><span style="display:flex;"><span>        divided: <span style="color:#a6e22e">num_1</span> <span style="color:#f92672">/</span> num_2,
+</span></span><span style="display:flex;"><span>        multiplied: <span style="color:#a6e22e">num_1</span> <span style="color:#f92672">*</span> num_2,
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> x: <span style="color:#66d9ef">f32</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">7.0</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> y: <span style="color:#66d9ef">f32</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">5.0</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    assert_eq!(
+</span></span><span style="display:flex;"><span>        math_it_for_me(x, y),
+</span></span><span style="display:flex;"><span>        GotMathed {
+</span></span><span style="display:flex;"><span>            added: <span style="color:#ae81ff">12.0</span>,
+</span></span><span style="display:flex;"><span>            subtracted: <span style="color:#ae81ff">2.0</span>,
+</span></span><span style="display:flex;"><span>            divided: <span style="color:#ae81ff">1.4</span>,
+</span></span><span style="display:flex;"><span>            multiplied: <span style="color:#ae81ff">35.0</span>,
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    );
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Here we have brought our intent, expectations, and understanding into
+alignment. We are communicating to the computer what our function needs to be
+able to do and how we intend to do it; the computer will now make sure that
+we are able to do what we promised with the types our function will accept.
+We have put ourselves in a position where the computer can help us. We are
+also communicating to other people what our function is <em>for</em> based on what
+kinds of arguments are acceptable and what they can expect it to return.</p>
+<p>Note that we are now describing what kinds of arguments are appropriate in
+<em>precisely</em> the terms that make sense. We&rsquo;re no longer talking about
+arbitrary concretions: we are talking about the arguments at exactly the
+level of abstraction that ought to define them.<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
+<p>We have specified the arguments that <code>math_it_for_me</code> takes in terms of
+<em>behavior</em>, and in so doing have aligned our intent with our understanding
+and expectations. We could alter the code so that <code>num_1</code> and <code>num_2</code> could
+be different numeric types, but that would force us to consider edge cases
+and typecasts, and so it is reasonable to limit our code the way we have, out
+to the limit of undefined or tricky behavior that we&rsquo;re not interested in
+dealing with. And all of these positive changes were driven by the type
+system&rsquo;s pressure to define things explicitly, together with its allowing
+us to describe acceptable arguments at the right level of abstraction.</p>
+<h2 id="good-type-systems-remind-us-to-think-about-things-we-might-otherwise-forget">Good type systems remind us to think about things we might otherwise forget.</h2>
+<p>Type systems with <code>Option</code>/<code>Maybe</code> and <code>Result</code>/<code>Either</code> are a good example
+of how type systems can force us to handle all possible results. For example, Rust
+defines the <code>Option</code> type:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#66d9ef">enum</span> Option<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Enums in Rust can contain values. Here the `Some` variant contains a
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// value of the generic type `T`.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    Some(T),
+</span></span><span style="display:flex;"><span>    None
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>There is no <code>null</code> in Rust. A function that can fail to return a value of
+type <code>T</code> must return an <code>Option&lt;T&gt;</code> (or similar) rather than a <code>T</code>. If you
+write a function that is supposed to return a <code>T</code> but there is any code path
+in the function that would fail to return a <code>T</code>, the compiler will yell at
+you for not satisfying the function&rsquo;s type signature. If the caller of that
+function tries to treat its return type like a <code>T</code> rather than an
+<code>Option&lt;T&gt;</code>, you will likely get a type error.<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></p>
+<p>So unless you follow the antipattern of calling <code>unwrap()</code> or <code>expect()</code> with
+your <code>Option</code> type,<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup> the compiler will hound you until you
+have dealt with the <code>null</code> case. Libertine Rubyists and Pythonistas may
+object and say that they always handle their <code>nil</code>s. But that&rsquo;s not what the
+runtime logs say for any of the applications I&rsquo;ve worked on in any of my
+programming jobs.<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup></p>
+<h2 id="specifying-types-in-terms-of-interfaces-traits-or-typeclasses-is-the-same-thing-as-duck-typing-except-its-harder-to-screw-up">Specifying types in terms of interfaces, traits, or typeclasses is the same thing as duck typing, except it&rsquo;s harder to screw up.</h2>
+<p>In dynamically typed languages, duck types</p>
+<blockquote>
+<p>are abstract; this gives them strength as a design tool but this very
+abstraction makes the duck type less than obvious in code. [¶] When you
+create duck types you must document <em>and</em> test their public interfaces.
+Fortunately, good tests are the best documentation, so you are already
+halfway done; you need only write the tests.<sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup></p>
+</blockquote>
+<p><em>Pace</em> the brilliant Sandi Metz, types are better documentation than tests,
+at least for the kinds of things types help us with. Unlike tests, types are
+nearby, facilitate our tooling, and provide a consistent means of
+communication. Tests and types are both better than documentation, but types
+are documentation attached to our code like PostIt notes, while tests are
+like books down in the stacks that we have to go looking for, hoping that the
+card catalog will help us find them.</p>
+<p>Elsewhere, Metz writes,<sup id="fnref:6"><a href="#fn:6" class="footnote-ref" role="doc-noteref">6</a></sup></p>
+<blockquote>
+<p>[I]n my code, I don&rsquo;t get run-time type errors. Because my experience is
+that dynamic typing is perfectly safe, I find myself resenting having to
+enter type annotations when I work in statically typed languages. While I
+appreciate the fact that static typing means that I don&rsquo;t have to write some
+tests, I hate having to add this extra code.</p>
+<p>Having said that, I realize that many folks have had different experiences
+with dynamic typing. I write trustworthy code where objects behave like you&rsquo;d
+expect. This means that I can trust that any object with which I&rsquo;m
+interacting just works. This, in turn, means that I don&rsquo;t have to check if
+objects behave the right way. Sadly, I&rsquo;ve seen many OO applications where
+these things were not true. Folks fall into the trap of writing code that&rsquo;s
+not trustworthy. Because they can&rsquo;t trust message sends to return objects
+that behave correctly, they have to check the type of the return of messages
+sends. This leads to a descending spiral of manually adding type checking,
+and code which ultimately breaks in confusing and painful ways.</p>
+</blockquote>
+<p>I&rsquo;m not as good a programmer as Sandi Metz is, and you probably aren&rsquo;t,
+either. It may be like the case of the great athlete who can&rsquo;t coach
+inferior talents because she didn&rsquo;t have to learn to work with the same
+limitations.</p>
+<p>But even if your code is Metzian in its brilliance, implicit interfaces are
+like verbal contracts: a fine way to get confused about what has been promised.
+Worse, the absence of a rigorous and explicit definition for your interface
+means your computer is powerless to help you get it right. Remember, types are
+<em>for people</em>.</p>
+<h2 id="types-are-not-a-panacea">Types are not a panacea.</h2>
+<p>There are some limitations to type systems, and I should acknowledge them to
+show that I am not enamored of a caricature of types. The problems are real,
+but they are worth it.</p>
+<h3 id="sometimes-types-arent-for-people-sometimes-they-are-about-the-programmer-helping-the-computer">Sometimes types aren&rsquo;t for people; sometimes they are about the programmer helping the computer.</h3>
+<p>In Rust, if you have a function that can return more than one error type, you
+must in some cases put the error in a
+<a href="https://doc.rust-lang.org/rust-by-example/error/multiple_error_types/boxing_errors.html"><code>Box</code></a>.
+That is because different errors are different sizes, and the return type of
+a Rust function must be of a size known at compile-time. So the indirection
+of a <code>Box</code> (which is a pointer) means that the compiler knows how big the
+return value is. You have to help the compiler know what&rsquo;s going on—you&rsquo;re
+helping the computer rather than the reverse.</p>
+<p>This is annoying. But even Ruby and Python aren&rsquo;t written in English
+sentences. Semicolons and curly braces are mostly there to help the computer,
+too. Just because types are <em>sometimes</em> for computers doesn&rsquo;t mean than types
+aren&rsquo;t mostly useful for people.<sup id="fnref:7"><a href="#fn:7" class="footnote-ref" role="doc-noteref">7</a></sup></p>
+<h3 id="types-cant-help-you-with-all-your-business-logic">Types can&rsquo;t help you with all your business logic.</h3>
+<p>I once used a <code>u8</code> (an 8-bit, unsigned integer) to represent people&rsquo;s ages.
+Because people haven&rsquo;t lived past 122, 255 seemed like plenty of room. Fair
+enough. But I also saw it as a way of embedding business logic into the type.
+It just so happens that 255 is not an insane limit for validating a person&rsquo;s
+age. If you input <code>-50</code> or <code>3000</code>, you have probably made a mistake.</p>
+<p>That got me thinking: What if I could somehow define a 7-bit unsigned
+integer. Then I could use the type system to do a kind of validation.</p>
+<p>I now see that this was colossally wrongheaded. This is mixing levels of
+abstraction in the wrong way. It&rsquo;s like noticing that motor oil and coffee
+are about the same color, so they should be interchangeable to keep your car
+running and to perk you up in the morning.</p>
+<p>Types are not for fine-grained validation. They&rsquo;re not a replacement for
+tests.</p>
+<p>But when you use them for their proper purposes, types can help you talk to
+yourself, your computer, and other people; they can catch certain kinds of
+errors; and they can put pressure on you to think, design, and communicate
+more clearly. That&rsquo;s enough to make them a great tool that most programmers
+should use.</p>
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p><em>Cf.</em> the <a href="https://en.wikipedia.org/wiki/Dependency_inversion_principle">Dependency Inversion Principle</a>.]&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2">
+<p>If you just so happened to treat your <code>Option&lt;T&gt;</code> in a way that is fully compatible with <code>T</code>, the type system would not catch it.&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3">
+<p>If you call either with a <code>None</code> type, you get a panic, which is like an unhandled exception.&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:4">
+<p><a href="https://www.youtube.com/watch?v=YR5WdGrpoug">Rich Hickey</a> doesn&rsquo;t like this pattern, and TypeScript handles nullability a <a href="https://www.typescriptlang.org/docs/handbook/advanced-types.html#nullable-types">different way</a>, but at bottom any alternative approach should require handling the <code>null</code> case.&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:5">
+<p>Sandi Metz, <em>Practical Object-oriented Design in Ruby: An Agile Primer</em> 98 (2013).&#160;<a href="#fnref:5" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:6">
+<p><a href="https://dev.to/sandimetz/im-sandi-metz-ask-me-anything-4ff9">I&rsquo;m Sandi Metz, Ask Me Anything!</a>, (Jan. 24, 2018).&#160;<a href="#fnref:6" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:7">
+<p>The title &ldquo;Types Are Mostly for People, Though Occasionally for Computers, Which can Be a Pain&rdquo; seemed less punchy.&#160;<a href="#fnref:7" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
+</div></article>
+<footer class="py:24">
+    <div class="f:fade-30 f:14 mb:8"></div>
+    <div class="f:fade-60 f:12">Theme <a class="f:bold" href="https://github.com/serkodev/holy" _target="_blank">Holy</a></div>
+</footer></div>
+    </div>
+</body>
+
+</html>

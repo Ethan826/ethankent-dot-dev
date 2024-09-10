@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+    <title>Carried on: bags - Ethan Kent&#39;s dev blog</title>
+
+    
+    
+    <meta name="description" content="(This is part 3 of a series on the bag/multiset data structure. Check out parts 1 and 2.)
+Improving the hash function So our bag works per our tests. Let&rsquo;s take a look at the naïve implementation of hashing, at least for strings:
+// This is the equivalent of `impl`ing a trait in Rust. type String = Hashable; // https://stackoverflow.com/a/8076436/3396324 String.prototype.hashCode = function (): number { return [...this].reduce((hash, character) =&gt; { hash = (hash &lt;&lt; 5) - hash &#43; character." />
+    <meta name="author" content="Ethan Kent" />
+    
+
+    <link href="https://unpkg.com/@master/normal.css" rel="stylesheet">
+    <script src="https://unpkg.com/@master/style@1.5.0"></script>
+    <script src="https://unpkg.com/@master/styles@1.13.0"></script>
+    <script src="https://unpkg.com/master-styles-group"></script>
+    <script src="https://unpkg.com/themes.js"></script>
+    <script>window.themes = window.themes || new window.Themes()</script>
+
+    <style>
+        :root {
+            --font-sans: "Inter var", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+        }
+    </style></head>
+<body class="bg:fade-84@dark font:fade-16@dark font:sans">
+    <nav class="w:full h:90 fixed bg:fade-84/.95@dark bg:white z:1000">
+    <div class="
+        h:full
+        w:full
+        max-w:1200
+        mx:auto
+        px:32
+        d:flex
+        align-items:center
+    ">
+        <div>
+            <a href="/" class="mr-3 font:extralight">
+              
+              Ethan Kent&#39;s dev blog
+              
+            </a>
+        </div>
+
+        <div class="ml:auto">
+            
+            
+            
+        </div>
+    </div>
+</nav>
+<div class="d:flex flex:column@<=sm pt:90 px:24 jc:center gap:44 word-break:break-word">
+        <div class="max-w:700 w:full box:content-box">
+<article class="box:border-box pt:32">
+    <header class="mb:32">
+        <div class="font:40 font:extrabold">Carried on: bags</div>
+        <div class="mt:16 f:fade-60">
+            <time>Jan 28, 2020</time>
+            </div>
+    </header><div class="
+    _:where(a):hover{text-decoration-color:fade}
+    _:where(a){text-decoration:2;underline;fade-10;_text-decoration-color:fade-70@dark}
+    _:where(blockquote){bl:5;solid;fade-76/.1;_bl:5;solid;fade-34/.1@dark}
+    _:where(code){font:90%;_v:middle}
+    _:where(code:not(.highlight_*,pre_*)){p:2;6;_r:4}
+    _:where(del){text-decoration:1;line-through;fade-68;_text-decoration-color:red-64@dark}
+    _:where(figcaption){text:14;_p:10;20;0;_width:fit;_mx:auto;_font:fade-56;_font:fade-57@dark}
+    _:where(h1){font:40;_font:extrabold}
+    _:where(h1,h2,h3)+:where(h1,h2,h3){mt:.5em}
+    _:where(h1,h2,h3,h4,h5,h6){mt:2em}
+    _:where(h2){mb:1em;_font:32}
+    _:where(h3){font:24}
+    _:where(h4){font:20}
+    _:where(h5){font:16}
+    _:where(h6){font:14}
+    _:where(li)::marker{font:fade-44;_font:fade-68@dark}
+    _:where(li){pl:.375em}
+    _:where(mark){text-decoration:1;underline;#fce016;_bg:transparent;_text-decoration-color:rgb(252;224;22/.5)@dark}
+    _:where(p,li){font:fade-76;_font:16;_line-height:1.65;_font:fade-34@dark}
+    _:where(p,pre,blockquote,figure,ul,ol,table){my:1.125em}
+    >:first-child{mt:0!}
+    _:where(pre){p:20;_r:8;_overflow:auto}
+    _:where(pre,code:not(.highlight_*)){bg:fade-2;_bg:fade-92!@dark}
+    _:where(strong,b,a,code:not(.highlight_*),mark,del){font:fade-92;_font:fade-12@dark}
+    _:where(table){width:full;_border-spacing:0}
+    _:where(td){v:baseline}
+    _:where(td,th):first-child{pl:0}
+    _:where(td,th):last-child{pr:0}
+    _:where(td,th){bb:1;solid;fade-92/.06;_p:6;_b:fade-4/.04@dark}
+    _:where(th){font:fade-78;_font:14;_text:left;_font:fade-12@dark}
+    _:where(th,p_code,li_code,a,mark){font:semibold;_font:medium@dark}
+    _:where(ul){list-style-type:disc}
+    _:where(ul,ol,blockquote){pl:1.5em}
+    _:where(video,img){max-width:full}
+    _:where(a,mark){text-underline-offset:3}
+    _:where(hr){h:2;_bg:fade-10;_bg:fade-70@dark;_my:3em}
+"><p>(This is part 3 of a series on the bag/multiset data structure. Check out
+parts <a href="/posts/thats_my_bag/">1</a> and <a href="/posts/implementing_a_bag/">2</a>.)</p>
+<h2 id="improving-the-hash-function">Improving the hash function</h2>
+<p>So our bag works per our tests. Let&rsquo;s take a look at the naïve implementation
+of hashing, at least for strings:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-typescript" data-lang="typescript"><span style="display:flex;"><span><span style="color:#75715e">// This is the equivalent of `impl`ing a trait in Rust.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> String <span style="color:#f92672">=</span> <span style="color:#a6e22e">Hashable</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// https://stackoverflow.com/a/8076436/3396324
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>String.<span style="color:#a6e22e">prototype</span>.<span style="color:#a6e22e">hashCode</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span> ()<span style="color:#f92672">:</span> <span style="color:#66d9ef">number</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">return</span> [...<span style="color:#66d9ef">this</span>].<span style="color:#a6e22e">reduce</span>((<span style="color:#a6e22e">hash</span>, <span style="color:#a6e22e">character</span>) <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">hash</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">hash</span> <span style="color:#f92672">&lt;&lt;</span> <span style="color:#ae81ff">5</span>) <span style="color:#f92672">-</span> <span style="color:#a6e22e">hash</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">character</span>.<span style="color:#a6e22e">charCodeAt</span>(<span style="color:#ae81ff">0</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">hash</span> <span style="color:#f92672">&amp;</span> <span style="color:#a6e22e">hash</span>;
+</span></span><span style="display:flex;"><span>  }, <span style="color:#ae81ff">0</span>);
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>String.<span style="color:#a6e22e">prototype</span>.<span style="color:#a6e22e">minimumHashValue</span> <span style="color:#f92672">=</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">0x80000000</span>;
+</span></span><span style="display:flex;"><span>String.<span style="color:#a6e22e">prototype</span>.<span style="color:#a6e22e">maximumHashValue</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0x7fffffff</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">default</span> String;
+</span></span></code></pre></div><p>One bit of good news is this: this is not baked in to the bag&rsquo;s
+implementation. We already discussed how it was desirable from an Open–Closed
+Principle point of view to make this the responsibility of each type that
+would like to be stored in a bag.</p>
+<p>I don&rsquo;t know enough about hashing algorithms to eyeball it in order to
+evaluate whether this one is collision-resistant in common applications for
+strings. But we can test it out empirically using a large <a href="http://app.aspell.net/create">SCOWL
+dictionary</a>.</p>
+<p>With our <code>hashCode()</code> ported from Java per Stack Overflow, let&rsquo;s bucket our
+657,769 dictionary entries in 100 buckets and count how many values are in
+each bucket. The mean is, of course, about 6,578. But the median is 5,830 and
+the standard deviation is about 3,090. The smallest bucket has 4,677 entries
+while the largest has 26,835 entries.</p>
+<p>Not great. Let&rsquo;s try this with the MurmurHash3 algorithm. I will
+simply steal the minified JavaScript from
+<a href="https://github.com/garycourt/murmurhash-js/blob/master/murmurhash3_gc.js">here</a>.</p>
+<p>Now we have a median of about 6,571, a standard deviation of about 72, and a
+minimum and maximum of about 6,424 and 6,781, respectively. That seems
+better.</p>
+<p>And this reinforces our decision to have the data we want to put in our bag
+extend <code>Hashable</code>: We could test this particular hashing algorithm against a
+dictionary of English words without worrying about the behavior for other
+kinds of data. For other data types, some other means of hashing might be
+better.</p>
+<h2 id="improving-load-factor">Improving load factor</h2>
+<p>If you have 100 buckets and 75 entries, the <em>load factor</em> is the ratio of
+those two, 0.75. Different languages use slightly different values, but 0.75
+to at most about 0.90 appear to be the maximum load factors allowable for
+best performance.</p>
+<p>One of those surprising statistical factoids is that if you&rsquo;re hosting a
+party and want to ensure a 50% chance that two guests share the same
+birthday, you need only invite 23 people; with 70 people, there&rsquo;s a 99.9%
+chance of a shared birthday (in each case assuming birthdays are uniformly
+distributed).<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup> And so it is with hash tables, where collisions
+become a problem sooner than you&rsquo;d think.</p>
+<p>To make sure load factor is in good shape, we need to pick a good starting
+value, then resize our hashtable when the load factor gets too high.</p>
+<h2 id="buckets-based-on-modulus">Buckets based on modulus</h2>
+<p>My naïve implementation added unneeded complexity by basing what bucket
+chosen on calculating the percentile of the hash in the range of possible
+hash values and multiplying that by the number of buckets. That&rsquo;s more
+operations than are needed. Using <code>hashResult % numBuckets</code> should distribute
+the result evenly across the hash buckets. This also lets us simplify our
+<code>Hashable</code> implementation.</p>
+<h2 id="linked-lists">Linked lists</h2>
+<p>My naïve implementation uses an array of buckets, with each bucket itself an
+array.<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup> The usual implementation is to use a linked list. It is a
+bit unclear from my reading whether that&rsquo;s desirable per se, or if it is
+simply because Donald Knuth said to do it that way in an example.<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup> I
+think it&rsquo;s because linked lists don&rsquo;t do spooky things like reallocate
+unexpectedly, and by the time a bucket&rsquo;s contents would need to reallocate,
+we should be re-hashing.</p>
+<h2 id="open-addressing">Open addressing</h2>
+<h3 id="why-its-good">Why it&rsquo;s good</h3>
+<p>Another way of building a hashtable is to use open addressing.</p>
+<p>Remember how our buckets hold linked lists or arrays rather than the values
+themselves? That&rsquo;s called &ldquo;chaining.&rdquo; Doing that means you have to go to some
+other place in the computer&rsquo;s memory, and so can&rsquo;t take advantage of
+&ldquo;locality of reference.&rdquo; That term means that computers are clever about
+caching things and that accessing something close in memory to something else
+you recently accessed can be more efficient if the second thing happened to
+be cached when you looked up the first thing.</p>
+<p>So in practice, it is often faster to store the data directly in the array of
+buckets. That is, you can have the buckets that make up the array actually
+hold the values rather than holding pointers to linked lists or other arrays.</p>
+<h3 id="dealing-with-collisions">Dealing with collisions</h3>
+<p>But this raises its own problem. Remember that with an array or linked list,
+collisions are easy to deal with: we just add a new value to the collection
+stored in each bucket. But when there&rsquo;s just that one array, we have to find
+a different place to stick the value that had a collision, and we have to
+think about how we&rsquo;ll delete that value.</p>
+<h4 id="insertion">Insertion</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>Before:
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>We want to insert Z, which hashes to 20.
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Current Value     | A  | Q  | M  | empty |
+</span></span><span style="display:flex;"><span>------------------------------------------
+</span></span><span style="display:flex;"><span>Bucket            | 20 | 21 | 22 | 23    |
+</span></span></code></pre></div><h5 id="standard-insertion">Standard insertion</h5>
+<p>The usual approach is to put the value in the next empty slot. Then when it&rsquo;s
+time to go looking for a value, you hash it, go to the appropriate bucket,
+and if it&rsquo;s not in that bucket, keep going along the array till you find <em>the
+value</em> or <em>an empty bucket</em>. In other words, go to the bucket where you&rsquo;d
+expect the value to be <em>if there wasn&rsquo;t a collision</em>, then check the buckets
+following that one, where you might have put it <em>if there was a collision</em>.
+Finding an empty slot means you didn&rsquo;t stick the value in the next available
+slot after a collision—because you wouldn&rsquo;t have left a gap in that case.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>After:
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Current Value     | A  | Q  | M  | Z  |
+</span></span><span style="display:flex;"><span>---------------------------------------
+</span></span><span style="display:flex;"><span>Bucket            | 20 | 21 | 22 | 23 |
+</span></span></code></pre></div><h5 id="robin-hood-hashing">Robin Hood hashing</h5>
+<p>You can also do what&rsquo;s called Robin Hood hashing. In short, it means that if
+you have a collision, as you look for an empty spot for your value, you keep
+checking which value is <em>more out of place</em>—the one you&rsquo;re inserting or the
+one that&rsquo;s already there. We rob from the rich to give to the poor, which is
+where the name comes from.</p>
+<p>Here&rsquo;s the same example, but with some extra information:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>Before:
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>We want to insert Z, which hashes to 20.
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Current Value            | A  | Q  | M  | empty |
+</span></span><span style="display:flex;"><span>Correct bucket           | 19 | 19 | 21 | N/A   |
+</span></span><span style="display:flex;"><span>How out of place?        | 1  | 2  | 1  | N/A   |
+</span></span><span style="display:flex;"><span>-------------------------------------------------
+</span></span><span style="display:flex;"><span>How far off would Z be?  | 0  | 1  | 2  | 3     |
+</span></span><span style="display:flex;"><span>-------------------------------------------------
+</span></span><span style="display:flex;"><span>Bucket                   | 20 | 21 | 22 | 23    |
+</span></span></code></pre></div><p>We are trying to insert the value <em>Z</em>, which hashes to 20. Using Robin Hood
+hashing would have us try to insert the value in Bucket 20. But that bucket
+is occupied. And its current value <em>A</em> really should be in Bucket 19, so it&rsquo;s
+already <em>one bucket out of place</em>. Meanwhile, <em>Z</em> is <em>zero buckets out of
+place</em> here at Bucket 20, so we aren&rsquo;t going to exchange <em>Z</em> and <em>A</em>. <em>A</em> is
+&ldquo;poorer&rdquo; because it is more out of place than <em>Z</em> is. So we don&rsquo;t rob from
+the poor to pay the rich here.</p>
+<p>Now we come to Bucket 21, which contains <em>Q</em>, which is <em>two buckets out of
+place</em>. <em>Z</em> is now <em>one bucket out of place</em>. No exchange there: again, it
+would be robbing from the poor to pay the rich.</p>
+<p>We come next to Bucket 22, which contains <em>M</em>, which is one bucket out of
+place. But now <em>Z</em> is two buckets out of place. Let&rsquo;s put <em>Z</em> in Bucket 22
+and carry <em>M</em> forward. We rob from the richer <em>M</em>, which is only one bucket
+out of place, to pay <em>Z</em>, which is two buckets out of place.</p>
+<p>Finally, we get to Bucket 23, which is empty, so <em>M</em> goes there. The final
+result is this:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>After:
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Current Value     | A  | Q  | Z  | M  |
+</span></span><span style="display:flex;"><span>Correct bucket    | 19 | 19 | 20 | 21 |
+</span></span><span style="display:flex;"><span>How out of place? | 1  | 2  | 2  | 2  |
+</span></span><span style="display:flex;"><span>---------------------------------------
+</span></span><span style="display:flex;"><span>Bucket            | 20 | 21 | 22 | 23 |
+</span></span></code></pre></div><p>By following this algorithm, values will not wind up wildly out of place,
+thereby reducing the search cost following a collision, at little extra cost
+(either way you must probe to the first empty spot; but by switching the
+values, you make searches faster on average).</p>
+<h4 id="deletion">Deletion</h4>
+<p>There&rsquo;s still one hitch (and bear with me till the example in the next
+paragraph): what if you insert a value, then have a collision and insert
+another value in the next available bucket, <em>but then delete the first value</em>
+(the one in its proper bucket)? Or, for that matter, delete <em>any</em> value that
+displaced another value because of a collision?</p>
+<p>Imagine <em>B</em> hashes to Bucket 22. Then <em>H</em> also hashes to Bucket 22, so it
+goes in Bucket 23.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>Before:
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>We want to delete B, which hashes to 22.
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Current Value     | B  | H  |
+</span></span><span style="display:flex;"><span>-----------------------------
+</span></span><span style="display:flex;"><span>Bucket            | 22 | 23 |
+</span></span></code></pre></div><p>Now you delete <em>B</em>. Finally, you check to see if <em>H</em> is in the hashtable. It
+hashes to bucket 22, but that bucket is empty. So you incorreclty conclude
+that <em>H</em> isn&rsquo;t in the hashtable, and report that back to the user.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>                    ↓ Problem!
+</span></span><span style="display:flex;"><span>Current Value     | empty  | H  |
+</span></span><span style="display:flex;"><span>---------------------------------
+</span></span><span style="display:flex;"><span>Bucket            | 22     | 23 |
+</span></span></code></pre></div><p>There are two approaches often used in this situation.</p>
+<h5 id="tombstones">Tombstones</h5>
+<p>First, you might replace the deleted entry with a <em>tombstone</em>, a special flag
+that means &ldquo;I deleted something here.&rdquo; So you treat that bucket exactly as
+you would a bucket that was filled with a value that didn&rsquo;t match the one we
+are searching for: it&rsquo;s not empty, and so you look at the next one. This is
+easy, but it means load factor doesn&rsquo;t go down when you delete values: you
+might have a hashtable with lots of tombstones just wasting space.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>After:
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Current Value     | TOMBSTONE  | H  |
+</span></span><span style="display:flex;"><span>-------------------------------------
+</span></span><span style="display:flex;"><span>Bucket            | 22         | 23 |
+</span></span></code></pre></div><h5 id="left-shift">Left shift</h5>
+<p>Alternatively, you might shift values backward to fill in the gap. This
+avoids using tombstones, but adds to the time complexity of deletion.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>After:
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Current Value     | H  | empty  |
+</span></span><span style="display:flex;"><span>---------------------------------
+</span></span><span style="display:flex;"><span>Bucket            | 22 | 23     |
+</span></span></code></pre></div><h2 id="conclusion">Conclusion</h2>
+<p>So we have discussed some fixes here that will improve our implementation:</p>
+<ul>
+<li>Improve the hash function.</li>
+<li>Rehash above a specified load factor.</li>
+<li>Use modulus in bucketing rather than a more complex algorithm.</li>
+<li>Use open addressing with Robin Hood hashing and left shift on deletion.</li>
+</ul>
+<p>I will implement those changes and describe updating the code in my next
+post.</p>
+<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p>Wikipedia, Birthday problem, <a href="https://en.wikipedia.org/wiki/Birthday_problem">https://en.wikipedia.org/wiki/Birthday_problem</a> (last visited Jan. 10, 2020).&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2">
+<p>When I say the array is &ldquo;in&rdquo; the bucket, I actually mean that the bucket holds a pointer to the array, which is on the heap. So it&rsquo;s really a pointer that is &ldquo;in&rdquo; the array.&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3">
+<p>Roman Leventov, Answer, <em>Why are we using linked list to address collisions in hash tables?</em>, Stack Overflow, <a href="https://stackoverflow.com/a/30238046/3396324">https://stackoverflow.com/a/30238046/3396324</a> (May 14, 2015).&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
+</div></article>
+<footer class="py:24">
+    <div class="f:fade-30 f:14 mb:8"></div>
+    <div class="f:fade-60 f:12">Theme <a class="f:bold" href="https://github.com/serkodev/holy" _target="_blank">Holy</a></div>
+</footer></div>
+    </div>
+</body>
+
+</html>

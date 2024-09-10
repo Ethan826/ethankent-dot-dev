@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+    <title>Dependency Inversion - Ethan Kent&#39;s dev blog</title>
+
+    
+    
+    <meta name="description" content="Among the coding principles you hear get tossed around, Dependency Inversion sounds boring and is hard to understand. I didn&rsquo;t understand it until a year or two ago. But it is one of the most valuable tools for organizing your software and making it easy to change.
+One of the hipster moves in programming is to tell people they don&rsquo;t need to use a framework, especially for backend work. People who say stuff like that don&rsquo;t typically give concrete guidance on what you should do instead." />
+    <meta name="author" content="" />
+    
+
+    <link href="https://unpkg.com/@master/normal.css" rel="stylesheet">
+    <script src="https://unpkg.com/@master/style@1.5.0"></script>
+    <script src="https://unpkg.com/@master/styles@1.13.0"></script>
+    <script src="https://unpkg.com/master-styles-group"></script>
+    <script src="https://unpkg.com/themes.js"></script>
+    <script>window.themes = window.themes || new window.Themes()</script>
+
+    <style>
+        :root {
+            --font-sans: "Inter var", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+        }
+    </style></head>
+<body class="bg:fade-84@dark font:fade-16@dark font:sans">
+    <nav class="w:full h:90 fixed bg:fade-84/.95@dark bg:white z:1000">
+    <div class="
+        h:full
+        w:full
+        max-w:1200
+        mx:auto
+        px:32
+        d:flex
+        align-items:center
+    ">
+        <div>
+            <a href="/" class="mr-3 font:extralight">
+              
+              Ethan Kent&#39;s dev blog
+              
+            </a>
+        </div>
+
+        <div class="ml:auto">
+            
+            
+            
+        </div>
+    </div>
+</nav>
+<div class="d:flex flex:column@<=sm pt:90 px:24 jc:center gap:44 word-break:break-word">
+        <div class="max-w:700 w:full box:content-box">
+<article class="box:border-box pt:32">
+    <header class="mb:32">
+        <div class="font:40 font:extrabold">Dependency Inversion</div>
+        <div class="mt:16 f:fade-60">
+            <time>Nov 4, 2023</time>
+            </div>
+    </header><div class="
+    _:where(a):hover{text-decoration-color:fade}
+    _:where(a){text-decoration:2;underline;fade-10;_text-decoration-color:fade-70@dark}
+    _:where(blockquote){bl:5;solid;fade-76/.1;_bl:5;solid;fade-34/.1@dark}
+    _:where(code){font:90%;_v:middle}
+    _:where(code:not(.highlight_*,pre_*)){p:2;6;_r:4}
+    _:where(del){text-decoration:1;line-through;fade-68;_text-decoration-color:red-64@dark}
+    _:where(figcaption){text:14;_p:10;20;0;_width:fit;_mx:auto;_font:fade-56;_font:fade-57@dark}
+    _:where(h1){font:40;_font:extrabold}
+    _:where(h1,h2,h3)+:where(h1,h2,h3){mt:.5em}
+    _:where(h1,h2,h3,h4,h5,h6){mt:2em}
+    _:where(h2){mb:1em;_font:32}
+    _:where(h3){font:24}
+    _:where(h4){font:20}
+    _:where(h5){font:16}
+    _:where(h6){font:14}
+    _:where(li)::marker{font:fade-44;_font:fade-68@dark}
+    _:where(li){pl:.375em}
+    _:where(mark){text-decoration:1;underline;#fce016;_bg:transparent;_text-decoration-color:rgb(252;224;22/.5)@dark}
+    _:where(p,li){font:fade-76;_font:16;_line-height:1.65;_font:fade-34@dark}
+    _:where(p,pre,blockquote,figure,ul,ol,table){my:1.125em}
+    >:first-child{mt:0!}
+    _:where(pre){p:20;_r:8;_overflow:auto}
+    _:where(pre,code:not(.highlight_*)){bg:fade-2;_bg:fade-92!@dark}
+    _:where(strong,b,a,code:not(.highlight_*),mark,del){font:fade-92;_font:fade-12@dark}
+    _:where(table){width:full;_border-spacing:0}
+    _:where(td){v:baseline}
+    _:where(td,th):first-child{pl:0}
+    _:where(td,th):last-child{pr:0}
+    _:where(td,th){bb:1;solid;fade-92/.06;_p:6;_b:fade-4/.04@dark}
+    _:where(th){font:fade-78;_font:14;_text:left;_font:fade-12@dark}
+    _:where(th,p_code,li_code,a,mark){font:semibold;_font:medium@dark}
+    _:where(ul){list-style-type:disc}
+    _:where(ul,ol,blockquote){pl:1.5em}
+    _:where(video,img){max-width:full}
+    _:where(a,mark){text-underline-offset:3}
+    _:where(hr){h:2;_bg:fade-10;_bg:fade-70@dark;_my:3em}
+"><p>Among the coding principles you hear get tossed around, Dependency Inversion
+sounds boring and is hard to understand. I didn&rsquo;t understand it until a
+year or two ago. But it is one of the most valuable tools for organizing your
+software and making it easy to change.</p>
+<p>One of the hipster moves in programming is to tell people they don&rsquo;t need to use
+a framework, especially for backend work. People who say stuff like that don&rsquo;t
+typically give concrete guidance on what you should do instead. One of the
+clearest advantages of a framework is that it provides an opinionated way to
+organize things in a consistent fashion that has worked in production. So if
+you&rsquo;re like me, you absorbed that meme about how using a framework makes you a
+little bit dumb, but you didn&rsquo;t know what to do instead&mdash;or you made a mess.</p>
+<p>In particular, organizing code can seem like organizing photos or music files
+into folders (don&rsquo;t call me &ldquo;Boomer&rdquo;). It seems like a matter of naming files
+reasonably and creating folders that make sense. But that turns out to be a
+shallow understanding of organizing code.</p>
+<p>The Dependency-Inversion Principle, and the &ldquo;Dependency Rule&rdquo; it implies, are
+powerful tools for organizing code.</p>
+<h2 id="the-solid-principles-are-about-making-change-easier">The SOLID Principles are about making change easier.</h2>
+<p>The Dependency-Inversion Principle (&ldquo;DIP&rdquo;) is the <em>D</em> in the SOLID Principles.</p>
+<p>I get the sense that people see the SOLID Principles as a bit fusty, maybe the
+domain of people with pleated pants working in cubicles, inclined to name things
+<code>StaticFactoryBeanFactoryFactory</code>, and wake up mumbling the names of Go4
+patterns. But in reality, they’re good rules of thumb for designing code in a
+way that makes it easier to change the things that are likeliest to change. So
+the SOLID Principles are as applicable to functional programming as they are to
+OOP, to polymorphism through composition as to inheritance-based polymorphism,
+and to the 2020s as to the 1990s.</p>
+<p>Think of it this way: if you keep a stack of books and papers on your desk, it&rsquo;s
+best if they&rsquo;re organized so your daily planner and pocket dictionary are near
+the top, and the manual for an old car and the teacher-conference schedule from
+three years ago are towards the bottom. Otherwise, you will have to put your
+hands on things that are less relevant to get to things that are more so. This
+is the Dependency Rule in a nutshell: depend in the direction of stability.</p>
+<p>The DIP, and the Clean/Onion/Hexagonal/Ports-and-Adapters Architecture, are
+simply elaborations on this idea.</p>
+<h2 id="introducing-an-example">Introducing an example</h2>
+<p>Let&rsquo;s start with this code, which creates a presigned POST URL in S3, meaning a
+temporary URL you can pass on to a client to let them upload something—say, a
+photo—without a password. The <code>Key</code> value will be a UUID. We want to put that in
+a database table to associate it with the user later (so we can figure out all
+the S3 locations where we put that user&rsquo;s photos).</p>
+<p>There are several things wrong with this code. There&rsquo;s no error handling, it
+does too many things in a single function, it connects to the database on every
+call rather than sharing a connection or pool, it puts everything in one hard-coded bucket, it isn&rsquo;t configured through the environment, etc. But I want you to consider
+two things as you read it.</p>
+<ol>
+<li>How hard is it to test this code?</li>
+<li>How hard is it to change this code?</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">randomUUID</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;node:crypto&#34;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">S3Client</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;@aws-sdk/client-s3&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">createPresignedPost</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;@aws-sdk/s3-presigned-post&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">Client</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;pg&#34;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * Given a user ID, create a presigned post URL and other data and write that
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * data to the database for future use. Return the presigned post data.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">createAndAssociatePresignedUrl</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">async</span> (
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">userId</span>: <span style="color:#66d9ef">number</span>
+</span></span><span style="display:flex;"><span>)<span style="color:#f92672">:</span> <span style="color:#a6e22e">Promise</span><span style="color:#f92672">&lt;</span>{
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">url</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">fields</span>: <span style="color:#66d9ef">Record</span>&lt;<span style="color:#f92672">string</span><span style="color:#960050;background-color:#1e0010">,</span> <span style="color:#a6e22e">string</span>&gt;;
+</span></span><span style="display:flex;"><span>}<span style="color:#f92672">&gt;</span> <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">uuid</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">randomUUID</span>();
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`Created UUID: </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">uuid</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">s3Client</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">S3Client</span>({ <span style="color:#a6e22e">region</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;us-west-2&#34;</span> });
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">const</span> { <span style="color:#a6e22e">url</span>, <span style="color:#a6e22e">fields</span> } <span style="color:#f92672">=</span> <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">createPresignedPost</span>(<span style="color:#a6e22e">s3Client</span>, {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Bucket</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;photos&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Key</span>: <span style="color:#66d9ef">uuid</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Fields</span><span style="color:#f92672">:</span> { <span style="color:#a6e22e">acl</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;public-read&#34;</span> },
+</span></span><span style="display:flex;"><span>  });
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`Created presigned post: </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">JSON</span>.<span style="color:#a6e22e">stringify</span>({ <span style="color:#a6e22e">url</span>, <span style="color:#a6e22e">fields</span> <span style="color:#e6db74">}</span><span style="color:#e6db74">)}`</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">dbClient</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Client</span>();
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">dbClient</span>.<span style="color:#a6e22e">connect</span>();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;Connected to DB&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">dbClient</span>.<span style="color:#a6e22e">query</span>(
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;INSERT INTO users_photos (user_id, photo_uuid) VALUES ($1, $2);&#34;</span>,
+</span></span><span style="display:flex;"><span>    [<span style="color:#a6e22e">userId</span>, <span style="color:#a6e22e">uuid</span>]
+</span></span><span style="display:flex;"><span>  );
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;Inserted record into `users_photos`&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">return</span> { <span style="color:#a6e22e">url</span>, <span style="color:#a6e22e">fields</span> };
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>The question about testing might seem to come from left field. But the same
+things that make code testable tend to make it loosely coupled and therefore
+easier to change.</p>
+<p>Why is the code hard to test? It&rsquo;s because we&rsquo;re creating or accessing instances
+of <code>console</code>, the PostgreSQL <code>Client</code> class, the <code>S3Client</code> class, and the
+functions <code>randomUUID()</code> and <code>createPresignedPost()</code> in our function. To test
+these instances we need to use Jest&rsquo;s heavy-handed monkey-patching-based mocking
+setup. This approach is annoying and brittle. (For the record I&rsquo;m experimenting
+with Bun, so I&rsquo;m not actually using Jest with my example code.)</p>
+<h3 id="dependency-injected-version">Dependency-injected version</h3>
+<p>We can improve this code by injecting these dependencies. We could use a bunch
+of positional arguments, but when that starts to get out of hand, an object can
+be a better approach. We can also make injecting the dependencies a curried
+argument, meaning <code>(anArg) =&gt; (anotherArg) =&gt; {}</code>.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">CreateAndAssociatePresignedUrlDeps</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// This is an example of the Interface-Segregation Principle
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">readonly</span> <span style="color:#a6e22e">logger</span>: <span style="color:#66d9ef">Pick</span>&lt;<span style="color:#f92672">typeof</span> <span style="color:#a6e22e">console</span><span style="color:#960050;background-color:#1e0010">,</span> <span style="color:#960050;background-color:#1e0010">&#34;</span><span style="color:#a6e22e">log</span><span style="color:#960050;background-color:#1e0010">&#34;</span>&gt;;
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">readonly</span> <span style="color:#a6e22e">pgClientCtor</span>: <span style="color:#66d9ef">typeof</span> <span style="color:#a6e22e">Client</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">readonly</span> <span style="color:#a6e22e">presignedPostCreator</span>: <span style="color:#66d9ef">typeof</span> <span style="color:#a6e22e">createPresignedPost</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">readonly</span> <span style="color:#a6e22e">s3ClientCtor</span>: <span style="color:#66d9ef">typeof</span> <span style="color:#a6e22e">S3Client</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">readonly</span> <span style="color:#a6e22e">uuidCreator</span>: <span style="color:#66d9ef">typeof</span> <span style="color:#a6e22e">randomUUID</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">createAndAssociatePresignedUrl</span> <span style="color:#f92672">=</span> ({
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">logger</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">pgClientCtor</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">presignedPostCreator</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">s3ClientCtor</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">uuidCreator</span>,
+</span></span><span style="display:flex;"><span>  }<span style="color:#f92672">:</span> <span style="color:#a6e22e">CreateAndAssociatePresignedUrlDeps</span>)<span style="color:#f92672">:</span> <span style="color:#a6e22e">Promise</span><span style="color:#f92672">&lt;</span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">url</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fields</span>: <span style="color:#66d9ef">Record</span>&lt;<span style="color:#f92672">string</span><span style="color:#960050;background-color:#1e0010">,</span> <span style="color:#a6e22e">string</span>&gt;;
+</span></span><span style="display:flex;"><span>  }<span style="color:#f92672">&gt;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">async</span> (<span style="color:#a6e22e">userId</span>: <span style="color:#66d9ef">number</span>) <span style="color:#f92672">=&gt;</span>
+</span></span><span style="display:flex;"><span>  {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">uuid</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">uuidCreator</span>();
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">logger</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`Created UUID: </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">uuid</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>); <span style="color:#75715e">// etc. with other `logger` statements
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// ... snip ...
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">s3Client</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">s3ClientCtor</span>({ <span style="color:#a6e22e">region</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;us-west-2&#34;</span> });
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> { <span style="color:#a6e22e">url</span>, <span style="color:#a6e22e">fields</span> } <span style="color:#f92672">=</span> <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">presignedPostCreator</span>(<span style="color:#a6e22e">s3Client</span>, {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// ... snip ...
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">dbClient</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">pgClientCtor</span>();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// ... snip ...
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  };
+</span></span></code></pre></div><p>This solves the testability problem, which proves we&rsquo;ve gone at least part of
+the way towards making our code more loosely coupled. Here are some tests.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">S3Client</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;@aws-sdk/client-s3&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">describe</span>, <span style="color:#a6e22e">expect</span>, <span style="color:#a6e22e">it</span>, <span style="color:#a6e22e">jest</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;bun:test&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">Client</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;pg&#34;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">import</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">createAndAssociatePresignedUrl</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">CreateAndAssociatePresignedUrlDeps</span>,
+</span></span><span style="display:flex;"><span>} <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;.&#34;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">describe</span>(<span style="color:#e6db74">&#34;createAndAssociatePresignedUrl&#34;</span>, () <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">queryMock</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">jest</span>.<span style="color:#a6e22e">fn</span>();
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">logMock</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">jest</span>.<span style="color:#a6e22e">fn</span>();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// Quick and dirty mocks. All we&#39;re trying to do here is to verify that the
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#75715e">// external APIs are called as expected.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">mockDeps</span>: <span style="color:#66d9ef">CreateAndAssociatePresignedUrlDeps</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">logger</span><span style="color:#f92672">:</span> { <span style="color:#a6e22e">log</span>: <span style="color:#66d9ef">logMock</span> },
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">pgClientCtor</span>: <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">PgMock</span> {
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">query</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">queryMock</span>;
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">connect</span> <span style="color:#f92672">=</span> () <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">this</span>;
+</span></span><span style="display:flex;"><span>    } <span style="color:#66d9ef">as</span> <span style="color:#66d9ef">unknown</span> <span style="color:#66d9ef">as</span> <span style="color:#66d9ef">typeof</span> <span style="color:#a6e22e">Client</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">presignedPostCreator</span>: <span style="color:#66d9ef">jest.fn</span>().<span style="color:#a6e22e">mockResolvedValue</span>(<span style="color:#e6db74">&#34;result&#34;</span>),
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// eslint-disable-next-line @typescript-eslint/no-extraneous-class
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">s3ClientCtor</span>: <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">S3Mock</span> {} <span style="color:#66d9ef">as</span> <span style="color:#66d9ef">unknown</span> <span style="color:#66d9ef">as</span> <span style="color:#66d9ef">typeof</span> <span style="color:#a6e22e">S3Client</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">uuidCreator</span><span style="color:#f92672">:</span> () <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#34;e621e953-8faa-41b4-9ee0-557947ccba3f&#34;</span>,
+</span></span><span style="display:flex;"><span>  };
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">it</span>(<span style="color:#e6db74">&#34;calls the dependencies as expected&#34;</span>, <span style="color:#66d9ef">async</span> () <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">expect</span>(<span style="color:#66d9ef">await</span> <span style="color:#a6e22e">createAndAssociatePresignedUrl</span>(<span style="color:#a6e22e">mockDeps</span>)(<span style="color:#ae81ff">123</span>)).<span style="color:#a6e22e">toEqual</span>({
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">url</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;testUrl&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">fields</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">some</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;data&#34;</span>,
+</span></span><span style="display:flex;"><span>      },
+</span></span><span style="display:flex;"><span>    });
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Bun doesn&#39;t implement `toBeCalledWith` yet.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">expect</span>(<span style="color:#a6e22e">logMock</span>.<span style="color:#a6e22e">mock</span>.<span style="color:#a6e22e">calls</span>).<span style="color:#a6e22e">toEqual</span>([
+</span></span><span style="display:flex;"><span>      [<span style="color:#e6db74">&#34;Created UUID: e621e953-8faa-41b4-9ee0-557947ccba3f&#34;</span>],
+</span></span><span style="display:flex;"><span>      [<span style="color:#e6db74">&#39;Created presigned post: {&#34;url&#34;:&#34;testUrl&#34;,&#34;fields&#34;:{&#34;some&#34;:&#34;data&#34;}}&#39;</span>],
+</span></span><span style="display:flex;"><span>      [<span style="color:#e6db74">&#34;Connected to DB&#34;</span>],
+</span></span><span style="display:flex;"><span>      [<span style="color:#e6db74">&#34;Inserted record into `users_photos`&#34;</span>],
+</span></span><span style="display:flex;"><span>    ]);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">expect</span>(<span style="color:#a6e22e">queryMock</span>.<span style="color:#a6e22e">mock</span>.<span style="color:#a6e22e">calls</span>).<span style="color:#a6e22e">toEqual</span>([
+</span></span><span style="display:flex;"><span>      [
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;INSERT INTO users_photos (user_id, photo_uuid) VALUES ($1, $2);&#34;</span>,
+</span></span><span style="display:flex;"><span>        [<span style="color:#ae81ff">123</span>, <span style="color:#e6db74">&#34;e621e953-8faa-41b4-9ee0-557947ccba3f&#34;</span>],
+</span></span><span style="display:flex;"><span>      ],
+</span></span><span style="display:flex;"><span>    ]);
+</span></span><span style="display:flex;"><span>  });
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><p>Problem solved? Not yet. We&rsquo;ve made our code more modular and loosely coupled by
+injecting dependencies. But that&rsquo;s not quite the same thing as <em>inverting</em>
+dependencies. I used to confuse dependency injection with dependency inversion.
+The steps we&rsquo;ve taken so far are necessary but not sufficient to use the DIP.</p>
+<h2 id="dependency-inverted-version">Dependency-inverted version</h2>
+<p>Remember our two questions from earlier? We&rsquo;ve made testing easier, but we&rsquo;re
+not in a good position to switch from <code>console</code> to Pino or PostgreSQL to
+MongoDB. We&rsquo;d have to tear out most of our code and start again to accomplish
+that kind of thing.</p>
+<h3 id="using-services-and-providers-to-invert-dependencies">Using &ldquo;services&rdquo; and &ldquo;providers&rdquo; to invert dependencies</h3>
+<p>The problem is we&rsquo;re relying too heavily on concrete things: the specific NPM
+library <code>pg</code>, the specific database PostgreSQL, the specific logger <code>console</code>,
+etc. What if we were more abstract, more declarative, more domain-focused? What
+if we defined the functionality we&rsquo;re using in terms of why and how we&rsquo;re using
+it?</p>
+<p>For example, we don&rsquo;t want <code>console.log</code> per se. If a business stakeholder
+stopped us in the hallway and said, &ldquo;What are you working on today,&rdquo; and we
+responded, &ldquo;Our team is focused on making sure that <code>console.log</code> works
+properly,&rdquo; the business stakeholder&rsquo;s eyes would glaze over. But if we said,
+&ldquo;Our team is making sure our program can log information so we can see if it&rsquo;s
+working correctly,&rdquo; the business stakeholder would nod knowingly and go play a
+round of golf or buy a Tesla or whatever it is they get up to.</p>
+<h4 id="loggingservice-and-its-providers"><code>LoggingService</code> and its providers</h4>
+<p>So let&rsquo;s define a capability, not an in-the-weeds implementation.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">LoggingService</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">readonly</span> <span style="color:#a6e22e">log</span><span style="color:#f92672">:</span> (<span style="color:#a6e22e">message</span>: <span style="color:#66d9ef">string</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">void</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Hang on a second, isn&rsquo;t that basically <code>console</code>? Yes, more or less.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">ConsoleLoggingProvider</span>: <span style="color:#66d9ef">LoggingService</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">log</span><span style="color:#f92672">:</span> (<span style="color:#a6e22e">message</span>: <span style="color:#66d9ef">string</span>) <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">message</span>);
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>But check this out. This is also a valid <code>LoggingService</code>.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">pinoInstance</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">pino</span>();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">PinoLoggingProvider</span>: <span style="color:#66d9ef">LoggingService</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">log</span><span style="color:#f92672">:</span> (<span style="color:#a6e22e">message</span>: <span style="color:#66d9ef">string</span>) <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Can&#39;t use destructuring with a Pino instance because it&#39;s implemented
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// weirdly for performance reasons.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">pinoInstance</span>.<span style="color:#a6e22e">info</span>(<span style="color:#a6e22e">message</span>);
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>So is this. (We&rsquo;re doing various gross things with the instances, transports,
+etc., but you get the idea.)</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">import</span> <span style="color:#a6e22e">winston</span> <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;winston&#34;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> { <span style="color:#a6e22e">info</span> } <span style="color:#f92672">=</span> <span style="color:#a6e22e">winston</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">WinstonLoggingProvider</span>: <span style="color:#66d9ef">LoggingService</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">log</span><span style="color:#f92672">:</span> (<span style="color:#a6e22e">message</span>: <span style="color:#66d9ef">string</span>) <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">info</span>(<span style="color:#a6e22e">message</span>);
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>To write code that can accept any of these, I have to focus on accepting a
+<code>LoggingService</code> rather than particular loggers. I&rsquo;d do this.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">heavilyInstrumentedAddition</span> <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>  ({ <span style="color:#a6e22e">log</span> }<span style="color:#f92672">:</span> <span style="color:#a6e22e">LoggingService</span>) <span style="color:#f92672">=&gt;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#a6e22e">num1</span>: <span style="color:#66d9ef">number</span>, <span style="color:#a6e22e">num2</span>: <span style="color:#66d9ef">number</span>) <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;About to do some great math&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">result</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">num1</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">num2</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`Hey, did you know </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">num1</span><span style="color:#e6db74">}</span><span style="color:#e6db74"> + </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">num2</span><span style="color:#e6db74">}</span><span style="color:#e6db74"> = </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">result</span><span style="color:#e6db74">}</span><span style="color:#e6db74">?`</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">result</span>;
+</span></span><span style="display:flex;"><span>  };
+</span></span></code></pre></div><p>Now our function doesn&rsquo;t care how <code>LoggingService</code> is implemented as long as the
+implementation satisfies the type. To choose which instance, we&rsquo;re still using
+dependency injection. Let&rsquo;s write our code to use <code>Pino</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">pinoVersion</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">heavilyInstrumentedAddition</span>(<span style="color:#a6e22e">PinoLoggingProvider</span>);
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">pinoVersion</span>(<span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">5</span>); <span style="color:#75715e">// =&gt; returns 8
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// logs:
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// {&#34;level&#34;:30,&#34;time&#34;:1698808523505,&#34;pid&#34;:9973,&#34;hostname&#34;:&#34;ethans-mbp.lan&#34;,&#34;msg&#34;:&#34;About to do some great math&#34;}
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// {&#34;level&#34;:30,&#34;time&#34;:1698808523506,&#34;pid&#34;:9973,&#34;hostname&#34;:&#34;ethans-mbp.lan&#34;,&#34;msg&#34;:&#34;Hey, did you know 3 + 5 = 8?&#34;}
+</span></span></span></code></pre></div><p>Remember our &ldquo;is it easy to update&rdquo; question? Is this easy enough for you?</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">consoleVersion</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">heavilyInstrumentedAddition</span>(<span style="color:#a6e22e">ConsoleLoggingProvider</span>);
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">consoleVersion</span>(<span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">5</span>); <span style="color:#75715e">// =&gt; returns 8
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// logs:
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// About to do some great math
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Hey, did you know 3 + 5 = 8?
+</span></span></span></code></pre></div><p>Notice that we put the dependencies first so that we can partially apply our
+function and build instances with different dependencies. This is generally the
+better approach—unless you&rsquo;re willing to take the dive into the extremely cool
+functional programming concept of the Reader monad. I&rsquo;ll write about that some
+time soon.</p>
+<h4 id="how-loggingservice-and-its-providers-achieve-dependency-inversion">How <code>LoggingService</code> and its providers achieve dependency inversion</h4>
+<p>Oh hey, let&rsquo;s check in on the stultifying-on-first-read definition of the DIP
+(lifted from Wikipedia). Now we at least have the context to grok it.</p>
+<blockquote>
+<ul>
+<li>High-level modules should not import anything from low-level modules. Both
+should depend on abstractions (e.g., interfaces).</li>
+<li>Abstractions should not depend on details. Details (concrete
+implementations) should depend on abstractions.</li>
+</ul>
+</blockquote>
+<p>Do you see that we’re doing exactly this? Notice that
+<code>heavilyInstrumentedAddition()</code> doesn&rsquo;t say the name <em>Pino</em>, <code>console</code>, or
+<em>Winston</em>? Instead, we name the abstraction/interface: <code>LoggingService</code>. And
+<code>LoggingService</code> does not know Pino, <code>console</code>, or Winston, either. There are
+now three things:</p>
+<ol>
+<li>Code that needs to log.</li>
+<li>Code that describes the ability to log abstractly.</li>
+<li>Code that actually logs, but matches the abstract description from 2.</li>
+</ol>
+<p>By adding in 2., 1. and 3. are now loosely coupled. These terms—<em>loose
+coupling</em>, <em>abstraction</em>, <em>concretion</em>, <em>depend on</em>—all sound really&hellip; abstract.
+But look at the example and see that by throwing in the middleman interface and
+using that as the glue to hold real code together, we make it very easy to swap
+things in and out.</p>
+<h3 id="defining-more-services-and-providers">Defining more services and providers</h3>
+<p>So let&rsquo;s define some more services. These are just sketches, and as we build
+this we&rsquo;ll probably find problems. They also have fewer methods than real
+services would have (though the Interface-Segregation Principle does counsel
+caution in making services too big).</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">/** Represents the ability to interact with bucket-based storage */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">BucketService</span>&lt;<span style="color:#f92672">A</span> <span style="color:#960050;background-color:#1e0010">=</span> <span style="color:#a6e22e">PresignedUrlData</span>&gt; {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">readonly</span> <span style="color:#a6e22e">createPresignedUrl</span><span style="color:#f92672">:</span> () <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">Promise</span>&lt;<span style="color:#f92672">A</span>&gt;;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * Represents the response from successfully creating a presigned URL for an
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * upload.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">PresignedUrlData</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">readonly</span> <span style="color:#a6e22e">url</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">readonly</span> <span style="color:#a6e22e">fields</span>: <span style="color:#66d9ef">Readonly</span>&lt;<span style="color:#f92672">Record</span><span style="color:#960050;background-color:#1e0010">&lt;</span><span style="color:#a6e22e">string</span><span style="color:#960050;background-color:#1e0010">,</span> <span style="color:#a6e22e">string</span>&gt;<span style="color:#f92672">&gt;</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/** Represents the ability to set and retrieve data about users in the system */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">UserDataService</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">readonly</span> <span style="color:#a6e22e">associateKeyWithUser</span><span style="color:#f92672">:</span> (<span style="color:#a6e22e">userId</span>: <span style="color:#66d9ef">number</span>, <span style="color:#a6e22e">key</span>: <span style="color:#66d9ef">string</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">Promise</span>&lt;<span style="color:#f92672">void</span>&gt;;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="heading"></h3>
+<p>Let&rsquo;s start implementing these.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">S3BucketProvider</span>: <span style="color:#66d9ef">BucketService</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">createPresignedUrl</span>: <span style="color:#66d9ef">async</span> ()<span style="color:#f92672">:</span> <span style="color:#a6e22e">Promise</span>&lt;<span style="color:#f92672">PresignedUrlData</span>&gt; <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">s3Client</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">S3Client</span>({ <span style="color:#a6e22e">region</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;us-west-2&#34;</span> });
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">uuid</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">randomUUID</span>();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> { <span style="color:#a6e22e">url</span>, <span style="color:#a6e22e">fields</span> } <span style="color:#f92672">=</span> <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">createPresignedPost</span>(<span style="color:#a6e22e">s3Client</span>, {
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">Bucket</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;photos&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">Key</span>: <span style="color:#66d9ef">uuid</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">Fields</span><span style="color:#f92672">:</span> { <span style="color:#a6e22e">acl</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;public-read&#34;</span> },
+</span></span><span style="display:flex;"><span>    });
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> { <span style="color:#a6e22e">url</span>, <span style="color:#a6e22e">fields</span> };
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>This provider does satisfy the contract, but we&rsquo;re back to the
+testability/difficulty-of-change issue because we&rsquo;re no longer injecting our
+dependencies.</p>
+<p>If we look carefully, we&rsquo;ll see two kinds of dependencies: those that correspond
+to the S3 Bucket concern and those that don&rsquo;t. It can be a valid design choice
+not to inject dependencies related to the concerns the &ldquo;Provider&rdquo; fulfills:
+after all, this one&rsquo;s entire job is to implement the capabilities of a
+<code>BucketService</code> for S3 in particular. It is unlikely to be a valid design choice
+to use non-domain-related capabilities like UUID generation, for example.</p>
+<p>I argue, however, that injecting all of these dependencies is still the better
+practice. We can achieve this in various ways, but it makes good sense to expose
+a constructor function for a provider that accepts the dependencies that that
+provider requires. These dependencies can themselves include services.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">UuidService</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">readonly</span> <span style="color:#a6e22e">createUuid</span><span style="color:#f92672">:</span> () <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">CreateS3BucketProviderDeps</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">readonly</span> <span style="color:#a6e22e">s3Client</span>: <span style="color:#66d9ef">S3Client</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">readonly</span> <span style="color:#a6e22e">loggingService</span>: <span style="color:#66d9ef">LoggingService</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">readonly</span> <span style="color:#a6e22e">presignedPostCreator</span>: <span style="color:#66d9ef">typeof</span> <span style="color:#a6e22e">createPresignedPost</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">createS3BucketProvider</span> <span style="color:#f92672">=</span> ({
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">s3Client</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">loggingService</span><span style="color:#f92672">:</span> { <span style="color:#a6e22e">log</span> },
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">presignedPostCreator</span>,
+</span></span><span style="display:flex;"><span>}<span style="color:#f92672">:</span> <span style="color:#a6e22e">CreateS3BucketProviderDeps</span>)<span style="color:#f92672">:</span> <span style="color:#a6e22e">BucketService</span> <span style="color:#f92672">=&gt;</span> ({
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">createPresignedUrl</span>: <span style="color:#66d9ef">async</span> (<span style="color:#a6e22e">key</span>: <span style="color:#66d9ef">string</span>)<span style="color:#f92672">:</span> <span style="color:#a6e22e">Promise</span>&lt;<span style="color:#f92672">PresignedUrlData</span>&gt; <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> { <span style="color:#a6e22e">url</span>, <span style="color:#a6e22e">fields</span> } <span style="color:#f92672">=</span> <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">presignedPostCreator</span>(<span style="color:#a6e22e">s3Client</span>, {
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">Bucket</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;photos&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">Key</span>: <span style="color:#66d9ef">key</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">Fields</span><span style="color:#f92672">:</span> { <span style="color:#a6e22e">acl</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;public-read&#34;</span> },
+</span></span><span style="display:flex;"><span>    });
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`Created presigned post: </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">JSON</span>.<span style="color:#a6e22e">stringify</span>({ <span style="color:#a6e22e">url</span>, <span style="color:#a6e22e">fields</span> <span style="color:#e6db74">}</span><span style="color:#e6db74">)}`</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> { <span style="color:#a6e22e">url</span>, <span style="color:#a6e22e">fields</span> };
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><p>Notice that I just whipped up a <code>UuidService</code>, defining it to do what I want.
+This situation is common: you may find yourself wishing you had another service.
+Well, go ahead and define it—it&rsquo;s a great time because you have a clear
+understanding of its use case. Indeed, this is the ideal way to define services:
+focusing on the service&rsquo;s users. You&rsquo;ll just need to implement it later. This is
+a kind of type-driven development.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">NodeUuidProvider</span>: <span style="color:#66d9ef">UuidService</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// Note this is thunked/called to remove the capability to pass it options,
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#75715e">// which we either want to disallow or define at the service layer
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#a6e22e">createUuid</span><span style="color:#f92672">:</span> () <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">randomUUID</span>(),
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>Another provider, this one for <code>BucketService</code> using S3.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">CreateS3BucketProviderDeps</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">readonly</span> <span style="color:#a6e22e">s3Client</span>: <span style="color:#66d9ef">S3Client</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">readonly</span> <span style="color:#a6e22e">uuidService</span>: <span style="color:#66d9ef">UuidService</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">createS3BucketProvider</span> <span style="color:#f92672">=</span> ({
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">s3Client</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">uuidService</span><span style="color:#f92672">:</span> { <span style="color:#a6e22e">createUuid</span> },
+</span></span><span style="display:flex;"><span>}<span style="color:#f92672">:</span> <span style="color:#a6e22e">CreateS3BucketProviderDeps</span>) <span style="color:#f92672">=&gt;</span> ({
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">createPresignedUrl</span>: <span style="color:#66d9ef">async</span> ()<span style="color:#f92672">:</span> <span style="color:#a6e22e">Promise</span>&lt;<span style="color:#f92672">PresignedUrlData</span>&gt; <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">uuid</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">createUuid</span>();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">createPresignedPost</span>(<span style="color:#a6e22e">s3Client</span>, {
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">Bucket</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;photos&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">Key</span>: <span style="color:#66d9ef">uuid</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">Fields</span><span style="color:#f92672">:</span> { <span style="color:#a6e22e">acl</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;public-read&#34;</span> },
+</span></span><span style="display:flex;"><span>    });
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><p>Hold up, we&rsquo;ve lost our logging. Well, no problem. We can set these providers up
+to require an instance of a <code>LoggingService</code>. Notice I said <code>LoggingService</code>,
+not a logging provider. This point is key: depend on abstractions not
+concretions, remember? It&rsquo;s also an illustration of the Dependency Rule: the
+service is more stable than the provider.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">CreateS3BucketProviderDeps</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// ... snip ...
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">readonly</span> <span style="color:#a6e22e">loggingService</span>: <span style="color:#66d9ef">LoggingService</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// ... snip ...
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">createS3BucketProvider</span> <span style="color:#f92672">=</span> ({
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// ... snip ...
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#a6e22e">loggingService</span><span style="color:#f92672">:</span> { <span style="color:#a6e22e">log</span> },
+</span></span><span style="display:flex;"><span>}<span style="color:#f92672">:</span> <span style="color:#a6e22e">CreateS3BucketProviderDeps</span>) <span style="color:#f92672">=&gt;</span> ({
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">createPresignedUrl</span>: <span style="color:#66d9ef">async</span> ()<span style="color:#f92672">:</span> <span style="color:#a6e22e">Promise</span>&lt;<span style="color:#f92672">PresignedUrlData</span>&gt; <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// ... snip ...
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> { <span style="color:#a6e22e">url</span>, <span style="color:#a6e22e">fields</span> } <span style="color:#f92672">=</span> <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">createPresignedPost</span>(<span style="color:#a6e22e">s3Client</span>, { <span style="color:#75715e">// ...
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// ... snip ...
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`Created presigned post: </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">JSON</span>.<span style="color:#a6e22e">stringify</span>({ <span style="color:#a6e22e">url</span>, <span style="color:#a6e22e">fields</span> <span style="color:#e6db74">}</span><span style="color:#e6db74">)}`</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> { <span style="color:#a6e22e">url</span>, <span style="color:#a6e22e">fields</span> };
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><p>We&rsquo;d update all our providers in this way.</p>
+<p>Let&rsquo;s do our last one, the <code>UserDataService</code> for PostgreSQL.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">CreatePostgresUserDataService</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">readonly</span> <span style="color:#a6e22e">pgClient</span>: <span style="color:#66d9ef">Client</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">readonly</span> <span style="color:#a6e22e">loggingService</span>: <span style="color:#66d9ef">LoggingService</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">createPostgresUserDataService</span> <span style="color:#f92672">=</span> ({
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">pgClient</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">loggingService</span><span style="color:#f92672">:</span> { <span style="color:#a6e22e">log</span> },
+</span></span><span style="display:flex;"><span>}<span style="color:#f92672">:</span> <span style="color:#a6e22e">CreatePostgresUserDataService</span>)<span style="color:#f92672">:</span> <span style="color:#a6e22e">UserDataService</span> <span style="color:#f92672">=&gt;</span> ({
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">associateKeyWithUser</span>: <span style="color:#66d9ef">async</span> (<span style="color:#a6e22e">userId</span>, <span style="color:#a6e22e">uuid</span>) <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`Preparing to insert user </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">userId</span><span style="color:#e6db74">}</span><span style="color:#e6db74"> with key </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">uuid</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">pgClient</span>.<span style="color:#a6e22e">query</span>(
+</span></span><span style="display:flex;"><span>      <span style="color:#e6db74">&#34;INSERT INTO users_photos (user_id, photo_uuid) VALUES ($1, $2);&#34;</span>,
+</span></span><span style="display:flex;"><span>      [<span style="color:#a6e22e">userId</span>, <span style="color:#a6e22e">uuid</span>]
+</span></span><span style="display:flex;"><span>    );
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><h3 id="defining-our-main-function-and-fine-tuning-the-services-and-providers">Defining our main function and fine-tuning the services and providers</h3>
+<p>Now let&rsquo;s define our main function. First, I&rsquo;ll update the dependencies.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">CreateAndAssociatePresignedUrlDeps</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">readonly</span> <span style="color:#a6e22e">loggingService</span>: <span style="color:#66d9ef">LoggingService</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">readonly</span> <span style="color:#a6e22e">userDataService</span>: <span style="color:#66d9ef">UserDataService</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">readonly</span> <span style="color:#a6e22e">bucketService</span>: <span style="color:#66d9ef">BucketService</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">createAndAssociatePresignedUrl</span> <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>  ({
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">loggingService</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">userDataService</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">bucketService</span>,
+</span></span><span style="display:flex;"><span>  }<span style="color:#f92672">:</span> <span style="color:#a6e22e">CreateAndAssociatePresignedUrlDeps</span>)<span style="color:#f92672">:</span> <span style="color:#a6e22e">Promise</span><span style="color:#f92672">&lt;</span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">url</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fields</span>: <span style="color:#66d9ef">Record</span>&lt;<span style="color:#f92672">string</span><span style="color:#960050;background-color:#1e0010">,</span> <span style="color:#a6e22e">string</span>&gt;;
+</span></span><span style="display:flex;"><span>  }<span style="color:#f92672">&gt;</span> <span style="color:#f92672">=&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">async</span> (<span style="color:#a6e22e">userId</span>: <span style="color:#66d9ef">number</span>) <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// ... snip ...
+</span></span></span></code></pre></div><p>Whoops. Looking at our original code, we see that we have to use the UUID that&rsquo;s
+currently being created inside <code>BucketService.createPresignedUrl()</code> in the call
+to <code>UserService.associateKeyWithUser()</code>. This discovery is an example of the
+positive knock-on effects that can happen with well-factored code. Creating a
+UUID inside <code>BucketService.createPresignedUrl()</code> wasn&rsquo;t really the right design:
+the UUID should be an argument for that method, and the main function should
+create it.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">BucketService</span>&lt;<span style="color:#f92672">A</span> <span style="color:#960050;background-color:#1e0010">=</span> <span style="color:#a6e22e">PresignedUrlData</span>&gt; {
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// Add `key` as an argument
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">readonly</span> <span style="color:#a6e22e">createPresignedUrl</span><span style="color:#f92672">:</span> (<span style="color:#a6e22e">key</span>: <span style="color:#66d9ef">string</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">Promise</span>&lt;<span style="color:#f92672">A</span>&gt;;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">CreateS3BucketProviderDeps</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// removed dependency on UuidService
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#75715e">// ... snip ...
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">createS3BucketProvider</span> <span style="color:#f92672">=</span> ({
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// ... snip ...
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// Add the `key` parameter to make it match the service signature
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#a6e22e">createPresignedUrl</span>: <span style="color:#66d9ef">async</span> (<span style="color:#a6e22e">key</span>: <span style="color:#66d9ef">string</span>)<span style="color:#f92672">:</span> <span style="color:#a6e22e">Promise</span>&lt;<span style="color:#f92672">PresignedUrlData</span>&gt; <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> { <span style="color:#a6e22e">url</span>, <span style="color:#a6e22e">fields</span> } <span style="color:#f92672">=</span> <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">createPresignedPost</span>(<span style="color:#a6e22e">s3Client</span>, {
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">Bucket</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;photos&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e">// Use the `key` here
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>      <span style="color:#a6e22e">Key</span>: <span style="color:#66d9ef">key</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">Fields</span><span style="color:#f92672">:</span> { <span style="color:#a6e22e">acl</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;public-read&#34;</span> },
+</span></span><span style="display:flex;"><span>    });
+</span></span></code></pre></div><p>Now we&rsquo;re ready to define our main function. Notice that it still relies
+entirely on services. This indirection may seem like a lot of overhead, but
+injecting dependencies even in our main function meets our two-part test of
+making tests easier to write and dependencies easier to swap out.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">CreateAndAssociateBucketDeps</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">readonly</span> <span style="color:#a6e22e">bucketService</span>: <span style="color:#66d9ef">BucketService</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">readonly</span> <span style="color:#a6e22e">loggingService</span>: <span style="color:#66d9ef">LoggingService</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">readonly</span> <span style="color:#a6e22e">userDataService</span>: <span style="color:#66d9ef">UserDataService</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">readonly</span> <span style="color:#a6e22e">uuidService</span>: <span style="color:#66d9ef">UuidService</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">createAndAssociateBucket</span> <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>  ({
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">bucketService</span><span style="color:#f92672">:</span> { <span style="color:#a6e22e">createPresignedUrl</span> },
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">loggingService</span><span style="color:#f92672">:</span> { <span style="color:#a6e22e">log</span> },
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">userDataService</span><span style="color:#f92672">:</span> { <span style="color:#a6e22e">associateKeyWithUser</span> },
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">uuidService</span><span style="color:#f92672">:</span> { <span style="color:#a6e22e">createUuid</span> },
+</span></span><span style="display:flex;"><span>  }<span style="color:#f92672">:</span> <span style="color:#a6e22e">CreateAndAssociateBucketDeps</span>) <span style="color:#f92672">=&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">async</span> (
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">userId</span>: <span style="color:#66d9ef">number</span>
+</span></span><span style="display:flex;"><span>  )<span style="color:#f92672">:</span> <span style="color:#a6e22e">Promise</span><span style="color:#f92672">&lt;</span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">url</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fields</span>: <span style="color:#66d9ef">Record</span>&lt;<span style="color:#f92672">string</span><span style="color:#960050;background-color:#1e0010">,</span> <span style="color:#a6e22e">string</span>&gt;;
+</span></span><span style="display:flex;"><span>  }<span style="color:#f92672">&gt;</span> <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">uuid</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">createUuid</span>();
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`Created UUID: </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">uuid</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> { <span style="color:#a6e22e">url</span>, <span style="color:#a6e22e">fields</span> } <span style="color:#f92672">=</span> <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">createPresignedUrl</span>(<span style="color:#a6e22e">uuid</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`Created presigned post: </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">JSON</span>.<span style="color:#a6e22e">stringify</span>({ <span style="color:#a6e22e">url</span>, <span style="color:#a6e22e">fields</span> <span style="color:#e6db74">}</span><span style="color:#e6db74">)}`</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">associateKeyWithUser</span>(<span style="color:#a6e22e">userId</span>, <span style="color:#a6e22e">uuid</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;Inserted record into `users_photos`&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> { <span style="color:#a6e22e">url</span>, <span style="color:#a6e22e">fields</span> };
+</span></span><span style="display:flex;"><span>  };
+</span></span></code></pre></div><p>Now we&rsquo;re ready to use this. We&rsquo;ll create an object with our prod dependencies
+and partially apply our main function. This is a light-weight factory function.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">prodDeps</span>: <span style="color:#66d9ef">CreateAndAssociateBucketDeps</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">bucketService</span>: <span style="color:#66d9ef">createS3BucketProvider</span>({
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">loggingService</span>: <span style="color:#66d9ef">ConsoleLoggingProvider</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">s3Client</span>: <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">S3Client</span>({ <span style="color:#a6e22e">region</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;us-east-1&#34;</span> }),
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">presignedPostCreator</span>: <span style="color:#66d9ef">createPresignedPost</span>,
+</span></span><span style="display:flex;"><span>  }),
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">loggingService</span>: <span style="color:#66d9ef">ConsoleLoggingProvider</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">userDataService</span>: <span style="color:#66d9ef">createPostgresUserDataService</span>({
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">pgClient</span>: <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Client</span>({ <span style="color:#a6e22e">region</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;us-east-1&#34;</span> }),
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">loggingService</span>: <span style="color:#66d9ef">ConsoleLoggingProvider</span>,
+</span></span><span style="display:flex;"><span>  }),
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">uuidService</span>: <span style="color:#66d9ef">NodeUuidProvider</span>,
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">prodCreateAndAssociateBucket</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">createAndAssociateBucket</span>(<span style="color:#a6e22e">prodDeps</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> { <span style="color:#a6e22e">url</span>, <span style="color:#a6e22e">fields</span> } <span style="color:#f92672">=</span> <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">prodCreateAndAssociateBucket</span>(<span style="color:#ae81ff">12345</span>);
+</span></span></code></pre></div><p>Swapping out our dependencies is as easy as ensuring we have a provider and then
+updating the <code>prodDeps</code> object. For example, we could simply change
+<code>ConsoleLoggingProvider</code> to <code>PinoLoggingProvider</code>.</p>
+<h3 id="testing-our-solution">Testing our solution</h3>
+<p>Notice that our services and constructing our main function each have their own
+dependencies. This approach makes it easier to test at the correct level of
+abstraction. Our earlier test suite for the dependency-injected version required
+us to mock the specific dependencies, e.g., the PostgreSQL client and the S3
+client.</p>
+<p>Now, in our main function, we can mock at the level of abstraction that our
+services represent. That is, we can make <code>BucketService.createPresignedUrl()</code>
+return the value we want without actually mocking AWS S3 SDK methods. That
+happens to also be the proper level of abstraction for testing the main
+function&rsquo;s business logic.</p>
+<p>But at the provider level, we get in the weeds, ensuring that the provider
+behaves correctly given our various dependencies&rsquo; return values.</p>
+<p>This ability to use mocks at a level of abstraction that matches the
+functionality we&rsquo;re trying to test supports test isolation. We don&rsquo;t have to
+arrange complicated and brittle test mocks to check each code path in the
+high-level functions. And we don&rsquo;t have to find a way to make assertions about
+low-level dependencies in a giant function with a zillion moving pieces.</p>
+<p>For example, if I want to ensure that we&rsquo;re handling a database connection
+failure (spoiler: we aren&rsquo;t), I can test the various failure modes in the
+<code>S3BucketProvider</code> tests. I can then independently test that the main function
+handles any failure from its <code>BucketService</code>.</p>
+<p>Here&rsquo;s an &ldquo;in the weeds&rdquo; test of a provider.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#a6e22e">describe</span>(<span style="color:#e6db74">&#34;createS3BucketProvider&#34;</span>, () <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">it</span>(<span style="color:#e6db74">&#34;gracefully handles errors thrown by `presignedPostCreator`&#34;</span>, () <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">loggingSpy</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">jest</span>.<span style="color:#a6e22e">fn</span>();
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">sendSpy</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">jest</span>.<span style="color:#a6e22e">fn</span>();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">mockDeps</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">s3Client</span><span style="color:#f92672">:</span> { <span style="color:#a6e22e">send</span>: <span style="color:#66d9ef">sendSpy</span>, <span style="color:#a6e22e">config</span><span style="color:#f92672">:</span> {} } <span style="color:#66d9ef">as</span> <span style="color:#66d9ef">unknown</span> <span style="color:#66d9ef">as</span> <span style="color:#a6e22e">S3Client</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">loggingService</span><span style="color:#f92672">:</span> { <span style="color:#a6e22e">log</span>: <span style="color:#66d9ef">loggingSpy</span> },
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">presignedPostCreator</span>: <span style="color:#66d9ef">jest.fn</span>().<span style="color:#a6e22e">mockRejectedValue</span>(<span style="color:#e6db74">&#34;kablooie&#34;</span>),
+</span></span><span style="display:flex;"><span>    };
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// This test will FAIL till we do correct error handling
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">expect</span>(
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">async</span> () <span style="color:#f92672">=&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">createS3BucketProvider</span>(<span style="color:#a6e22e">mockDeps</span>).<span style="color:#a6e22e">createPresignedUrl</span>(<span style="color:#e6db74">&#34;testData&#34;</span>)
+</span></span><span style="display:flex;"><span>    ).<span style="color:#a6e22e">not</span>.<span style="color:#a6e22e">toThrow</span>();
+</span></span><span style="display:flex;"><span>  });
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// error: expect(received).not.toThrow()
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Thrown value: &#34;kablooie&#34;
+</span></span></span></code></pre></div><p>Here&rsquo;s a &ldquo;high level&rdquo; test of the main function.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#a6e22e">describe</span>(<span style="color:#e6db74">&#34;createAndAssociateBucket&#34;</span>, () <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">test</span>(<span style="color:#e6db74">&#34;happy path&#34;</span>, <span style="color:#66d9ef">async</span> () <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">createPresignedUrlSpy</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">jest</span>.<span style="color:#a6e22e">fn</span>().<span style="color:#a6e22e">mockResolvedValue</span>({
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">url</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;www.fake.com&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">fields</span><span style="color:#f92672">:</span> { <span style="color:#a6e22e">some</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;fields&#34;</span> },
+</span></span><span style="display:flex;"><span>    } <span style="color:#a6e22e">satisfies</span> <span style="color:#a6e22e">PresignedUrlData</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">logSpy</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">jest</span>.<span style="color:#a6e22e">fn</span>();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">associateKeyWithUserSpy</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">jest</span>.<span style="color:#a6e22e">fn</span>().<span style="color:#a6e22e">mockResolvedValue</span>(<span style="color:#66d9ef">undefined</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">mockDeps</span>: <span style="color:#66d9ef">CreateAndAssociateBucketDeps</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">bucketService</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">createPresignedUrl</span>: <span style="color:#66d9ef">createPresignedUrlSpy</span>,
+</span></span><span style="display:flex;"><span>      },
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">loggingService</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">log</span>: <span style="color:#66d9ef">logSpy</span>,
+</span></span><span style="display:flex;"><span>      },
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">userDataService</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">associateKeyWithUser</span>: <span style="color:#66d9ef">associateKeyWithUserSpy</span>,
+</span></span><span style="display:flex;"><span>      },
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">uuidService</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">createUuid</span>: <span style="color:#66d9ef">jest</span>
+</span></span><span style="display:flex;"><span>          .<span style="color:#a6e22e">fn</span>()
+</span></span><span style="display:flex;"><span>          .<span style="color:#a6e22e">mockReturnValue</span>(<span style="color:#e6db74">&#34;5940cf0d-5bb3-43a5-bbc0-7801ef23daf3&#34;</span>),
+</span></span><span style="display:flex;"><span>      },
+</span></span><span style="display:flex;"><span>    };
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">subject</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">createAndAssociateBucket</span>(<span style="color:#a6e22e">mockDeps</span>)(<span style="color:#ae81ff">123</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">expect</span>(<span style="color:#a6e22e">subject</span>).<span style="color:#a6e22e">toEqual</span>({
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">url</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;www.fake.com&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">fields</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">some</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;fields&#34;</span>,
+</span></span><span style="display:flex;"><span>      },
+</span></span><span style="display:flex;"><span>    });
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Again, I&#39;m using bun:test, which doesn&#39;t have `expect().toBeCalledWith()`
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">expect</span>(<span style="color:#a6e22e">createPresignedUrlSpy</span>.<span style="color:#a6e22e">mock</span>.<span style="color:#a6e22e">calls</span>).<span style="color:#a6e22e">toEqual</span>([
+</span></span><span style="display:flex;"><span>      [<span style="color:#e6db74">&#34;5940cf0d-5bb3-43a5-bbc0-7801ef23daf3&#34;</span>],
+</span></span><span style="display:flex;"><span>    ]);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">expect</span>(<span style="color:#a6e22e">logSpy</span>.<span style="color:#a6e22e">mock</span>.<span style="color:#a6e22e">calls</span>).<span style="color:#a6e22e">toEqual</span>([
+</span></span><span style="display:flex;"><span>      [<span style="color:#e6db74">&#34;Created UUID: 5940cf0d-5bb3-43a5-bbc0-7801ef23daf3&#34;</span>],
+</span></span><span style="display:flex;"><span>      [
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#39;Created presigned post: {&#34;url&#34;:&#34;www.fake.com&#34;,&#34;fields&#34;:{&#34;some&#34;:&#34;fields&#34;}}&#39;</span>,
+</span></span><span style="display:flex;"><span>      ],
+</span></span><span style="display:flex;"><span>      [<span style="color:#e6db74">&#34;Inserted record into `users_photos`&#34;</span>],
+</span></span><span style="display:flex;"><span>    ]);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">expect</span>(<span style="color:#a6e22e">associateKeyWithUserSpy</span>.<span style="color:#a6e22e">mock</span>.<span style="color:#a6e22e">calls</span>).<span style="color:#a6e22e">toEqual</span>([
+</span></span><span style="display:flex;"><span>      [<span style="color:#ae81ff">123</span>, <span style="color:#e6db74">&#34;5940cf0d-5bb3-43a5-bbc0-7801ef23daf3&#34;</span>],
+</span></span><span style="display:flex;"><span>    ]);
+</span></span><span style="display:flex;"><span>  });
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><p>We can begin changing the mocks&rsquo; return values to test various failure cases
+directly without having to induce the dependencies of dependencies to do what we
+want.</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>We&rsquo;ve seen the value of Dependency Inversion, how it relates to Dependency
+Injection, and how it leads to a &ldquo;Services and Providers&rdquo; (or similar)
+architecture.</p>
+<p>These same ideas exist in a variety of frameworks. For example,
+Nest.js and Angular use a runtime dependency-injection framework. I believe the
+JVM has a variety of runtime solutions. On the opposite end of the spectrum,
+tools like <code>fp-ts</code>&rsquo;s Reader monad make this possible with type-level support at
+compile time. Effect-TS and ZIO use the Reader pattern along with the ability to
+do runtime resolution.</p>
+<p>But don&rsquo;t confuse frameworks that help you do this stuff with the ideas
+themselves. Any language that supports interface-like abstractions can do this.
+This pattern is also the basis of the Clean/Onion/Hexagonal/Ports-and-Adapters
+Architecture.</p>
+<p>If you understand why and how to use this pattern, you&rsquo;re well on your way to
+writing more loosely coupled code and having a mental model of arranging the
+dependencies within your codebases.</p>
+</div></article>
+<footer class="py:24">
+    <div class="f:fade-30 f:14 mb:8"></div>
+    <div class="f:fade-60 f:12">Theme <a class="f:bold" href="https://github.com/serkodev/holy" _target="_blank">Holy</a></div>
+</footer></div>
+    </div>
+</body>
+
+</html>

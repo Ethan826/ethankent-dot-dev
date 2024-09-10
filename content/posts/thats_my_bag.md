@@ -5,7 +5,7 @@ author: Ethan Kent
 draft: false
 ---
 
-(This is part of a series of articles. The next one is [here]({{<relref "/implementing_a_bag">}}).)
+(This is part of a series of articles. The next one is [here]({{<relref "implementing_a_bag">}}).)
 
 When we want a collection with elements that may repeat, we generally reach
 for an array, list, vector, etc. When we want a collection with elements that

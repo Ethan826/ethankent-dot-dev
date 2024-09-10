@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+    <title>Limiting the scope of mutation - Ethan Kent&#39;s dev blog</title>
+
+    
+    
+    <meta name="description" content="Functional programming teaches us about the dangers of mutability. But some object-oriented code mutates variables freely, in different scopes, along different code paths, and in many places.
+To maintain our ability to reason about code, we can learn from functional programming and treat mutation as a risk to be managed. Even if we stop short of mandatory immutability and using constructs like monads, we can still manage mutations and recognize them as a source of bugs and confusion." />
+    <meta name="author" content="Ethan Kent" />
+    
+
+    <link href="https://unpkg.com/@master/normal.css" rel="stylesheet">
+    <script src="https://unpkg.com/@master/style@1.5.0"></script>
+    <script src="https://unpkg.com/@master/styles@1.13.0"></script>
+    <script src="https://unpkg.com/master-styles-group"></script>
+    <script src="https://unpkg.com/themes.js"></script>
+    <script>window.themes = window.themes || new window.Themes()</script>
+
+    <style>
+        :root {
+            --font-sans: "Inter var", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+        }
+    </style></head>
+<body class="bg:fade-84@dark font:fade-16@dark font:sans">
+    <nav class="w:full h:90 fixed bg:fade-84/.95@dark bg:white z:1000">
+    <div class="
+        h:full
+        w:full
+        max-w:1200
+        mx:auto
+        px:32
+        d:flex
+        align-items:center
+    ">
+        <div>
+            <a href="/" class="mr-3 font:extralight">
+              
+              Ethan Kent&#39;s dev blog
+              
+            </a>
+        </div>
+
+        <div class="ml:auto">
+            
+            
+            
+        </div>
+    </div>
+</nav>
+<div class="d:flex flex:column@<=sm pt:90 px:24 jc:center gap:44 word-break:break-word">
+        <div class="max-w:700 w:full box:content-box">
+<article class="box:border-box pt:32">
+    <header class="mb:32">
+        <div class="font:40 font:extrabold">Limiting the scope of mutation</div>
+        <div class="mt:16 f:fade-60">
+            <time>Nov 5, 2019</time>
+            </div>
+    </header><div class="
+    _:where(a):hover{text-decoration-color:fade}
+    _:where(a){text-decoration:2;underline;fade-10;_text-decoration-color:fade-70@dark}
+    _:where(blockquote){bl:5;solid;fade-76/.1;_bl:5;solid;fade-34/.1@dark}
+    _:where(code){font:90%;_v:middle}
+    _:where(code:not(.highlight_*,pre_*)){p:2;6;_r:4}
+    _:where(del){text-decoration:1;line-through;fade-68;_text-decoration-color:red-64@dark}
+    _:where(figcaption){text:14;_p:10;20;0;_width:fit;_mx:auto;_font:fade-56;_font:fade-57@dark}
+    _:where(h1){font:40;_font:extrabold}
+    _:where(h1,h2,h3)+:where(h1,h2,h3){mt:.5em}
+    _:where(h1,h2,h3,h4,h5,h6){mt:2em}
+    _:where(h2){mb:1em;_font:32}
+    _:where(h3){font:24}
+    _:where(h4){font:20}
+    _:where(h5){font:16}
+    _:where(h6){font:14}
+    _:where(li)::marker{font:fade-44;_font:fade-68@dark}
+    _:where(li){pl:.375em}
+    _:where(mark){text-decoration:1;underline;#fce016;_bg:transparent;_text-decoration-color:rgb(252;224;22/.5)@dark}
+    _:where(p,li){font:fade-76;_font:16;_line-height:1.65;_font:fade-34@dark}
+    _:where(p,pre,blockquote,figure,ul,ol,table){my:1.125em}
+    >:first-child{mt:0!}
+    _:where(pre){p:20;_r:8;_overflow:auto}
+    _:where(pre,code:not(.highlight_*)){bg:fade-2;_bg:fade-92!@dark}
+    _:where(strong,b,a,code:not(.highlight_*),mark,del){font:fade-92;_font:fade-12@dark}
+    _:where(table){width:full;_border-spacing:0}
+    _:where(td){v:baseline}
+    _:where(td,th):first-child{pl:0}
+    _:where(td,th):last-child{pr:0}
+    _:where(td,th){bb:1;solid;fade-92/.06;_p:6;_b:fade-4/.04@dark}
+    _:where(th){font:fade-78;_font:14;_text:left;_font:fade-12@dark}
+    _:where(th,p_code,li_code,a,mark){font:semibold;_font:medium@dark}
+    _:where(ul){list-style-type:disc}
+    _:where(ul,ol,blockquote){pl:1.5em}
+    _:where(video,img){max-width:full}
+    _:where(a,mark){text-underline-offset:3}
+    _:where(hr){h:2;_bg:fade-10;_bg:fade-70@dark;_my:3em}
+"><p>Functional programming teaches us about the dangers of mutability. But some
+object-oriented code mutates variables freely, in different scopes, along
+different code paths, and in many places.</p>
+<p>To maintain our ability to reason about code, we can learn from functional
+programming and treat mutation as a risk to be managed. Even if we stop short
+of mandatory immutability and using constructs like monads, we can still
+manage mutations and recognize them as a source of bugs and confusion.</p>
+<p>I&rsquo;m always nervous when I see code like this:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Unwieldy</span> <span style="color:#f92672">&lt;</span> <span style="color:#66d9ef">GrabBag</span><span style="color:#f92672">::</span><span style="color:#66d9ef">Base</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">include</span> <span style="color:#66d9ef">BizarroHelpers</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># ... 500 lines of spaghetti</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">do_something</span>(wibble)
+</span></span><span style="display:flex;"><span>    result <span style="color:#f92672">=</span> <span style="color:#f92672">[]</span>
+</span></span><span style="display:flex;"><span>    intermediate_result <span style="color:#f92672">=</span> <span style="color:#f92672">[]</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># ... 20 lines of code</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    intermediate_result <span style="color:#f92672">&lt;&lt;</span> weird_helper(wibble)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># ... 20 lines of code</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    intermediate_result <span style="color:#f92672">&lt;&lt;</span> biscuits? ? gravy : grits
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># ... 20 lines of code</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> weirder_helper(wibble)
+</span></span><span style="display:flex;"><span>      intermediate_result<span style="color:#f92672">.</span>reject!(<span style="color:#f92672">&amp;</span><span style="color:#e6db74">:magic</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>      result <span style="color:#f92672">&lt;&lt;</span> inexplicable_helper(wibble)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># ... 20 lines of code</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> confusing_predicate_method?
+</span></span><span style="display:flex;"><span>      result <span style="color:#f92672">+=</span> intermediate_result
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">return</span> result
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    result <span style="color:#f92672">&lt;&lt;</span> <span style="color:#e6db74">:deus_ex_machina</span>
+</span></span><span style="display:flex;"><span>    result
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># ... 500 lines of spaghetti</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span></code></pre></div><p>We might not be able to fix all the spaghetti code and we&rsquo;re sure to have
+difficulty grokking what comes from where (the class inherits from
+<code>GrabBag::Base</code> and mixes in <code>BizzaroHelpers</code>). But if we&rsquo;re writing
+<code>do_something</code>, we can use a few rules of thumb to avoid getting too confused
+and to make our code more maintainable.</p>
+<p>To summarize the ideas presented below: Generally, avoid declaring a basic
+object and repeatedly mutating it in a large scope. Prefer instantiating
+objects using literals, other objects, and the builder pattern/fluent API.
+Run the code with mutations in an attached scope, or at least right next to
+the declaration. And avoid building logic into the interaction of control
+flow with mutation.</p>
+<h2 id="keep-mutation-near-the-declaration">Keep mutation near the declaration.</h2>
+<p>The examples here use a Rust <code>HashMap</code>. I chose that because the standard
+library doesn&rsquo;t give us a way to construct one using a literal.</p>
+<p>The following Rust code has a few benefits: it keeps all mutations close
+together and it immediately makes <code>lunch</code> immutable once the assigning is
+done.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#75715e">#![allow(unused_variables)]</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">use</span> std::collections::HashMap;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> <span style="color:#66d9ef">mut</span> lunch <span style="color:#f92672">=</span> HashMap::new();
+</span></span><span style="display:flex;"><span>    lunch.insert(<span style="color:#e6db74">&#34;salad&#34;</span>, <span style="color:#e6db74">&#34;house&#34;</span>);
+</span></span><span style="display:flex;"><span>    lunch.insert(<span style="color:#e6db74">&#34;entree&#34;</span>, <span style="color:#e6db74">&#34;sandwich&#34;</span>);
+</span></span><span style="display:flex;"><span>    lunch.insert(<span style="color:#e6db74">&#34;dessert&#34;</span>, <span style="color:#e6db74">&#34;cookie&#34;</span>);
+</span></span><span style="display:flex;"><span>    lunch.insert(<span style="color:#e6db74">&#34;drink&#34;</span>, <span style="color:#e6db74">&#34;milk&#34;</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> lunch <span style="color:#f92672">=</span> lunch; <span style="color:#75715e">// `let` binding without `mut` makes `lunch` immutable.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre></div><h2 id="better-yet-put-mutation-in-a-scope-attached-to-the-declaration">Better yet, put mutation in a scope attached to the declaration.</h2>
+<p>This is overkill here, but it demonstrates a point. Notice that the scope in
+which the <code>HashMap</code> is mutable is only in the body of the closure passed to <code>fold</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> lunch <span style="color:#f92672">=</span> [
+</span></span><span style="display:flex;"><span>    (<span style="color:#e6db74">&#34;salad&#34;</span>, <span style="color:#e6db74">&#34;house&#34;</span>),
+</span></span><span style="display:flex;"><span>    (<span style="color:#e6db74">&#34;entree&#34;</span>, <span style="color:#e6db74">&#34;sandwich&#34;</span>),
+</span></span><span style="display:flex;"><span>    (<span style="color:#e6db74">&#34;dessert&#34;</span>, <span style="color:#e6db74">&#34;cookie&#34;</span>),
+</span></span><span style="display:flex;"><span>    (<span style="color:#e6db74">&#34;drink&#34;</span>, <span style="color:#e6db74">&#34;milk&#34;</span>),
+</span></span><span style="display:flex;"><span>]
+</span></span><span style="display:flex;"><span>.iter()
+</span></span><span style="display:flex;"><span>.fold(HashMap::new(), <span style="color:#f92672">|</span><span style="color:#66d9ef">mut</span> result, (k, v)<span style="color:#f92672">|</span> {
+</span></span><span style="display:flex;"><span>    result.insert(k, v);
+</span></span><span style="display:flex;"><span>    result
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><p>Ruby has some nice patterns with <code>Object#tap</code> and <code>Object#yield_self</code>, for
+example:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>immutable <span style="color:#f92672">=</span> <span style="color:#66d9ef">MyClass</span><span style="color:#f92672">.</span>new<span style="color:#f92672">.</span>tap <span style="color:#f92672">|</span>mutable<span style="color:#f92672">|</span> <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>  mutable<span style="color:#f92672">.</span>blip <span style="color:#f92672">=</span> <span style="color:#ae81ff">8</span>
+</span></span><span style="display:flex;"><span>  mutable<span style="color:#f92672">.</span>blop <span style="color:#f92672">=</span> <span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span></code></pre></div><p>An instance of <code>MyClass</code> is mutated after being instantiated, but before it
+is bound to <code>immutable</code>. We do that with a scope in which the instance of
+<code>MyClass</code> is mutated, but <code>mutable</code> goes out of scope at the end of the <code>tap</code>
+block; the result is now bound to <code>immutable</code> and—we hope—not mutated any
+more. This doesn&rsquo;t actually prevent anyone from mutating <code>immutable</code> (that&rsquo;s
+just a name, after all), but it makes our intent clear and helps the next
+developer follow the same pattern.</p>
+<h2 id="better-yet-use-a-literal-or-the-builder-pattern-to-instantiate-the-object">Better yet, use a literal or the builder pattern to instantiate the object.</h2>
+<p>A Rust crate called <a href="https://github.com/bluss/maplit"><code>maplit</code></a> exposes a
+macro for creating literal hashmaps:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> lunch <span style="color:#f92672">=</span> hashmap! {
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;salad&#34;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#34;house&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;entree&#34;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#34;sandwich&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;dessert&#34;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#34;cookie&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;drink&#34;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#34;milk&#34;</span>,
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>If you have control over objects, you can allow them to be initialized with a
+literal. For example:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#66d9ef">use</span> std::collections::HashMap;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// The &#34;Newtype&#34; pattern. Lunch is basically a `HashMap`, but we&#39;re making our
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// own type as a thin wrapper over it (in Rust it&#39;s a struct, but it would be a
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// class in many languages) so that we control its construction and which
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// methods we expose.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Lunch</span>(HashMap<span style="color:#f92672">&lt;</span>String, String<span style="color:#f92672">&gt;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">impl</span> Lunch {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// You can ignore the `&amp;str` and `to_string()` stuff for this example and
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// view them all as strings. It&#39;s a Rust quirk.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">new</span>(init: Vec<span style="color:#f92672">&lt;</span>(<span style="color:#f92672">&amp;</span><span style="color:#66d9ef">str</span>, <span style="color:#f92672">&amp;</span><span style="color:#66d9ef">str</span>)<span style="color:#f92672">&gt;</span>) -&gt; <span style="color:#a6e22e">Self</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> <span style="color:#66d9ef">mut</span> result <span style="color:#f92672">=</span> HashMap::with_capacity(init.len());
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> (k, v) <span style="color:#66d9ef">in</span> init {
+</span></span><span style="display:flex;"><span>            result.insert(k.to_string(), v.to_string());
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        Self(result)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> lunch <span style="color:#f92672">=</span> Lunch::new(vec![
+</span></span><span style="display:flex;"><span>        (<span style="color:#e6db74">&#34;salad&#34;</span>, <span style="color:#e6db74">&#34;house&#34;</span>),
+</span></span><span style="display:flex;"><span>        (<span style="color:#e6db74">&#34;entree&#34;</span>, <span style="color:#e6db74">&#34;sandwich&#34;</span>),
+</span></span><span style="display:flex;"><span>        (<span style="color:#e6db74">&#34;dessert&#34;</span>, <span style="color:#e6db74">&#34;cookie&#34;</span>),
+</span></span><span style="display:flex;"><span>        (<span style="color:#e6db74">&#34;drink&#34;</span>, <span style="color:#e6db74">&#34;milk&#34;</span>),
+</span></span><span style="display:flex;"><span>    ]);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Or you can use the builder pattern with an object you define:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#75715e">#![allow(unused_variables)]</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">use</span> std::collections::HashMap;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// You&#39;d do this with named struct fields; just making this example more like
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// the others.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Lunch</span>(HashMap<span style="color:#f92672">&lt;</span>String, String<span style="color:#f92672">&gt;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">impl</span> Lunch {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">new</span>() -&gt; <span style="color:#a6e22e">Self</span> {
+</span></span><span style="display:flex;"><span>        Lunch(HashMap::with_capacity(<span style="color:#ae81ff">4</span>))
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">with_salad</span>(<span style="color:#66d9ef">mut</span> self, salad: <span style="color:#66d9ef">&amp;</span><span style="color:#66d9ef">str</span>) -&gt; <span style="color:#a6e22e">Self</span> {
+</span></span><span style="display:flex;"><span>        self.<span style="color:#ae81ff">0.</span>insert(<span style="color:#e6db74">&#34;salad&#34;</span>.to_string(), salad.to_string());
+</span></span><span style="display:flex;"><span>        self
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">with_entree</span>(<span style="color:#66d9ef">mut</span> self, entree: <span style="color:#66d9ef">&amp;</span><span style="color:#66d9ef">str</span>) -&gt; <span style="color:#a6e22e">Self</span> {
+</span></span><span style="display:flex;"><span>        self.<span style="color:#ae81ff">0.</span>insert(<span style="color:#e6db74">&#34;entree&#34;</span>.to_string(), entree.to_string());
+</span></span><span style="display:flex;"><span>        self
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">with_dessert</span>(<span style="color:#66d9ef">mut</span> self, dessert: <span style="color:#66d9ef">&amp;</span><span style="color:#66d9ef">str</span>) -&gt; <span style="color:#a6e22e">Self</span> {
+</span></span><span style="display:flex;"><span>        self.<span style="color:#ae81ff">0.</span>insert(<span style="color:#e6db74">&#34;dessert&#34;</span>.to_string(), dessert.to_string());
+</span></span><span style="display:flex;"><span>        self
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">with_drink</span>(<span style="color:#66d9ef">mut</span> self, drink: <span style="color:#66d9ef">&amp;</span><span style="color:#66d9ef">str</span>) -&gt; <span style="color:#a6e22e">Self</span> {
+</span></span><span style="display:flex;"><span>        self.<span style="color:#ae81ff">0.</span>insert(<span style="color:#e6db74">&#34;drink&#34;</span>.to_string(), drink.to_string());
+</span></span><span style="display:flex;"><span>        self
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> lunch <span style="color:#f92672">=</span> Lunch::new()
+</span></span><span style="display:flex;"><span>        .with_salad(<span style="color:#e6db74">&#34;house&#34;</span>)
+</span></span><span style="display:flex;"><span>        .with_entree(<span style="color:#e6db74">&#34;sandwich&#34;</span>)
+</span></span><span style="display:flex;"><span>        .with_dessert(<span style="color:#e6db74">&#34;cookie&#34;</span>)
+</span></span><span style="display:flex;"><span>        .with_drink(<span style="color:#e6db74">&#34;milk&#34;</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="assign-_from_-rather-than-_in_-conditional-_expressions_">Assign <em>from</em> rather than <em>in</em> conditional <em>expressions</em>.</h2>
+<p>In many languages, <code>if/else</code> is an expression rather than a statement. When
+that is so, make use of this to assign the value of the <code>if/else</code> expression
+rather than assigning within the <code>if</code>. That fits in with the rest of the
+recommendations because it entails mutation in one scope that affects a larger
+scope.</p>
+<p>Thus, prefer</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>my_result <span style="color:#f92672">=</span> <span style="color:#66d9ef">if</span> predicate?
+</span></span><span style="display:flex;"><span>              value_a
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>              value_b
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">end</span>
+</span></span></code></pre></div><p>to</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> predicate?
+</span></span><span style="display:flex;"><span>  my_result <span style="color:#f92672">=</span> value_a
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>  my_result <span style="color:#f92672">=</span> value_b
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span></code></pre></div><p>Among other reasons, it assures that <code>my_result</code> is always defined, and it
+makes clear that the intent of the <code>if/else</code> is to bind a value to a
+variable. (And of course, don&rsquo;t <em>also</em> do some side-effecting thing in the
+conditional. Remember the <a href="https://en.wikipedia.org/wiki/Command%E2%80%93query_separation">command–query separation
+principle</a>.)</p>
+<p>In JavaScript, ternaries are expressions while <code>if/else</code> blocks are
+not. So you can use ternaries in lieu of <code>if/else</code> expressions in some
+cases. But ternaries are probably best confined to small amounts of code
+because the <code>?</code> and <code>:</code> operators are easy to lose track of.</p>
+<h2 id="do-not-embed-logic-in-the-interaction-of-flow-control-and-mutation">Do not embed logic in the interaction of flow control and mutation.</h2>
+<p>This is a general statement of the specific example of <code>if/then</code> statements
+from the previous section. When your business logic is immanent from the
+interaction of control flow and mutation, it can be quite difficult to reason
+about your code, the code is more difficult to maintain, and bugs are more
+likely.</p>
+<p>The tongue-in-cheek example at the beginning is a case of this. A common
+pattern is for a <code>result</code> variable to be mutated throughout a large function,
+with some mutation occurring inside conditionals, and <code>result</code> sometimes
+short-circuit returned. The author of the code may think he or she is helping
+you out because you don&rsquo;t wind up deep within nested conditionals. Yet the
+effect is often worse: the logic is just as confusing, but now the logic is
+implicit: the state of your <code>result</code> variable is determined by the
+combination of not having returned at line X, having entered the <code>else</code> block
+at line Y, and so forth.</p>
+</div></article>
+<footer class="py:24">
+    <div class="f:fade-30 f:14 mb:8"></div>
+    <div class="f:fade-60 f:12">Theme <a class="f:bold" href="https://github.com/serkodev/holy" _target="_blank">Holy</a></div>
+</footer></div>
+    </div>
+</body>
+
+</html>

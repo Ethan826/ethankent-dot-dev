@@ -5,7 +5,7 @@ author: Ethan Kent
 draft: false
 ---
 
-In my previous [post]({{< relref "/thats_my_bag" >}}), I talked about a bag
+In my previous [post]({{< relref "thats_my_bag" >}}), I talked about a bag
 data structure, which is like a set that allows repeated occurrences of the
 same value.
 
@@ -102,7 +102,7 @@ private computeBucket(value: T): number {
 
 This is also an example of "describing what kinds of arguments are
 appropriate in _precisely_ the terms that make sense" that I referred to in
-an earlier [post]({{< relref "/types_are_for_people" >}}).
+an earlier [post]({{< relref "types_are_for_people" >}}).
 
 ## Design
 
@@ -150,9 +150,9 @@ uses `HashTable` to find the right `Bucket`, then asks `Bucket` to do the
 work of inserting, deleting, counting, etc.
 
 `Bucket` also hides the detail mentioned in the previous
-[post]({{< relref "/thats_my_bag" >}}), namely avoiding the presumption that something is intended by the difference between a value that's missing from the data structure versus a value that reports zero occurrences.[^priors]
+[post]({{< relref "thats_my_bag" >}}), namely avoiding the presumption that something is intended by the difference between a value that's missing from the data structure versus a value that reports zero occurrences.[^priors]
 
-[^priors]: See my earlier [post]({{< relref "/priors" >}}) about avoiding differences that don't mean anything.
+[^priors]: See my earlier [post]({{< relref "priors" >}}) about avoiding differences that don't mean anything.
 
 ## Injectability
 
