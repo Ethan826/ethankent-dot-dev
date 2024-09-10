@@ -6,12 +6,12 @@
     <description>Recent content in Posts on Ethan Kent&#39;s dev blog</description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 19 Nov 2023 19:58:08 -0500</lastBuildDate>
+    <lastBuildDate>Tue, 10 Sep 2024 02:38:18 +0000</lastBuildDate>
     <atom:link href="http://localhost:1313/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Obligatory Monad post</title>
+      <title>Obligatory Monad explainer</title>
       <link>http://localhost:1313/posts/obligatory-monad/</link>
-      <pubDate>Sun, 19 Nov 2023 19:58:08 -0500</pubDate>
+      <pubDate>Tue, 10 Sep 2024 02:38:18 +0000</pubDate>
       <guid>http://localhost:1313/posts/obligatory-monad/</guid>
       <description>In addition to its being good and useful, it’s also cursed and the curse of the monad is that once you get the epiphany, once you understand—&amp;ldquo;oh that&amp;rsquo;s what it is&amp;rdquo;—you lose the ability to explain it to anybody else.&#xA;– Douglas Crockford&#xA;It is a truth universally acknowledged, that a programmer in possession of a rudimentary knowledge of monads, must publish a dev blog post on that topic.</description>
     </item>

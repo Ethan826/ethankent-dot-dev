@@ -209,8 +209,19 @@ This is the simplest version of the main idea of a monad: a type that you can
 `flatMap()` over. But I'm of course leaving out some details.
 
 Also, `flatMap()` is called `bind` and looks like `>>=`, and its arguments are
-in a different order, and it's a function, not a method. Here are a few more
-nuances.
+in a different order, and it looks like a function call.
+
+```haskell
+-- Double a number and wrap the result in a list
+doubleInsideList x = [2 * x]
+
+-- In Haskell, `>>=` (bind) applies the doubleInsideList function and flattens
+-- the result, similar to `flatMap()` in other languages.
+[1, 2] >>= doubleInsideList
+-- [2, 4]
+```
+
+Here are a few more nuances.
 
 ### Type classes
 
