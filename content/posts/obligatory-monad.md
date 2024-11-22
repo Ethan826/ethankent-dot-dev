@@ -105,7 +105,7 @@ But let's say we want to create an array with all permissions for several users
 for later processing:
 
 ```ts
-assignRoles(["Anita", "Brad", "Cindy"]);
+["Anita", "Brad", "Cindy"].map(assignRoles);
 // => [
 //      [
 //        { user: "Anita", role: "admin" },
